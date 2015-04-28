@@ -1,0 +1,20 @@
+<apex:page sidebar="false" showChat="false" id="pg" showHeader="false">
+	<apex:composition template="ManageCashCommunityTemplate">		
+		<apex:define name="ManageCashHeader">
+		</apex:define>
+		<apex:define name="sidebar">
+		</apex:define>
+		<apex:define name="headerHTML">
+		</apex:define>
+		<apex:define name="headerHTMLReportMenuHeader">
+		</apex:define>
+		<apex:define name="body">
+<!-- 			<apex:define name="headerHTMLReportMenuHeader"> -->
+<!-- 			</apex:define> -->
+			<apex:form >
+				<c:ManageCashInput sourcePage="accountInputReportViewPage?aId={!$CurrentPage.parameters.aId}" />
+			</apex:form>
+			<c:ManageCashInputs />
+		</apex:define>
+	</apex:composition>
+</apex:page>

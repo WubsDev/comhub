@@ -1,0 +1,47 @@
+<apex:component >
+		<script type="text/javascript">
+        function topPersonalSetup(){
+            
+            parent.sfdcPage.openPersonalSetup('{!URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))}/_ui/common/setup/PersonalSetup');
+            sfdcPage.openPersonalSetup('{!URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))}/_ui/common/setup/PersonalSetup');
+        }
+        function UserPopup(){
+ 					alert(888);
+        }
+    </script>
+    <style>
+    	.brandPrimaryFgr {
+    		  margin-top: 0px;
+  				margin-bottom: 0px;
+  				font-size: 13px !important;
+  				font-family: Arial,Helvetica,sans-serif !important;	
+  				font-weight: bold;
+    	}
+    	.sidebarModuleBody a {
+    		 color:#222;
+    		 text-decoration: underline;
+    	}
+    	.sidebarModuleBody {
+			  font-size: 12px;
+			  font-weight: 200;
+			  
+    	}
+    	.sidebarModulePortalWelcomeContainer {
+    		font-family: Arial,Helvetica,sans-serif;	
+    	}
+    </style>
+  <c:FirstTimeLogin />   
+	<div class="collapsible sidebar" id="sidebarDiv" style="height:115px;">
+        <div class="sidebarModulePortalWelcomeContainer sidebarModule">
+            <div class="sidebarModuleHeader" style="background:#222;">
+                <h2 class="brandPrimaryFgr">Welcome, {!$User.FirstName} {!$User.LastName}</h2></div>
+            <div class="sidebarModuleBody" style="background:#eee;">
+	        		<a href="{!$Site.Prefix}/_ui/core/portal/PortalUserMyProfilePage/d" class="sidebarModulePortalWelcome" target="_top">My Profile</a>&nbsp;|&nbsp;<a href="{!$Site.Prefix}/secur/logout.jsp" class="sidebarModulePortalWelcome" target="_top">Logout</a>
+	            <br/>
+	            <a href="javascript:topPersonalSetup();" class="menuButtonMenuLink" title="My Settings">My Settings</a>&nbsp;|&nbsp;<a href="javascript:void((function(){ window.open('{!URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))}/apex/portalUserCurrency?sfdc.tabName=User Currency','Ratting','width=850,height=400,left=150,top=200,toolbar=0,status=0,');})());" target="_top" class="menuButtonMenuLink" title="My Currency">My Currency</a>
+	            <br/>
+	            <a href="javascript:openIntroVideoModal();" class="menuButtonMenuLink" title="Intro Tutorial">Intro Tutorial</a>&nbsp;
+            </div>
+        </div>
+  </div>
+</apex:component>

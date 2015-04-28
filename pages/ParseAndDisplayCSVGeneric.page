@@ -1,0 +1,12 @@
+<apex:page controller="ParseAndDisplayCSVGenericCtl"  showHeader="false" docType="html-5.0" id="pa" action="{!Init}">
+	<apex:composition template="ManageCashCommunityTemplate">
+		<apex:define name="headerHTML">
+			<c:ManageCashMenu menuName="Input"/> 
+		</apex:define>
+	
+<!-- Start-->
+	<apex:define name="body">
+		<c:CSVUploadComp csvCTL="{!self}" />		
+	</apex:define>
+	</apex:composition>
+</apex:page>

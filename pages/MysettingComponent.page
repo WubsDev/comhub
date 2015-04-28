@@ -1,0 +1,32 @@
+<apex:page showChat="false" showHeader="false" sidebar="false" >
+    <body>
+     <script type="text/javascript">
+        function topPersonalSetup(){
+            
+            parent.sfdcPage.openPersonalSetup('{!URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))}/_ui/common/setup/PersonalSetup');
+            sfdcPage.openPersonalSetup('{!URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))}/_ui/common/setup/PersonalSetup');
+        }
+        function UserPopup(){
+ 			alert(888);
+        }
+     </script>
+     
+	<div class="collapsible sidebar" id="sidebarDiv">
+        <div class="sidebarModulePortalWelcomeContainer sidebarModule">
+            <div class="sidebarModuleHeader brandPrimaryBgr" style="background:#222;">
+                <h2 class="brandPrimaryFgr">Welcome, {!$User.FirstName} {!$User.LastName}</h2></div>
+            <div class="sidebarModuleBody" style="background:#eee;">
+	        		<a href="{!$Site.Prefix}/_ui/core/portal/PortalUserMyProfilePage/d" class="sidebarModulePortalWelcome" target="_top">My Profile</a>&nbsp;|&nbsp;<a href="{!$Site.Prefix}/secur/logout.jsp" class="sidebarModulePortalWelcome" target="_top">Logout</a>
+	            <br/>
+	            <br/>
+	            <a href="javascript:topPersonalSetup();" class="menuButtonMenuLink" title="My Settings">My Settings</a>&nbsp;|&nbsp;<a href="javascript:void((function(){ window.open('{!URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))}/apex/portalUserCurrency?sfdc.tabName=User Currency','Ratting','width=850,height=400,left=150,top=200,toolbar=0,status=0,');})());" target="_top" class="menuButtonMenuLink" title="My Currency">My Currency</a>
+	            <br/>
+	            <br/>
+	            <a href="javascript:openIntroVideoModal1();" class="menuButtonMenuLink" title="Intro Tutorial">Intro Tutorial</a>&nbsp;
+            </div>
+        </div>
+  </div>
+
+
+	</body>
+ </apex:page>

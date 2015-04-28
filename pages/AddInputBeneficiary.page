@@ -1,0 +1,72 @@
+<apex:page controller="AddInputBeneficiaryCtrl"  title="Add Input Beneficiary" showHeader="false">
+	<apex:composition template="ManageCashCommunityTemplate">
+		<apex:define name="headerHTML">
+		<!-- Blank Header -->	 
+		</apex:define>
+		<apex:define name="sidebar">
+		<!-- Blank sidebar -->	 
+		</apex:define>
+		
+		
+	
+		<!-- Start-->
+		<apex:define name="body"> 
+
+		<apex:form >
+		    <script type="text/javascript">
+		    	function setBeneficiaryAtParent(id, name){
+		    		debugger;
+					if(id!=null && id.length>14){
+						try{
+							parent.window.opener.setSelectedRecordId(id, name, '{!$CurrentPage.parameters.customLkNameId}', '{!$CurrentPage.parameters.customRefId}'); 
+						}catch(e){
+							alert(e);
+						}
+						self.close();
+					}
+					return false;
+		    	}
+		    </script>
+			<apex:pageBlock title="Add New Input Buyer/Supplier " >
+				<apex:pageMessages id="errors" ></apex:pageMessages>
+			
+		        <apex:PageBlockSection columns="2" collapsible="false" id="collapse">
+	                <apex:PageBlockSectionItem >
+	                    <apex:outputLabel value="Buyer/Supplier Name" />
+	                    <apex:inputField value="{!inputBene.Name}" id="acctName"/>
+	                </apex:PageBlockSectionItem>
+	                <apex:PageBlockSectionItem >
+	                    <apex:outputLabel value="Buyer/Supplier State" />
+	                    <apex:inputField value="{!inputBene.Beneficiary_State__c}" id="acctName1"/>
+	                </apex:PageBlockSectionItem>
+	                <apex:PageBlockSectionItem >
+	                    <apex:outputLabel value="Buyer/Supplier Address" />
+	                    <apex:inputField value="{!inputBene.Beneficiary_Address__c}" id="acctName1"/>
+	                </apex:PageBlockSectionItem>
+	                <apex:PageBlockSectionItem >
+	                    <apex:outputLabel value="Buyer/Supplier Postal Code" />
+	                    <apex:inputField value="{!inputBene.Beneficiary_Postal_Code__c}" id="acctName2"/>
+	                </apex:PageBlockSectionItem>
+	                <apex:PageBlockSectionItem >
+	                    <apex:outputLabel value="Buyer/Supplier City" />
+	                    <apex:inputField value="{!inputBene.Beneficiary_City__c}" id="acctName1"/>
+	                </apex:PageBlockSectionItem>
+	                <apex:PageBlockSectionItem >
+	                    <apex:outputLabel value="Buyer/Supplier Country" />
+	                    <apex:inputField value="{!inputBene.Beneficiary_Country__c}" id="acctName3"/>
+	                </apex:PageBlockSectionItem> 
+	                <apex:PageBlockSectionItem >
+	                    <apex:outputLabel value="Buyer/Supplier Email" />
+	                    <apex:inputField value="{!inputBene.Beneficiary_Email__c}" id="acctName4"/>
+	                </apex:PageBlockSectionItem> 
+	                
+			    </apex:PageBlockSection>
+			    <div style="text-align: center;">
+			    	<apex:commandButton action="{!save}"  value="Submit" styleclass="Button" rerender="errors" oncomplete="setBeneficiaryAtParent('{!inputBene.id}','{!inputBene.name}');" />
+			    	<apex:commandButton value="Cancel" styleclass="Button" onclick="self.close();"/><br></br>
+			    </div>
+		   </apex:pageBlock>
+		</apex:form>
+	</apex:define>
+</apex:composition>
+</apex:page>

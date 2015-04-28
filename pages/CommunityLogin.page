@@ -1,0 +1,43 @@
+<apex:page sidebar="false" controller="CommunityLoginController" showheader="false" standardStylesheets="false" action="{!init}">
+	<apex:form id="theFrom">
+		
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Login Page</title>
+<!-- 		<link href="styles.css" rel="stylesheet" type="text/css"></link> -->
+		<apex:stylesheet value="{!URLFOR($Resource.CommunityLogin, 'styles/styles.css')}"/>
+	</head>
+	<body>
+		<div id="background">
+			<div id="Background"><img src="{!URLFOR($Resource.CommunityLogin,'images/Background.png')}" /></div>
+			<div id="GlassesCityFocus"><img src="{!URLFOR($Resource.CommunityLogin,'images/GlassesCityFocus.png')}" /></div>
+			<div style="position: relative;top: 231px;right: -493px;z-index: 5;color: red;font-weight: bolder;" ><apex:pageMessages id="msj" />	</div>
+			<div id="WelcometotheCashMana"><img src="{!URLFOR($Resource.CommunityLogin,'images/WelcometotheCashMana.png')}" /></div>
+			<div id="InputfieldsBG"><img class="imgToError" src="{!URLFOR($Resource.CommunityLogin,'images/InputfieldsBG.png')}" /></div>
+			<div id="Button" style="top: 401px !important;">
+				<apex:commandButton image="{!URLFOR($Resource.CommunityLogin,'images/Button.png')}" action="{!doLogin}"/>
+			</div>
+			<div id="Login" style="top: 414px !important;"><img src="{!URLFOR($Resource.CommunityLogin,'images/Login.png')}" onclick="submitForm();"/></div>
+			<div id="ButtonArrow" style="top: 409px !important;"><img src="{!URLFOR($Resource.CommunityLogin,'images/ButtonArrow.png')}" onclick="submitForm();"/></div>
+			<div id="UsernamePassword" style="top: 317px !important;"><img src="{!URLFOR($Resource.CommunityLogin,'images/UsernamePassword.png')}" /></div>
+			<div id="Usernamefieldbox" style=" top: 313px !important;"><apex:inputtext value="{!username}" /></div>
+			<div id="Passwordfieldbox" style=" top: 365px !important;"><apex:inputsecret value="{!password}" /></div>
+			<div id="LogoBanner"><img src="{!URLFOR($Resource.CommunityLogin,'images/LogoBanner.png')}" /></div>
+			<div id="WUBusinessSolutionsS"><img src="{!URLFOR($Resource.CommunityLogin,'images/WUBusinessSolutionsS.png')}" /></div>
+			<div id="RememberUsername" style="top: 412px;width: 152px;">
+				<a style="color: white;text-decoration: none;" href="{!$Site.Prefix}/secur/forgotpassword.jsp?locale=us">Forgot your password?</a>
+			</div>
+			
+			
+		</div>
+		
+	</body>
+	
+	<apex:actionFunction name="submitForm" action="{!doLogin}" rerender="theFrom" />
+	<script>
+		function updateUI(){
+			$('.imgToError').style.width = "650px";			
+		}
+	</script>
+	</apex:form>
+</apex:page>

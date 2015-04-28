@@ -1,0 +1,127 @@
+<apex:page controller="TopPendingInvoicesCtrl" showHeader="false" sidebar="false">
+	<apex:composition template="ManageCashCommunityTemplate">
+		<apex:define name="headerHTML">
+		<!-- Blank Header -->	 
+		</apex:define>
+		<apex:define name="sidebar">
+		<!-- Blank sidebar -->	 
+		</apex:define>
+		<!-- Start-->
+		<apex:define name="body"> 
+<!--Display the top 5 invoices   -->  
+
+		<apex:form >
+        	<!-- script type="text/javascript">
+      		   function openLookupAlert(objectType, recId) {
+					
+		            var url = "{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/NewThresholdAlertPage?objectType="+objectType+"&recId="+recId;
+		            var newWin = window.open(url , 'Popup', 'height=500,width=900,left=100,top=100,resizable=no,scrollbars=yes,toolbar=no,status=no');
+		            if (window.focus) {
+		                newWin.focus();
+		            }  
+		       }
+			</script-->		
+		    <apex:pageBlock title="Top Pending Invoices  " >
+		        <apex:outputLabel value="Filter By Status" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		        <apex:selectList value="{!selectedStatus}" multiselect="false" size="1">
+		            <apex:selectOption itemValue="Both" itemLabel="Both"/>
+		            <apex:selectOption itemValue="Approved" itemLabel="Approved"/>
+		            <apex:selectOption itemValue="Pending Approval (Open)" itemLabel="Pending Approval"/>
+		        </apex:selectList>&nbsp;
+		        <apex:commandButton value="Refresh" action="{!search}"/>&nbsp;&nbsp;&nbsp;
+		        <c:DateTimestampMessage />
+		        <br/>
+		        <apex:outputPanel rendered="{!dataAvailable}">
+					<table class="table" border="0" cellpadding="0" cellspacing="0">
+						<colgroup span="6"></colgroup>
+						<thead class="">
+							<tr>
+								<th scope="col" colspan="1" >
+									<div >Invoice Number</div>
+								</th>
+								<th scope="col" colspan="1" >
+									<div >Due Date</div>
+								</th>
+								<th scope="col" colspan="2" width="10%" style="width:10%;">
+									<div >Amount in Settlement Currency*</div>
+								</th>
+								<th scope="col" colspan="1" >
+									<div style="padding-left:30px;">Invoice Amount Due</div>
+								</th>
+								<th scope="col" colspan="1" >
+									<div >Beneficiary</div>
+								</th>
+								<th scope="col" colspan="1" >
+									<div >Status</div>
+								</th>
+							</tr>
+						</thead>		        
+			        	<tbody>
+			        		<apex:repeat value="{!invoiceList}" var="c">
+			        			<tr>
+				        			<td>
+						                <apex:outputpanel id="InvoiceNumber">  
+						                    <a href="javascript:newInvoiceWindow('{!c.invoice.id}');" src="#" id="InvoiceNumber{!$Component.InvoiceNumber}" >{!c.invoice.Name}</a>
+						                </apex:outputpanel>
+				        			</td>
+									<td>
+						                <apex:outputfield value="{!c.invoice.Due_Date__c}" />
+									</td>
+									<td>
+										<nobr>
+							                <apex:outputText value="{!userDefaultCurrency}{0, number, ###,##0.00} ">
+							                	<apex:param value="{!c.settlementCurrency}"/>
+							                </apex:outputText>
+							            </nobr>							
+									</td>
+									<td>
+										<!-- nobr><a title="Please select a Threshold for your Invoice" alt="Please select a Threshold for your Invoice" href="javascript:openLookupAlert('Invoice', '{!c.invoice.id}');" src="#', '{!c.invoice.id}');" type="button" class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">Rate Watch</a></nobr-->
+										<nobr><a src="javascript:void();" type="button" title="Coming Soon" alt="Coming Soon"  class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">Rate Watch - Coming Soon!</a></nobr>							
+									</td>
+									<td>
+				            			<nobr><apex:outputText value="{!c.invoice.CurrencyIsoCode}{0, number, ###,##0.00}" style="padding-left:30px;">
+				                  			<apex:param value="{!c.invoice.Amount__c}"/>
+				                  			</apex:outputText>
+				                  		</nobr>
+				                  	</td>
+									<td>
+										<nobr><apex:outputfield value="{!c.invoice.Input_Beneficiary__r.name}" /></nobr>
+									</td>
+									<td >
+										<nobr><apex:outputfield value="{!c.invoice.Status__c}" /></nobr>
+									</td>
+								</tr>
+			        		</apex:repeat>
+			        	</tbody>
+			        </table>
+		        </apex:outputPanel>
+		        <apex:outputPanel rendered="{!NOT(dataAvailable)}">
+		            <div class="noDataPanel" style="background-color: #eee;height: 200px; text-align: center; vertical-align: middle;">
+		                <p style="color: #fcd40d; font-size: 28px; font-weight: bold; padding-bottom: 10px;">No Data To Display</p>
+		                <apex:outputLink value="{!$Site.Prefix}/apex/InvoicesAndPayments?lid=01rS000000095lA&#38;ic=1" target="_top" style="font-size: 18px; ">
+		                    Start Adding Invoices
+		                </apex:outputLink>
+		            </div>
+		        </apex:outputPanel>
+		    </apex:pageBlock>
+		    <script type="text/javascript">
+		    function newInvoiceWindow(id) {
+		        //T-361755: Commented out following code to link the invoice number with the new 
+		        // custom vf page for invoice details
+		        window.open('{!URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))}/apex/InvoiceDetail?id=' + id, '_blank');
+		         
+		    }
+		    </script>
+		</apex:form>
+		</apex:define>
+		</apex:composition>
+		<style type="text/css">
+			<!-- Overloading bootstrape CSS -->
+			.outer td.oRight{
+				padding: 0 0 0 0;
+			}
+			.container-fluid {
+				padding-right: 0px;
+			}   		
+		</style>
+</apex:page>

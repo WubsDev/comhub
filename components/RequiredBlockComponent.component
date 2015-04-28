@@ -1,0 +1,22 @@
+<apex:component access="global" id="requiredblock">
+	<apex:attribute name="isRequired" type="boolean" description=""	default="true" />
+	<style>
+	.requiredInput .requiredBlock {
+			background-color: #CC0000;
+			bottom: 1px;
+			left: -4px;
+			position: absolute;
+			top: 1px;
+			width: 3px;
+			}
+			
+			.requiredInput {
+			height: 100%;
+			position: relative;
+	}
+	</style>
+	<div class="{!if(isRequired==true, 'requiredInput', '')}">
+		<div class="{!if(isRequired==true, 'requiredBlock', '')}"></div>
+		<apex:componentBody id="container" />
+	</div>
+</apex:component>

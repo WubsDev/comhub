@@ -1,0 +1,138 @@
+<apex:component Controller="CustomLookupCtrl" id="cmp">
+    <script>
+        var newWin = null;
+        var typeNameId = '';
+        var selectedId = '';
+        var searchText = '';
+        function openLookupPopup(zTypeNameId, zTypeRefId) {
+            var searchText = '';
+            if(document.getElementById(zTypeNameId)!=null){
+				searchText = document.getElementById(zTypeNameId).value;
+			}
+            var url = "{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/OpenLookupPopupBeneficiary";
+            url = url + "?aId={!$CurrentPage.parameters.aId}&Object=" + '{!objName}' + "&fieldName=" + '{!fieldName}' + "&searchText=" + searchText + "&fieldSetName=" + '{!fieldSetNameAPI}'+"&customLkNameId="+zTypeNameId+"&customRefId="+zTypeRefId ;
+            newWin = window.open(url, 'Popup', 'height=500,width=600,left=100,top=100,resizable=no,scrollbars=yes,toolbar=no,status=no');
+            if (window.focus) {
+                newWin.focus();
+            }  
+        }
+
+        function setSelectedRecordId(selectedId, selectedName, zTypeNameId, zTypeRefId){
+        	
+           debugger;
+           //displaySelectedRecord(selectedId+'Name', selectedName);
+			document.getElementById(zTypeNameId).value = selectedName;
+			if(zTypeRefId!=null && zTypeRefId!='' && zTypeRefId!='null'){
+				document.getElementById(zTypeRefId).value = selectedId;
+			}else{
+				document.getElementById(zTypeNameId+'_lkid').value = selectedId;
+			}
+			setAncerHoverLookup(zTypeNameId+'Name', selectedId, selectedName);
+        }
+        function setAncerHoverLookup(fieldToPopulateId, selectedRefId, acValue){
+        	debugger;
+        	var zUrl = "{!IF($Site.Prefix != null,URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/";
+        	var targetName = fieldToPopulateId;
+        	var ajxContent = zUrl+'{!selectedRefId}/m?retURL=%2F{!selectedRefId}&isAjaxRequest=1';
+        	var ancer = '<a '+ 
+        	'href="'+zUrl+'"'+ 
+        	'id="'+targetName+'"'+ 
+        	'onblur="LookupHoverDetail.getHover(\''+targetName+'\').hide();"'+ 
+       	'onmouseout="LookupHoverDetail.getHover(\''+targetName+'\').hide();"'+ 
+        	'onfocus="LookupHoverDetail.getHover(\''+targetName+'\',\''+ajxContent+'\' ).show();"'+ 
+       	'onmouseover="LookupHoverDetail.getHover(\''+targetName+'\',\''+ajxContent+'\' ).show();"'+
+        	'>'+acValue+'</a>';
+
+			var element = document.getElementById(targetName+'Div');
+			var relement = document.getElementById(targetName);
+			if(relement!=null){
+				relement.parentNode.removeChild(relement);
+			}
+			if(element!=null){
+				element.innerHTML = ancer;
+			}
+        }
+		function resetLookup(zTypeRefId, zTypeNameId){
+			debugger;
+			document.getElementById(zTypeRefId).value = '';
+			document.getElementById(zTypeNameId).value = '';
+			zTypeNameId = zTypeNameId+'Name';
+			if(document.getElementById(zTypeNameId)==null){
+				return;
+			}
+			if (document.getElementById(zTypeNameId).nodeName=='A'|| document.getElementById(zTypeNameId).nodeName=='a'){
+				var element = document.getElementById(zTypeNameId);
+				element.parentNode.removeChild(element);
+				//document.getElementById(zTypeNameId).innerHTML = '';
+			}
+		}
+        //To initialize the controller of component IMP.
+        var placeHolderForCtrlIni = '{!SelectedRecord}';
+        
+    </script>
+    
+    <apex:attribute name="objectName" type="String" required="true" assignTo="{!objName}" description="API Name of the Object for which Lookup has to be created"/> 
+    <apex:attribute name="fieldAPI" type="String" required="true" assignTo="{!fieldName}" description="API Name of the field on the basis of which you want to search"/> 
+    <apex:attribute name="fieldToPopulateId" type="String" required="true" assignTo="{!fieldPopulatingId}" description="Id of the Field whose value needs to be populated"/> 
+    <apex:attribute name="fieldSetName" type="String" required="true" assignTo="{!fieldSetNameAPI}" description="Name of the field Set whose fields need to be displayed"/>
+    <apex:attribute name="selectedRefId" type="String" required="true" assignTo="{!selectedId}" description="Id for the record already selected"/>
+    <apex:attribute name="isLookupLabel" type="boolean" required="false" description="Flag if text box or lookup" default="false"/>
+    <apex:attribute name="isOnlyRead" type="boolean" required="false" description="Flag if allowed to update/remove selection" default="false"/>
+    
+    <apex:outputPanel id="lookupPanel">
+		<table border="0" style="border-bottom:0px;padding: 0px 0px 0px 0px;width:100%;" width="100%">
+			<tr><td style="border-bottom:0px;padding: 0px 0px 0px 0px;width:100%;" width="100%">    
+	   	<nobr>
+	   	
+        <apex:inputText id="targetTxtName" value="{!selectedRecordName}" style="display:{!if(isLookupLabel==false, 'block', 'none')};"/>
+    		<apex:outputPanel rendered="{!isLookupLabel==true}">
+	    		<div id="{!$Component.targetTxtName}NameDiv">
+<!-- 	    		href="{!IF($Site.Prefix != null,URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/{!selectedRefId}"  -->
+		        	<a 		        	
+		        	href="{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))+'/apex/InputBeneficiaryDetailPage?Id=','/')}{!selectedRefId}"
+		        	id="{!$Component.targetTxtName}Name" 
+		        	onblur="LookupHoverDetail.getHover('{!$Component.targetTxtName}Name').hide();" 
+		        	onfocus="LookupHoverDetail.getHover('{!$Component.targetTxtName}Name', '{!IF($Site.Prefix != null,URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/BeneficiaryLookupDetail?Id={!selectedRefId}&retURL=%2F{!selectedRefId}&isAjaxRequest=1').show();" 
+		        	onmouseout="LookupHoverDetail.getHover('{!$Component.targetTxtName}Name').hide();" 
+		        	onmouseover="LookupHoverDetail.getHover('{!$Component.targetTxtName}Name', '{!IF($Site.Prefix != null,URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/BeneficiaryLookupDetail?Id={!selectedRefId}&retURL=%2F{!selectedRefId}&isAjaxRequest=1').show();"
+		        	>{!selectedRecordName}</a>
+				</div>
+		</apex:outputPanel>
+		</nobr>
+		</td><td style="border-bottom:0px;padding: 0px 0px 0px 0px;display:{!if(isOnlyRead, 'none;', 'block;')}">
+        <a id="acc3_lkwgt" onclick="openLookupPopup('{!$Component.targetTxtName}', '{!fieldToPopulateId}');" tabindex="2" 
+            title="Parent Lookup (New Window)" style="text-decoration: none;" >
+                <img src="/s.gif" alt="Search Buyer/Supplier" 
+                class="lookupIcon" 
+                onblur="this.className = 'lookupIcon';" 
+                onfocus="this.className = 'lookupIconOn';" 
+                onmouseout="this.className = 'lookupIcon';this.className = 'lookupIcon';" 
+                onmouseover="this.className = 'lookupIconOn';this.className = 'lookupIconOn';" 
+                title="Search Buyer/Supplier" />
+        </a>
+        
+		<script type="text/javascript">
+			var lkName = '{!fieldToPopulateId}_name';
+			debugger;
+			var lookupIdHolder ;
+			if((lookupIdHolder+'')=='undefined'){
+				lookupIdHolder= new Object();
+			}
+			lookupIdHolder[lkName] = '{!$Component.targetTxtName}';
+			if(document.getElementById('{!$Component.targetTxtName}')!=null){
+				document.getElementById('{!$Component.targetTxtName}').disabled = true;
+			} 			
+		</script>        
+		</td><td>
+			<a style="display:{!if(isOnlyRead, 'none;', 'block;')}" href="javascript:resetLookup('{!fieldToPopulateId}', '{!$Component.targetTxtName}');" ><img alt="Delete Buyer/Supplier" src="/img/func_icons/remove12_on.gif" title="Delete Buyer/Supplier"/></a>
+		</td></tr></table>
+    </apex:outputPanel>
+<!-- 
+href="/managecash/a08n0000002PS2H" id="lookupa08n0000002PS2H00N80000005AE8F" 
+onblur="LookupHoverDetail.getHover('lookupa08n0000002PS2H00N80000005AE8F').hide();" 
+onfocus="LookupHoverDetail.getHover('lookupa08n0000002PS2H00N80000005AE8F', '/managecash/a08n0000002PS2H/m?retURL=%2Fmanagecash%2Fapex%2FManageCashInput&amp;isAjaxRequest=1&amp;nocache=1429240334289').show();" 
+onmouseout="LookupHoverDetail.getHover('lookupa08n0000002PS2H00N80000005AE8F').hide();" 
+onmouseover="LookupHoverDetail.getHover('lookupa08n0000002PS2H00N80000005AE8F', '/managecash/a08n0000002PS2H/m?retURL=%2Fmanagecash%2Fapex%2FManageCashInput&amp;isAjaxRequest=1&amp;nocache=1429240334289').show();"
+ -->
+
+</apex:component>

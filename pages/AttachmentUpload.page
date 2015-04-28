@@ -1,0 +1,30 @@
+<apex:page standardController="Attachment" tabStyle="Invoice__c" title="Invoice Image Upload" label="Invoice Image Upload"
+    name="Invoice Image Upload"  extensions="AttachmentUpload" showHeader="false">
+	<apex:composition template="ManageCashCommunityTemplate">
+		<apex:define name="headerHTML">
+			<c:ManageCashMenu menuName="Report"/> 
+		</apex:define>
+	
+<!-- Start-->
+		<apex:define name="body"> 
+                
+			<div class="container-fluid"><br/>
+				<apex:pagemessages />
+				<apex:form id="theForm">
+					<apex:pageBlock title="Upload Attachment">
+					<apex:pageMessages id="pg"/>
+						<apex:pageBlockSection >
+							<!-- <apex:outputLabel value="Document"/> -->
+							<apex:inputFile value="{!attach.body}" filename="{!attach.name}" />
+							</apex:pageBlockSection>
+							<div class="palette">
+							<apex:commandButton value="Save" action="{!save}" />
+							<apex:commandButton value="Cancel" action="{!cancel}" />
+							</div>
+						
+					</apex:pageBlock>
+				</apex:form>
+			</div>
+		</apex:define>
+	</apex:composition>
+</apex:page>

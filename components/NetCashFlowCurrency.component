@@ -1,0 +1,152 @@
+<apex:component allowDML="true" controller="NetCashFlowCtrl">    
+<!--Display the top 5 invoices   -->  
+                 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false"></script>   
+        <!-- Slider js and css -->
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" />
+            <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+                <script src="//code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
+                <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+                <style>
+            .center {
+              padding-left:200px;
+              position:absolute;
+            } <!-- Overloading bootstrape CSS -->
+                        .outer td.oRight{
+                            padding: 0 0 0 0;
+                        }
+                        .container-fluid {
+                            padding-right: 0px;
+                        }    
+        </style>
+        <script>
+               function renderNetCashFlowByCurrencyChart(result){
+                     if(result==null){
+                        return null;
+                     }
+                     
+                     //update width of <Div dir='ltr'> node
+                     /*START Fix the google chart to fix the with for resize**/
+                     if(document.getElementById('chartBlockByCurrency')!=null && document.getElementById('chartBlockByCurrency').children.length>0 && document.getElementById('chartBlockByCurrency').children[0].children.length>0){
+                        document.getElementById('chartBlockByCurrency').children[0].children[0].setAttribute("style","width:50px");
+                     } 
+                                 
+                     /*Fix the google chart to fix the with for resize**/
+                     if(result.length > 0){
+                        if(document.getElementById('chartBlockByCurrency')!=null){
+                            document.getElementById('chartBlockByCurrency').style.background="none";
+                         }
+                         /*
+                         if(document.getElementById('chartBlockByCurrencyInputLink')!=null){
+                            document.getElementById('chartBlockByCurrencyInputLink').style.display = 'none';
+                         } */  
+                         
+                         /*if(document.getElementById('addNewInputLink')!=null){
+                            document.getElementById('addNewInputLink').style.display = 'none';
+                         }*/          
+                         // load Column chart
+                         // Prepare table model for chart with columns
+                         var data = new google.visualization.DataTable();
+                         data.addColumn('string', 'currencyCode');
+                         data.addColumn('number', 'amount ');  
+                         data.addColumn({type:'string', role:'style'}); 
+                         data.addColumn({type :'string', role: 'tooltip'}); 
+                         
+                         // add rows from the remoting results
+                         try{
+                          for(var i =0; i<result.length;i++){
+                             if(i<5) {
+                                 var r = result[i];
+                                 var barColor = '#585858';
+                                 if(r.amount<0){
+                                     barColor = '#C9626E';
+                                 }
+                                 data.addRow([r.currencyCode, r.amount, barColor,  r.toolTipAmount]);
+                             } else {
+                                    break;
+                             }
+                           }
+                          }catch(e){
+                            alert('Chart Error '+e);
+                          }
+        
+                          view = new google.visualization.DataView(data);
+                          view.setColumns([0, 1,2,
+                                           { calc: "stringify",
+                                             sourceColumn: 3,
+                                             type: "string",
+                                             role: "annotation" },
+                                           3]);
+                    
+                         var options = {
+                                             title: "Amount Shown in 1000s ",
+                                             width: "100%",
+                                             height: 274,
+                                             bar: {groupWidth: "45%"},
+                                             vAxis: { textPosition: 'none',gridlineColor: '#fff', baseline: 3 },
+                                             legend: { position: "none" },
+                                             chartArea: {width: '76%', height: '55%'},
+                                             backgroundColor: '#F8F8F8',
+                             };        
+                          
+                          //vAxis to hide vAxis and caption
+                          chart = new google.visualization.ColumnChart(document.getElementById("chartBlockByCurrency"));
+                          chart.draw(view, options);
+                          google.visualization.events.addListener(chart, 'select', function() {
+                                var selectedItem = chart.getSelection()[0];
+                                if (selectedItem) {
+                                  var currency = data.getValue(selectedItem.row, 0);
+                                    window.open('{!$Site.Prefix}/apex/InsightsAndInputTab?currency=' + currency,'_top',false);
+                                }                  
+                          });
+                          
+                     } else{
+                         var chartDiv = document.getElementById('chartBlockByCurrency');
+                         // chartDiv.style.backgroundColor ="#eee";
+                         chartDiv.style.color= "#fcd40d";
+                         chartDiv.style.fontSize = '28px';
+                         chartDiv.style.fontWeight = 'bold';
+                         chartDiv.style.height = '60px';
+                         chartDiv.style.textAlign = 'center';
+                         chartDiv.style.vAlign = 'middle';
+                         chartDiv.innerHTML = "<br/>No Data To Display";
+                         document.getElementById('addNewInputLink').style.display = 'block';
+                         document.getElementById('addNewInputLink').style.height = '300px;';
+                     }
+                        }       
+                       // Load the Visualization API and the piechart package.
+                        google.load('visualization', '1.0', {'packages':['corechart']});
+                
+                        // Set a callback to run when the Google Visualization API is loaded.
+                        google.setOnLoadCallback(initCharts);
+                        function initCharts() {    
+                             // Render net cast currency chart
+                            NetCashFlowCtrl.loadAllTimeData(
+                                     function(result, event){               
+                                        renderNetCashFlowByCurrencyChart(result);
+                                  }, {escape:true});             
+                          }
+                  
+                  window.addEventListener("resize", initCharts);
+        </script>
+        
+        <apex:form style="margin-top:15px;min-width:350px;">
+                     <div style="padding: 3px 2px;background-color:#222;color:white;font-weight:bold;text-align:center;">Total Net Cash Flow by Currency</div>
+                <apex:outputPanel layout="block" id="pieDiv" style="height:250px;">
+                     <center>
+                        <div id="chartBlockByCurrency" style="height: 230px;width:100%;cursor: pointer;" ></div>                    
+                   </center>
+                   <center><a>
+                    <div>
+                        <p id="addNewInputLink2" onclick="window.open('{!$Site.Prefix}/apex/ManageCashInput','_top',false);" style="cursor: pointer; display:block; backgroundColor:#eee;font-size: 18px;" >
+                        
+                            Start Adding Inputs
+                        </p>
+                    </div></a></center>
+                </apex:outputPanel>
+         </apex:form> 
+                 
+                 
+    
+</apex:component>

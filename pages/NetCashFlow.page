@@ -1,0 +1,269 @@
+<apex:page controller="NetCashFlowCtrl"  title="Graph" sidebar="true" docType="html-5.0" showHeader="false" applyHtmlTag="false" applyBodyTag="false">
+    <apex:composition template="ManageCashCommunityTemplate">
+        <apex:define name="headerHTML">
+        <!-- Blank Header -->    
+        </apex:define>
+        <apex:define name="sidebar">
+        <!-- Blank sidebar -->   
+        </apex:define>
+        <!-- Start-->
+        <apex:define name="body"> 
+<!--Display the top 5 invoices   -->  
+
+        <apex:form >
+            <style>
+            .center {
+              padding-left:200px;
+              position:absolute;
+            } <!-- Overloading bootstrape CSS -->
+            .outer td.oRight{
+                padding: 0 0 0 0;
+            }
+            .container-fluid {
+                padding-right: 0px;
+            }    
+            </style>
+            <apex:pageBlock title="Net Cash Flow without Hedging">
+                <apex:pageBlockSection columns="1">
+                <!--  
+                     <apex:pageBlockSectionItem >
+                        <apex:outputPanel >
+                           Total Net Cash flow by Currency 
+                           <div style="margin-top:19px;">&nbsp;</div>
+                          <div id="chartBlockByCurrency" style="height: 300px;width:100%;">
+                          </div>    
+                        </apex:outputPanel>   
+                     </apex:pageBlockSectionItem>
+                   -->              
+                     
+                    <apex:pageBlockSectionItem dataStyle="width:100%;">
+                        <apex:outputPanel >
+                            Net Cash Flow by Month <br/>
+                            <apex:outputLabel value="Currency" />&nbsp;&nbsp;&nbsp;&nbsp;
+                            <apex:selectList value="{!selectedCurrency}" multiselect="false" size="1">
+                                <apex:selectOptions value="{!accountNetcashCurrency}" />
+                            </apex:selectList>
+                            &nbsp;&nbsp;&nbsp;
+                            <apex:outputLabel value="Date Range" />&nbsp;&nbsp;&nbsp;
+                            <apex:selectList value="{!selectedMonth}" multiselect="false" size="1">
+                                <apex:selectOption itemValue="3" itemLabel="3 Months"/>
+                                <apex:selectOption itemValue="6" itemLabel="6 Months"/>
+                                <apex:selectOption itemValue="9" itemLabel="9 Months"/>
+                                <apex:selectOption itemValue="12" itemLabel="12 Months"/>
+                            </apex:selectList>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <apex:commandButton value="Refresh" action="{!search}" id="RefreshChart" />
+                            &nbsp;&nbsp;&nbsp; 
+                            <a href ='{!$Site.Prefix}/apex/InsightsAndInputTab?currency={!selectedCurrency}' target='_parent'>       
+                                    <div id="chartBlock" style="height: 300px;width:100%;background-size: cover;">
+                                        <center>
+                                        <p id="addNewInputLink" onclick="window.open('{!$Site.Prefix}/apex/ManageCashInput?currency={!selectedCurrency}','_top',false);" style="display:none; padding-top:13%; font-size: 18px;" >
+                                            Start Adding Inputs
+                                        </p>
+                                        </center>
+                                    </div>
+                            </a>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>    
+                <br/>
+                </apex:pageBlock>
+            </apex:form> 
+            </apex:define>
+    </apex:composition>   
+ <script type="text/javascript">
+       var chart =null;
+       var view = null;
+       var chartData = null;
+       function rerederGraph(result){
+             if(result==null){
+                return null;
+             }
+             
+             //update width of <Div dir='ltr'> node
+             /*START Fix the google chart to fix the with for resize**/
+             if(document.getElementById('chartBlock')!=null && document.getElementById('chartBlock').children.length>0 && document.getElementById('chartBlock').children[0].children.length>0){
+                document.getElementById('chartBlock').children[0].children[0].setAttribute("style","width:100%;padding-top:10%;font-size: 18px;");
+             }
+             /*Fix the google chart to fix the with for resize**/
+             
+             if(result.length > 0){
+                if(document.getElementById('chartBlock')!=null){
+                    document.getElementById('chartBlock').style.background="none";
+                 }
+                 if(document.getElementById('addNewInputLink')!=null){
+                    document.getElementById('addNewInputLink').style.display = 'none';
+                 }
+                 
+                 // load Column chart
+                 var visualization = new google.visualization.ColumnChart(document.getElementById('chartBlock'));
+                 debugger;
+                 // Prepare table model for chart with columns
+                 var data = new google.visualization.DataTable();
+                 data.addColumn('string', 'invoiceMonth');
+                 data.addColumn('number', 'amount ');   
+                 data.addColumn({type:'string', role:'style'}); 
+                 data.addColumn({type :'string', role: 'tooltip'}); 
+                 // add rows from the remoting results
+                 try{
+                  for(var i =0; i<result.length;i++){
+                     var r = result[i]; 
+                     var barColor = '#ffffff';
+                     if(r.amount<0){
+                         barColor = '#C9626E';
+                     }
+                     if(r.amount>0){
+                         barColor = '#585858';
+                     }
+                     data.addRow([r.invoiceMonth, r.amount, barColor, r.toolTipAmount]);
+                   }
+                  }catch(e){
+                    alert('Chart Error '+e);
+                  }
+                  view = new google.visualization.DataView(data);
+                  view.setColumns([0, 1, 2,
+                                   { calc: "stringify",
+                                     sourceColumn: 3,
+                                     type: "string",
+                                     role: "annotation" }
+                                   ,3]);
+            
+                 var options = {
+                                     title: "Amount Shown in 1000s ",
+                                     width: "100%",
+                                     height: 300,
+                                     bar: {groupWidth: "65%"},
+                                     vAxis: { textPosition: 'none',gridlineColor: '#fff', baseline: 3 },
+                                     legend: { position: "none" },
+                                     chartArea: {width: '96%', height: '55%'}
+                     };        
+                  
+                  //vAxis to hide vAxis and caption
+                  chart = new google.visualization.ColumnChart(document.getElementById("chartBlock"));
+                  chart.draw(view, options);
+                 
+                 /*
+                    // all done, lets draw the chart with some options to make it look nice.
+                    visualization.draw(data, {legend : {position: 'top', textStyle: {color: 'Blue', fontSize: 10}}, width:window.innerWidth,vAxis:{textStyle:{fontSize: 10}},hAxis:{textStyle:{fontSize: 0},showTextEvery:1,slantedText:false}});
+                 */
+             }
+             else{
+                 document.getElementById('chartBlock').style.background="url({!$Resource.NetCashFlowSampleDataImage}) no-repeat";
+                 document.getElementById('chartBlock').style.backgroundSize= "100%";
+                 document.getElementById('addNewInputLink').style.display = 'block';
+                 document.getElementById('addNewInputLink').style.height = '100%;';
+                 
+             }
+        }
+        
+       function renderNetCashFlowByCurrencyChart(result){
+             if(result==null){
+                return null;
+             }
+             
+             //update width of <Div dir='ltr'> node
+             /*START Fix the google chart to fix the with for resize**/
+             if(document.getElementById('chartBlockByCurrency')!=null && document.getElementById('chartBlockByCurrency').children.length>0 && document.getElementById('chartBlockByCurrency').children[0].children.length>0){
+                document.getElementById('chartBlockByCurrency').children[0].children[0].setAttribute("style","width:100%;padding-top:13%;font-size: 18px;");
+             } 
+                         
+             /*Fix the google chart to fix the with for resize**/
+             if(result.length > 0){
+                if(document.getElementById('chartBlockByCurrency')!=null){
+                    document.getElementById('chartBlockByCurrency').style.background="none";
+                 }
+                 /*
+                 if(document.getElementById('chartBlockByCurrencyInputLink')!=null){
+                    document.getElementById('chartBlockByCurrencyInputLink').style.display = 'none';
+                 } */            
+                 // load Column chart
+                 // Prepare table model for chart with columns
+                 var data = new google.visualization.DataTable();
+                 data.addColumn('string', 'currencyCode');
+                 data.addColumn('number', 'amount ');  
+                 data.addColumn({type:'string', role:'style'}); 
+                 data.addColumn({type :'string', role: 'tooltip'}); 
+                 
+                 // add rows from the remoting results
+                 try{
+                  for(var i =0; i<result.length;i++){
+                     var r = result[i];
+                     var barColor = '#585858';
+                     if(r.amount<0){
+                         barColor = '#C9626E';
+                     }
+                     data.addRow([r.currencyCode, r.amount,barColor,  r.toolTipAmount]);
+                   }
+                  }catch(e){
+                    alert('Chart Error '+e);
+                  }
+
+                  view = new google.visualization.DataView(data);
+                  view.setColumns([0, 1,2,
+                                   { calc: "stringify",
+                                     sourceColumn: 3,
+                                     type: "string",
+                                     role: "annotation" },
+                                   3]);
+            
+                 var options = {
+                                     title: "Amount showed in 1000s",
+                                     width: "100%",
+                                     height: 300,
+                                     bar: {groupWidth: "65%"},
+                                     vAxis: { textPosition: 'none',gridlineColor: '#fff', baseline: 3 },
+                                     legend: { position: "none" },
+                                     chartArea: {width: '96%', height: '55%'}
+                     };        
+                  
+                  //vAxis to hide vAxis and caption
+                  chart = new google.visualization.ColumnChart(document.getElementById("chartBlockByCurrency"));
+                  chart.draw(view, options);
+                  google.visualization.events.addListener(chart, 'select', function() {
+                        var selectedItem = chart.getSelection()[0];
+                        if (selectedItem) {
+                          var currency = data.getValue(selectedItem.row, 0);
+                            window.open('{!$Site.Prefix}/apex/InsightsAndInputTab?currency=' + currency,'_top',false);
+                        }                  
+                  });
+                  
+             } else{
+                 var chartDiv = document.getElementById('chartBlockByCurrency');
+                 chartDiv.style.backgroundColor ="#eee";
+                 chartDiv.style.color= "#fcd40d";
+                 chartDiv.style.fontSize = '28px';
+                 chartDiv.style.fontWeight = 'bold';
+                 chartDiv.style.height = '200px';
+                 chartDiv.style.textAlign = 'center';
+                 chartDiv.style.vAlign = 'middle';
+                 chartDiv.innerHTML = '<br/>No Data To Display';
+             }
+        }       
+       // Load the Visualization API and the piechart package.
+        google.load('visualization', '1.0', {'packages':['corechart']});
+
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.setOnLoadCallback(initCharts);
+        function initCharts() {        
+          // Following the usual Remoting syntax
+          // [<namespace>.]<controller>.<method>([params...,] <callbackFunction>(result, event) {...}
+          // controller : GoogleChartsController
+          // method : loadOpps
+            if(chartData==null){
+              NetCashFlowCtrl.loadOpps('{!selectedCurrency}', {!selectedMonth},
+                     function(result, event){               
+                        chartData = result;
+                        rerederGraph(chartData);
+                  }, {escape:true});
+             }else{
+                rerederGraph(chartData);
+             }
+             // Render net cast currency chart
+            NetCashFlowCtrl.loadAllTimeData(
+                     function(result, event){               
+                        renderNetCashFlowByCurrencyChart(result);
+                  }, {escape:true});             
+          }
+          
+          window.addEventListener("resize", initCharts);
+</script>                     
+</apex:page>

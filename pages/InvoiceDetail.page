@@ -1,0 +1,134 @@
+<!--Author        :   Jinesh Goyal(Appirio)-->
+<!-- Created Date :   14 Feb' 2014-->
+<!-- Task         :   T-361755-->
+<!-- Description  :   custom detail page for Invoice object-->
+<apex:page controller="InvoiceDetailController" showHeader="false" title="Invoice Detail" label="Invoice Detail"
+	name="Invoice Detail" id="pg">
+	<apex:composition template="ManageCashCommunityTemplate">
+		<apex:define name="headerHTML">
+			<c:ManageCashMenu menuName="Report" />
+		</apex:define>
+
+		<!-- Start-->
+		<apex:define name="body">
+			<!-- Start page content -->
+
+			<div class="container-fluid">
+				<apex:sectionHeader title="Invoice" subtitle="{!invoiceName}" />
+				<!-- Standard chatter functionality -->
+				<chatter:feedWithFollowers entityId="{!invoiceId}" showHeader="true"
+					id="chatter" rendered="{!canEdit}"/>
+				<apex:form id="frm">
+					<apex:actionFunction name="deleteAttachment"
+						action="{!delAttachment}" rerender="att">
+						<apex:param name="firstParam" assignTo="{!attachmentIdToDelete}"
+							value="" />
+					</apex:actionFunction>
+					<!-- <apex:outputPanel id="op"></apex:outputPanel> -->
+					<apex:pageMessages />
+
+					<apex:pageBlock >
+					<!-- Code to center align Button -->
+						<apex:outputpanel >
+							<table width="100%" style="width:100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr>
+								<td class="pbTitle" style="position: relative;">									
+									<h2 class="mainTitle" style="float:left;">Invoice Detail</h2>
+									<div style="position: absolute;left:0px;width:100%">
+										<center class="pbButton " style="width:100%">
+										<apex:outputPanel rendered="{!canEdit}">
+											<input type="button" class="btn" value="Edit"
+												onClick="window.location.href = '{!$Site.Prefix}/apex/InvoiceEdit?id={!invoiceId}&retURL={!$Site.Prefix}/apex/InvoiceDetail?id={!invoiceId}'" />
+
+											<apex:commandButton value="Delete" action="{!customDelete}" />
+											</apex:outputPanel>
+											<apex:commandButton value="Cancel" action="{!customCancel}" />
+										
+										</center>
+									</div>
+								</td>
+								</tr></tbody></table>							
+							
+						</apex:outputpanel>
+					<!-- END Code to center align Button -->
+				        <apex:pageBlockSection columns="2" >
+				        <!-- <apex:repeat value="{!$ObjectType.Invoice__c.FieldSets.Detail}" var="f">
+				        	<apex:outputField value="{!$ObjectType.Invoice__c[f]}" styleclass="dataTable"/>
+				        </apex:repeat> -->
+				        <apex:repeat value="{!fields}" var="f">
+				        	<apex:pageBlockSectionItem >
+					        	<span class="label" style="align: right"> {!if(f =='CurrencyIsoCode', 'Currency',LabelDetailMaps[f.fieldPath] )} </span>
+	                 			<apex:OutputField value="{!invoiceRecord[f.fieldPath]}" 
+	                      		 styleclass="dataTable"/>
+              				</apex:pageBlockSectionItem>
+              			</apex:repeat>
+				        </apex:pageBlockSection>
+					</apex:pageBlock>
+					<!--related lists-->
+					<br />
+					<br />
+
+					<apex:pageBlock id="pb">
+					<!-- Code to center align Button -->
+						<apex:outputpanel >
+							<table width="100%" style="width:100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr>
+								<td class="pbTitle" style="position: relative;">									
+									<h2 class="mainTitle" style="float:left;">Attachments</h2>
+									<div style="position: absolute;left:0px;width:100%">
+										<center class="pbButton " style="width:100%">
+											<apex:commandButton action="{!createNewAttachment}"
+												value="Attach Reference Document" rendered="{!canEdit}"/>
+										</center>
+									</div>
+								</td>
+								</tr></tbody></table>							
+							
+						</apex:outputpanel>
+					<!-- END Code to center align Button -->
+
+						<!-- <apex:inputHidden value="{!attachmentIdToDelete}" id="attToDelete"/>
+						<script>
+							var attToDel_clientid = '{!$Component.attToDelete}';
+						</script> -->
+						<apex:outputpanel id="att" rendered="{!canEdit}">
+							<apex:dataTable value="{!listChildAttachments}"
+								var="eachAttachment" styleClass="table">
+								<apex:column headerValue="Action">
+									<apex:outputLink value="/apex/AttachmentEdit?id={!eachAttachment.Id}&retURL=/apex/InvoiceDetail?id={!invoiceId}">Edit</apex:outputLink>
+					      &#160;|&#160;
+					      <apex:outputLink value="/servlet/servlet.FileDownload?file={!eachAttachment.Id}">View</apex:outputLink>
+					      &#160;|&#160;
+					      <apex:outputLink onclick="if (confirm('Are you sure?')) {deleteAttachment('{!eachAttachment.Id}'); }else{return false;}"
+										value="javascript:void(0);">Del</apex:outputLink>
+
+
+								</apex:column>
+								<apex:column headerValue="Type">Attachment</apex:column>
+								<apex:column headerValue="Title">
+									<!--                   <apex:outputLink value="/{!eachAttachment.Id}?btdid={!invoiceId}">{!eachAttachment.name}</apex:outputLink> -->
+									<apex:outputLink value="/servlet/servlet.FileDownload?file={!eachAttachment.Id}">{!eachAttachment.name}</apex:outputLink>
+								</apex:column>
+								<apex:column value="{!eachAttachment.LastModifiedById}"
+									headerValue="Last Modified" />
+								<apex:column value="{!eachAttachment.CreatedById }"
+									headerValue="Created By" />
+							</apex:dataTable>
+						</apex:outputpanel>
+					</apex:pageBlock>
+					
+					<br /><br />
+					<!-- c:Related_List p_objectName="Alert_Threshold__c" rendered="{!canEdit}"
+						p_fieldsCSV="Threshold__c,Active__c,CreatedById,LastModifiedDate" 
+						p_pageSize="2" 
+						p_parentFieldId="{!invoiceId}" 
+						p_parentFieldName="Invoice__c" 
+						p_orderByFieldName="Name" 
+						p_sortDirection="asc"
+						p_actionToInvoke="{!alertEdit}"
+						p_title="Alert Threshold"
+						p_returnUrl="/{!invoiceId}"
+						p_showAsStandardRelatedList="true"/--> 
+				</apex:form>
+			</div>
+		</apex:define>
+	</apex:composition>
+</apex:page>

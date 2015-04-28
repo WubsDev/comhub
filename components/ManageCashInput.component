@@ -1,0 +1,257 @@
+<!-- 
+// Updated By : 14th Apr 2015		Ashish Goyal (JDC)		Ref: T-377272
+-->
+<apex:component controller="InsightsAndInputTabCtrl" allowDML="true">
+	<apex:attribute name="sourcePage" type="String" description="" default="InsightsAndInputTab" />
+
+	<!-- 
+	Added By : @Ashish Goyal
+	Ref: T-377272
+	Description : Added css and js library for custom tooltip
+	 -->
+	<style type="text/css">  
+        
+        .imgclass{  
+            background-image: url(/img/help/helpOrbs.gif);  
+            background-repeat: no-repeat;  
+            width: 16px;  
+            height: 15px; 
+            background-position: right; 
+        }  
+    </style> 
+	<!-- End @Ashish Goyal -->
+	
+	<script>
+                function openPageInPopup(hasErrorval){
+                	showProgressbarBS(false);
+                    if(hasErrorval == false){
+                    	debugger;
+                    	if($('div[role="alert"]').find('img[alt="ERROR"]').size()==0 || $('div[role="alert"]').find('img[alt="ERROR"]').css("display") == 'none'){
+                    	//Div :role=alert >>img alt=ERROR class=msgIcon 
+                        	window.open('{!IF($Site.Prefix != null,URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')),'')}/apex/AddAnotherInput?sourcePage={!sourcePage}','AnotherInput','width=850,height=400,left=150,top=200,//toolbar=0,status=0,');
+                        }
+                    }
+                }
+
+				            
+		         function saveInputWithImage() {
+									progressbarBSMsg('Saving Input ...');
+								    showProgressbarBS(true);
+								   	var invImageFiles = document.getElementById('invoiceImage').files;
+								   
+									if(invImageFiles.length > 0) {
+									var invImage = invImageFiles[0];
+									var reader = new FileReader();
+									  // Keep a reference to the File in the FileReader so it can be accessed in callbacks
+									reader.file = invImage;
+									
+									reader.onload = function(e)
+									{
+									    var attName = this.file.name;
+									    var attContentType = this.file.type;
+									    var binary = "";
+									    var bytes = new Uint8Array(e.target.result);
+									    var length = bytes.byteLength;
+									    for (var i = 0; i < length; i++)
+									    {
+									        binary += String.fromCharCode(bytes[i]);
+									    }
+									    var attBody = (new sforce.Base64Binary(binary)).toString();
+									    $('input[id$="invoiceImageName"]').val(attName);
+									    $('input[id$="invoiceImageBody"]').val(attBody);
+									    saveInput();
+									};
+									reader.readAsArrayBuffer(invImage);
+									} else {
+										saveInput();
+									}                    
+                    //saveInputAF();
+             }
+             
+       </script>		
+            <!-- rendered="{!if(selectedTranscation=='Invoice', true, false)}"  -->
+            <apex:actionstatus id="status1" onstart="progressbarBSMsg('{!$Label.Loading_Wait_Text}');showProgressbarBS(true);" onstop="showProgressbarBS(false);">
+    		</apex:actionstatus>
+            <apex:outputPanel id="mainPanel"> 
+            <c:ManageCashInvoice sourcePage="{!sourcePage}" isInputTransaction="true" InsightsAndInputTabCtl="{!self}" rendered="{!selectedTranscation=='Invoice'}"/>
+			<apex:outputPanel id="inputTab" rendered="{!if(selectedTranscation!='Invoice', true, false)}">
+				<apex:pageMessages id="msg"></apex:pageMessages>
+				<apex:pageBlock id="pBlock1">
+					<apex:PageBlockSection columns="2" id="pbSec1">
+						<apex:facet name="header">
+							<apex:outputtext value="{!if(sourcePage!='ManageCashInput', inputLink, 'Input Wizard')}" escape="false" />
+						</apex:facet>				
+						<apex:pageBlock id="pBlock2">
+							<apex:outputpanel >
+								<script>    
+											var pbSec1Id = '{!$Component.pbSec1}';
+								</script>
+								
+							</apex:outputpanel>
+							<apex:actionRegion >
+								<script>
+									$(function () {
+									    $('[data-toggle="tooltip"]').tooltip();
+									})
+								</script>
+								<apex:PageBlockSection id="pbSec2"
+									collapsible="false" columns="2">
+									<apex:facet name="header">
+									<!--  
+									Added By : Ashish Goyal (Ref: T-377272)
+									Descriptio : added img tag to output text value for help test							 
+									-->
+									<center><h3>Data Input Option: Enter Data Manually</h3>
+		 									<img src='/s.gif' class='imgclass' data-toggle='tooltip' data-placement='bottom' title='{!$Label.Help_Text_Manual_Inputs}'  style='height: 21px; width: 18px;' />
+									</center>
+									</apex:facet>
+								</apex:PageBlockSection>
+								<apex:PageBlockSection columns="2"
+									 id="pbSec3">
+									<apex:PageBlockSectionItem >
+										<label><nobr> Transaction Type</nobr></label>
+										<apex:selectList value="{!selectedTranscation}"
+											multiselect="false" size="1">
+											<apex:selectOptions value="{!lstTransactionType}" />
+											<apex:actionSupport event="onchange" rerender="mainPanel" status="status1"
+												action="{!changeTransactionType}" />
+										</apex:selectList>
+									</apex:PageBlockSectionItem>
+									<apex:PageBlockSectionItem />
+									<apex:repeat value="{!if(fieldset != null, $ObjectType.Input__c.FieldSets[fieldset], null)}" var="f" rendered="{!fieldset != null}">
+										<apex:PageBlockSectionItem >
+											<span class="label" style="align: right"> {!if(f ==
+												'CurrencyIsoCode', 'Currency',LabelMaps[f.fieldPath] )} </span>
+											<apex:outputpanel >
+												<nobr>
+													<apex:outputpanel rendered="{!if(f == 'CurrencyIsoCode', true,false )}">
+														<c:RequiredBlockComponent isRequired="{!(f.required || f.dbrequired)}">
+															<apex:SelectList size="1" multiselect="false"
+																value="{!input[f]}">
+																<apex:SelectOptions value="{!InputCurrency}" />
+															</apex:SelectList>
+														</c:RequiredBlockComponent>
+													</apex:outputpanel>
+													<apex:outputpanel rendered="{!if(f != 'CurrencyIsoCode', true,false )}">
+														<c:RequiredBlockComponent isRequired="{!(f.required || f.dbrequired)}">
+															<apex:outputpanel rendered="{!if(f != 'Input_Beneficiary__c', true,false )}">
+																<apex:inputField value="{!input[f]}" id="bene1"  />
+															</apex:outputpanel>
+															<apex:outputpanel rendered="{!if(f == 'Input_Beneficiary__c', true,false )}">
+																<table border="0" style="border-bottom:0px;padding: 0px 0px 0px 0px;">
+																	<tr><td style="border-bottom:0px;padding: 0px 0px 0px 0px;">
+																		<apex:inputHidden value="{!input[f]}" id="bene"/> 
+																		<c:CustomLookup objectName="Input_Beneficiary__c" selectedRefId="{!input[f]}" fieldAPI="Name" fieldToPopulateId="{!$Component.bene}" fieldSetName="Lookup_Fields"/>
+																		<script>
+			                                                  				var beneVar = '{!$Component.bene}';
+			                                              				</script>
+																	</td>
+																	<td style="border-bottom:0px;padding: 0px 0px 0px 0px;">
+																			<apex:commandButton value="New" title="Add New Buyer/Supplier"
+																				rendered="{!if(f == 'Input_Beneficiary__c', true,false )}"
+																				styleClass="wuBtn"
+																				style="padding:5px 15px 5px!important"
+																				onClick="window.open('{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/AddInputBeneficiary?aId={!$CurrentPage.parameters.aId}&sourcePage={!sourcePage}&customRefId={!$Component.bene}&customLkNameId='+lookupIdHolder['{!$Component.bene}_name'],'Ratting','width=850,height=400,left=150,top=200,toolbar=0,status=0,');return false;" />
+																	</td></tr>	
+																</table>
+															</apex:outputpanel>
+														</c:RequiredBlockComponent>
+														<apex:selectOption value="{!InputCurrency}"
+																	rendered="{!if(f == 'CurrencyIsoCode', true,false )}" />
+													</apex:outputpanel>
+												</nobr>
+											</apex:outputpanel>
+										</apex:PageBlockSectionItem>
+										<apex:PageBlockSectionItem rendered="{!if(AND(fieldset='Option_Other', f='Amount__c'), true, false)}">
+											<span class="label" style="align: right"> Obligation Amount </span>
+											<c:RequiredBlockComponent isRequired="{!(f.required || f.dbrequired)}">
+												<apex:inputField value="{!inputOther[f]}" />
+											</c:RequiredBlockComponent>
+										</apex:PageBlockSectionItem>
+									</apex:repeat>
+									<apex:PageBlockSectionItem rendered="{!fieldset != null}">								
+										<apex:outputLabel value="Attach Reference Document" />
+										<apex:outputPanel >
+											<nobr>
+												
+													<input type="file" id="invoiceImage" />
+													<apex:inputHidden value="{!invoiceImageBody}"
+														id="invoiceImageBody" />
+													<apex:inputHidden value="{!invoiceImageName}"
+														id="invoiceImageName" />
+											</nobr>
+										</apex:outputPanel>
+									</apex:PageBlockSectionItem>
+								</apex:PageBlockSection>
+			
+			
+								<apex:actionfunction rerender="msg, hasErrorVal,pBlock1"
+									name="saveInput" action="{!saveInput}"
+									oncomplete="openPageInPopup({!hasError});" />
+								<center>
+									<div style="padding-top:{!if(fieldset != null, '10px;', '0px;')}">
+										<apex:commandButton value="Save"
+											onClick="saveInputWithImage(); return false;"
+											styleClass="btn wuBtn" rendered="{!fieldset != null}" />
+										<apex:commandButton value="Cancel" action="{!cancel}"
+											rendered="{!fieldset != null}" />
+									</div>
+								</center>
+							</apex:actionRegion>
+						</apex:pageBlock>
+						<apex:outputPanel id="cmp1">
+							<apex:pageBlock >
+								<apex:PageBlockSection collapsible="false"
+									id="pbSec4" columns="1">
+	
+									<apex:facet name="header">
+									<!--  
+									Added By : Ashish Goyal (Ref: T-377272)
+									Descriptio : added img tag to output text value for help test							 
+									-->
+									<center><h3>Data Input Option: Upload CSV</h3>
+											<img src='/s.gif' class='imgclass' data-toggle='tooltip' data-placement='bottom' title='{!$Label.Help_Text_Csv_Upload}' style='height: 21px; width: 18px;' />
+									</center>
+									<script>
+										$(function () {
+										    $('[data-toggle="tooltip"]').tooltip();
+										})
+									</script>
+									</apex:facet>
+									<apex:outputpanel >
+										<nobr>
+										<apex:outputLabel value="Transaction Type" />
+			                                          &nbsp;&nbsp;&nbsp;&nbsp;
+			                                          <apex:selectList id="transTypeId" multiselect="false" size="1"
+											styleClass="ctt" onchange="updateCSVSample(this.value)">
+											<apex:selectOptions value="{!lstTransactionType}" />
+										</apex:selectList>
+										</nobr>
+									</apex:outputpanel>
+			
+								</apex:PageBlockSection>
+							</apex:pageBlock>
+							<!--  DRAG AND DROP CSV UPLOAD SECTION      -->
+							<apex:actionRegion >
+								<c:DragnDropFileUploadInput parentId2="{!AccId}"
+									multiple="true" sourcePage="{!sourcePage}" ></c:DragnDropFileUploadInput>
+							</apex:actionRegion>
+						</apex:outputPanel>
+					</apex:PageBlockSection>
+					<script>    
+						function querystring(key) {
+						   var re=new RegExp('(?:\\?|&)'+key+'=(.*?)(?=&|$)','gi');
+						   var r=[], m;
+						   while ((m=re.exec(document.location.search)) != null) r[r.length]=m[1];
+						   return r;
+						}
+						if(querystring('fin')=='true'){                          
+		  	            	twistSection(document.getElementById(pbSec1Id).getElementsByTagName('img')[0])
+			            }
+			      					</script>
+					<!-- Net Flow Start -->
+					</apex:pageBlock>
+			</apex:outputPanel>
+			</apex:outputPanel>
+			
+</apex:component>

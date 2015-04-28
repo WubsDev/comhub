@@ -1,0 +1,5 @@
+<apex:component controller="WuDashboardCtrl">
+<!-- Begin Default Content REMOVE THIS -->
+	<apex:outputLabel value="*CONVERSIONS BASED ON REUTER'S RATE UPDATED AT "/>
+	<b><apex:outputLabel value="{!lastupdate}"/></b>
+</apex:component>

@@ -1,0 +1,69 @@
+<apex:component allowDML="true">
+<apex:attribute name="csvCTL" type="ParseAndDisplayBaseCSVGenericCtl" description="Parser controller."/> 
+<div class="sep"></div> 
+			<!-- TO DISPLAY THE PARSED INVOICE RECORD LIST   -->
+			<apex:form id="fm">
+			<apex:PageMessages id="pageMessage"></apex:PageMessages>
+				<apex:actionstatus id="status" onstart="progressbarBSMsg('{!$Label.Loading_Wait_Text}');showProgressbarBS(true);"/>
+			    <apex:pageBlock mode="inlineEdit" id="pageCtl" >
+					<apex:variable var="schIndex" value="{!0}" />
+                	<apex:pageBlockTable value="{!csvCTL.parsedInput}" var="c" id="pbt">
+		                 <apex:repeat value="{!csvCTL.FieldSet}" var="FieldLable">  
+		                 
+							<apex:column >
+								
+                        		<apex:facet name="header" >{!csvCTL.fieldLabels[FieldLable.FieldPath]}</apex:facet>
+                        		<apex:variable var="schIndex" value="{!(schIndex+1)}" rendered="{!if(FieldLable.Type=='picklist' && FieldLable.FieldPath=='CurrencyIsoCode', true, false)}">
+                        			<c:RequiredBlockComponent isRequired="{!(FieldLable.required || FieldLable.dbrequired)}">
+										<apex:SelectList size="1" multiselect="false" value="{!c.CurrencyVal}">  
+						    	    		<apex:SelectOptions value="{!csvCTL.CurrencyOptions}" />
+						        		</apex:SelectList>                        		
+					        		</c:RequiredBlockComponent>
+                        		</apex:variable>
+                        		<apex:variable var="schIndex" value="{!(schIndex+1)}" rendered="{!if(FieldLable.Type=='picklist' && FieldLable.FieldPath=='Status__c', true, false)}">
+                        			<c:RequiredBlockComponent isRequired="{!(FieldLable.required || FieldLable.dbrequired)}">
+										<apex:SelectList size="1" multiselect="false" value="{!c.Status}">  
+						    	    		<apex:SelectOptions value="{!csvCTL.StatusOptions}" />
+						        		</apex:SelectList>                        		
+					        		</c:RequiredBlockComponent>
+                        		</apex:variable>
+                        		<apex:variable var="schIndex" value="{!(schIndex+1)}" rendered="{!if(FieldLable.FieldPath=='Input_Beneficiary__c', true, false)}">
+			                    	<c:RequiredBlockComponent isRequired="{!(FieldLable.required || FieldLable.dbrequired)}">
+				                    	<apex:outputPanel >
+				                    		<table border="0" style="border-bottom:0px;padding: 0px 0px 0px 0px;">
+					                    		<tr><td style="border-bottom:0px;padding: 0px 0px 0px 0px;">
+<!-- 						                    		<apex:inputfield value="{!c.input[FieldLable.FieldPath]}" id="benef"/> -->
+													<apex:inputHidden value="{!c.input[FieldLable.FieldPath]}" id="benef"/> 
+													<c:CustomLookup selectedRefId="{!c.input[FieldLable.FieldPath]}" objectName="Input_Beneficiary__c" fieldAPI="Name" fieldToPopulateId="{!$Component.benef}" fieldSetName="Lookup_Fields"/>
+					                    		</td><td style="border-bottom:0px;padding: 0px 0px 0px 0px;">
+						                        	<apex:commandButton value="Add" styleClass="wuBtn" onClick="window.open('{!IF($Site.Prefix != null,URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/AddInputBeneficiary?aId={!$CurrentPage.parameters.aId}&customRefId={!$Component.benef}&customLkNameId='+lookupIdHolder['{!$Component.benef}_name'],'Ratting','width=850,height=400,left=150,top=200,toolbar=0,status=0,');return false;"/>
+					                        	</td>
+					                        	</tr>
+				                    		</table>
+				                    	</apex:outputPanel>
+			                    	</c:RequiredBlockComponent>
+                        		</apex:variable>
+                        		<apex:variable var="schIndex" value="{!(schIndex+1)}" rendered="{!if(AND(FieldLable.Type!='picklist', FieldLable.FieldPath!='Input_Beneficiary__c'), true, false)}">
+                        			<c:RequiredBlockComponent isRequired="{!(FieldLable.required || FieldLable.dbrequired)}">
+                        				<apex:outputfield value="{!c.input[FieldLable.FieldPath]}" ></apex:outputfield>
+                        			</c:RequiredBlockComponent>
+                        		</apex:variable>
+                          	</apex:column>
+						 </apex:repeat>
+    		            </apex:pageBlockTable> 
+            		   <apex:commandButton value="Save and Submit" action="{!csvCTL.save}" rerender="panelID, pageMessage,pageCtl" rendered="{!csvCTL.isValidCsv}" status="status"/>
+               			<apex:commandButton value="Cancel" action="{!csvCTL.cancel}" />
+				<!--                <apex:commandButton value="Cancel" action="{!cancel}"/>-->
+								<apex:outputpanel id="panelID">
+								    <script>
+								    	if({!csvCTL.doSave}  == true){
+									    	window.open('{!IF($Site.Prefix != null,URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/AddAnotherInvoice?sourcePage={!csvCTL.sourcePage}',
+									    					'AnotherInvoice','width=850,height=400,left=150,top=200,//toolbar=0,status=0,');
+								    	}else{
+				    		 				showProgressbarBS(false);
+				    					}
+								    </script>
+							    </apex:outputpanel> 
+				    </apex:pageBlock>
+				</apex:form>
+</apex:component>

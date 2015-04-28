@@ -1,0 +1,6 @@
+<apex:page showHeader="true" sidebar="false" id="ManageCashReportTemplate" docType="html-5.0" applyBodyTag="false">
+	<apex:composition template="ManageCashCommunityTemplate">
+			<apex:insert name="headerHTMLReportMenuHeader">
+			</apex:insert>
+	</apex:composition>
+</apex:page>

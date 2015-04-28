@@ -1,0 +1,3 @@
+<apex:page showHeader="false" contentType="text/csv#CSV_{!$CurrentPage.parameters.tmp}_Tmp.csv" controller="ParseAndDisplayCSVGenericTmpCtl">
+<apex:outputText value="{!tmpCsv}"/>
+</apex:page>

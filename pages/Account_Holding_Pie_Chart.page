@@ -1,0 +1,170 @@
+<apex:page controller="AccountHoldingPieChartCtl" showHeader="false" showChat="false" sidebar="false" >
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"/>
+<script>
+    // Build the chart data array in JavaScript
+    var data = new Array();
+</script>
+<apex:repeat value="{!dataMap}" var="currenyCode">
+<script type="text/javascript">
+var product = {};
+</script>
+<apex:repeat value="{!dataMap[currenyCode]}" var="convertedAmount">
+    <!-- {!currenyCode} {!convertedAmount} {!dataMap[currenyCode][convertedAmount]}<br/>  -->
+    <script type="text/javascript">
+        product['{!convertedAmount}'] = {!dataMap[currenyCode][convertedAmount]};
+        
+        product['name'] = '{!currenyCode}';
+    </script>
+</apex:repeat>
+<script type="text/javascript">
+data.push(product);
+</script>
+<style>
+            .center {
+              padding-left:200px;
+              position:absolute;
+            } <!-- Overloading bootstrape CSS -->
+			.outer td.oRight{
+				padding: 0 0 0 0;
+			}
+			.container-fluid {
+				padding-right: 0px;
+			}    
+            </style>
+</apex:repeat>
+    <apex:pageblock >    
+        <apex:pageblocksection columns="{!if(isNonCCTuser=true, '2', '3')}">
+<!--         <apex:outputPanel rendered="{!IF(pieData.size > 0 , true, false)}"> -->
+           <apex:pageblocksection collapsible="false" title="Holding Balance by Currency" columns="1" >
+            <apex:facet name="header"><div style="width:100%;text-align:center;">Holding Balance by Currency with WUBS</div></apex:facet>
+              <apex:outputPanel layout="block" id="pieDiv" style="height:250px;" rendered="{!IF(pieData.size > 0 , true, false)}">
+              <center>
+              <a href ='InsightsAndInputTab?sfdc.tabName=01rS000000095lP&dtab=tabAccount3&holding=1' target='_parent'>          
+                    <apex:chart height="250" width="320" data="{!pieData}" > 
+                        <apex:legend position="right"/>
+                        <apex:pieSeries tips="true" dataField="data" labelField="name" donut="50" colorSet="{!HoldingBalanceColor}">
+                             <apex:chartTips height="20" width="120" rendererFn="renderTooltip"/>
+                             
+                        </apex:pieSeries> 
+                    </apex:chart>
+               </a>
+               </center>
+            </apex:outputPanel>
+            
+            <apex:outputPanel rendered="{!IF(AND(pieData.size = 0, NOT(isNonCCTuser)) , true, false)}">
+         	<center>
+<!--             <a href='InsightsAndInputTab?sfdc.tabName=01rS000000095lP&dtab=tabAccount3&holding=1' target='_parent'> -->
+              <apex:image id="theImage1" value="{!URLFOR($Resource.Dashboard_Chart_NoData_Images, '/Dashboard_Chart_NoData_Images/HBDB.png')}" style="padding-top: 0px;height:250px; width:330px;" />
+<!--             </a>   -->
+            </center>
+         </apex:outputPanel>
+            </apex:pageblocksection>
+<!--          </apex:outputPanel> -->
+         
+         
+<!--           <apex:outputPanel rendered="{!IF(pieData1.size > 0, true, false)}"> -->
+             <apex:pageblocksection collapsible="false" title="Outstanding Forwards with WUBS" columns="1">
+                <apex:facet name="header"><div style="width:100%;text-align:center;">Outstanding Forward Contracts by Currency with WUBS</div></apex:facet>
+                <apex:outputPanel layout="block" id="pieInsightDiv" style="height:250px;" rendered="{!IF(pieData1.size > 0, true, false)}">
+                  <center>
+                  <a href ='InsightsAndInputTab?sfdc.tabName=01rS000000095lP&dtab=tabAccount3&forward=1' target='_parent'>
+                    <apex:chart height="250" width="320" data="{!pieData1}" > 
+                        <apex:legend position="right"/>
+                        <apex:pieSeries tips="true" dataField="data" labelField="name" donut="50" colorSet="{!ForwardBalanceColor}">
+                             <apex:chartTips height="20" width="120" rendererFn="renderTooltip"/>
+                        </apex:pieSeries> 
+                    </apex:chart>
+                  </a>
+                  </center>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!IF(pieData1.size = 0, true, false)}">
+            <center>
+<!--             <a href='InsightsAndInputTab?sfdc.tabName=01rS000000095lP&dtab=tabAccount3&forward=1' target='_parent'> -->
+              <apex:image id="theImage2" value="{!URLFOR($Resource.Dashboard_Chart_NoData_Images, '/Dashboard_Chart_NoData_Images/OFCDB.png')}" style="padding-top: 0px;height:250px; width:330px;"/>
+<!--             </a>   -->
+            </center>
+         </apex:outputPanel>
+            </apex:pageblocksection>
+<!--          </apex:outputPanel> -->
+         
+        <apex:outputpanel > 
+                <!-- apex:outputPanel id="HPBC_Data_Panel" style="display:none;">
+                    <apex:pageblocksection collapsible="false" title="Historical Payment by Currency" columns="1">
+                    <apex:facet name="header"><div style="width:100%;text-align:center;">Historical Payments by Currency with WUBS</div></apex:facet>
+                    <apex:outputPanel styleClass="barChartPanel" layout="block" id="pieChartDiv" style="height:250px;">
+                    <center>
+                        
+                        <apex:chart data="data" height="250" width="320">
+                        <apex:legend position="right" />
+                        <apex:axis type="Numeric" position="left" title="" grid="true"
+                            fields="{!yfield}" dashSize="2">
+                            <apex:chartLabel />
+                        </apex:axis>
+                        <apex:axis type="Category" position="bottom" fields="name">
+                            <apex:chartLabel rotate="315"/>
+                        </apex:axis>
+                        <apex:barSeries orientation="vertical" axis="left"  stacked="true"
+                            xField="name" yField="{!yfield}" colorSet="{!HistoryBalanceColor}">
+                            <apex:chartTips height="20" width="120" rendererFn="renderTooltipStacked"/>
+                        </apex:barSeries>
+                    </apex:chart>
+                    </center>
+                    </apex:outputPanel>
+                    </apex:pageblocksection>
+                 </apex:outputPanel-->
+<!--                 <apex:outputPanel id="HPBC_NoData_Panel" style="display:none;"> -->
+<!--                 	<center> -->
+<!--                      <a href ='InsightsAndInputTab?sfdc.tabName=01rS000000095lP&dtab=tabAccount1&historical=1' target='_parent'> -->
+<!--                        <apex:image id="theImage3" value="{!URLFOR($Resource.Dashboard_Chart_NoData_Images, '/Dashboard_Chart_NoData_Images/HPBC.png')}" width="250" height="250"/> -->
+<!--                      </a> -->
+<!--                      </center> -->
+<!--                 </apex:outputPanel> -->
+					<apex:outputPanel >
+<!--              	<iframe frameborder="no" height="280px" id="theFrame" marginheight="0" style="padding-top:14px;" scrolling="no" marginwidth="0" name="theFr" src="{!$Site.Prefix}/apex/NetCashFlowCurrency" title="TopPendingInvoices" width="320px"/> -->
+						<c:NetCashFlowCurrency />
+				
+        	</apex:outputPanel> 
+        </apex:outputpanel>
+       
+        </apex:pageblocksection>
+    </apex:pageblock>
+    <script type="text/javascript">
+        var Chart$ = jQuery.noConflict();
+        
+        
+        // This method allows to handle the showing and hiding the chart and replacing with dummy image in
+        // case when user doesn't have any data possess for that chart.
+        var NoDataValidationHandlerForHPBC = function(){
+           if(data && data.length > 0){
+             Chart$('[id$=HPBC_NoData_Panel]').hide();
+             Chart$('[id$=HPBC_Data_Panel]').show();             
+           }else{
+             Chart$('[id$=HPBC_NoData_Panel]').show();
+             Chart$('[id$=HPBC_Data_Panel]').hide();
+           }
+        }
+        
+        function numberWithCommas(n) {
+            var parts=n.toString().split(".");
+            return parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] ? "." + parts[1] : "");
+        }
+        
+        function renderTooltip(data , item) {
+            //var present = String(item.storeItem.data.data);
+            var convertedCurrency = item.storeItem.data.Rate;
+            convertedCurrency = convertedCurrency.toFixed(2)
+            convertedCurrency = numberWithCommas(convertedCurrency);
+            this.setTitle(data.raw.name + ' ' + convertedCurrency);
+        }
+        function renderTooltipStacked(data , item) {
+            //console.log(data);
+            //console.log(item);
+            //var present = String(item.storeItem.data.data);
+            this.setTitle(item.yField+ ' : ' + item.value[1]);
+        }
+        
+        Chart$(document).ready(function() {
+           NoDataValidationHandlerForHPBC();           
+        });
+    </script>
+</apex:page>

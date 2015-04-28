@@ -1,0 +1,1 @@
+Invoice Number,Amount,Input Beneficiary,Payment Due Date,Currency,Status

@@ -1,0 +1,40 @@
+<!-- 
+// 
+// (c) 2014 Appirio, Inc.
+//
+// InputBeneficiaryEdit
+//
+// 07 Apr, 2015    Ashish Goyal  Original (Ref. T-375697)
+//
+-->
+<apex:page standardController="Input_Beneficiary__c" showHeader="false"
+    tabStyle="Input_Beneficiary__c" title="Input Edit" label="Input Edit"
+    name="Input Buyer/Supplier Detail" id="pg" extensions="InputBeneficiaryDetailPageController">
+    <apex:composition template="ManageCashCommunityTemplate">
+        <apex:define name="headerHTML">
+            <c:ManageCashMenu menuName="Report" />
+        </apex:define>
+
+        <!-- Start-->
+        <apex:define name="body">
+                
+            <div class="container-fluid">
+                <apex:sectionHeader title="Input Buyer/Supplier" />
+                <apex:form id="frm">
+                    <apex:pageBlock title="Input Buyer/Supplier Edit">                
+                        <apex:pageMessages />
+                        <apex:pageBlockButtons >
+                            <apex:commandButton value="Save" action="{!save}"/>
+                            <apex:commandButton value="Cancel" action="{!cancel}"/>
+                        </apex:pageBlockButtons> 
+                        <apex:pageBlockSection >
+                            <apex:repeat value="{!$ObjectType.Input_Beneficiary__c.FieldSets.Detail}" var="f1">
+                                <apex:inputField value="{!Input_Beneficiary__c[f1]}"/>
+                            </apex:repeat>
+                        </apex:pageBlockSection>
+                    </apex:pageBlock>
+                </apex:form>
+            </div>
+        </apex:define>
+    </apex:composition>
+</apex:page>

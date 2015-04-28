@@ -1,0 +1,13 @@
+<apex:component >
+	<apex:attribute name="menuName" type="String" description="" default="summaryDashboard" />
+	<div class="menu">
+	      	<div class="container-fluid">
+	      		  <apex:image value="{!URLFOR($Resource.CommunityLogo)}"/>	              
+	              <a href="{!$Site.Prefix}/apex/wuDashboard" class="menu--item {!if(menuName=='SummaryDashboard', 'menu--active', '')}">Summary Dashboard</a>
+	              <a href="{!$Site.Prefix}/apex/ManageCashInput" class="menu--item {!if(menuName=='Input', 'menu--active', '')}">Input</a>	              
+				  			<a href="{!$Site.Prefix}/apex/InsightsAndInputTab" class="menu--item {!if(menuName=='Reports', 'menu--active', '')}">Cash Flow Management</a>
+	              <a href="{!$Site.Prefix}/apex/Insights" class="menu--item {!if(menuName=='Insights', 'menu--active', '')}">Business Intelligence</a>
+	              <!-- a href="{!$Site.Prefix}/apex/InvoicesAndPayments" class="menu--item {!if(menuName=='Report', 'menu--active', '')}">Invoices</a-->
+	          </div>
+	      </div> 
+</apex:component>

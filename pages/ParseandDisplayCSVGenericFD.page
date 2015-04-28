@@ -1,0 +1,17 @@
+<apex:page sidebar="false" docType="html-5.0" id="pa" showHeader="false" controller="ParseAndDisplayCSVGenericCtl"  action="{!Init}">
+	<apex:composition template="ManageCashCommunityTemplate">
+		<apex:define name="ManageCashHeader">
+		</apex:define>
+		<apex:define name="sidebar">
+		</apex:define>
+		<apex:define name="headerHTML">
+		</apex:define>
+		<apex:define name="headerHTMLReportMenuHeader">
+		</apex:define>
+		<apex:define name="body"> 
+			<apex:define name="headerHTMLReportMenuHeader">
+			</apex:define>	
+			<c:CSVUploadComp csvCTL="{!self}" />	
+		</apex:define>
+	</apex:composition>	
+</apex:page>

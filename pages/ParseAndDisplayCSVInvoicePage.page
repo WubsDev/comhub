@@ -1,0 +1,12 @@
+<apex:page controller="ParseAndDisplayCSVInvoice" sidebar="false" docType="html-5.0" id="pa" action="{!Init}">
+	<apex:composition template="ManageCashCommunityTemplate">
+		<apex:define name="headerHTML">
+			<c:ManageCashMenu menuName="Report"/> 
+		</apex:define>
+	
+<!-- Start-->
+		<apex:define name="body">            
+			<c:CSVLoadInvoiceComp csvCTL="{!self}" /> 
+		</apex:define>
+	</apex:composition>    
+</apex:page>

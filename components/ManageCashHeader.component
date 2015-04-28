@@ -1,0 +1,253 @@
+<apex:component >
+	<style>
+		/*Hide standard Header*/
+		body #AppBodyHeader {
+		    display: none;
+		}
+		
+		.noSidebarCell,.sidebarCell .fixed {
+		    padding: 0px !important;
+		}
+		
+		#handlebarContainer {
+		    top: 150px!impornant;
+		}
+		
+		.sidebarCollapsed #handlebarContainer {
+		    left: 4px !important;
+		}
+		/*Show standard Header*/
+		.hasMotif{
+			margin: 0 0 !important;
+		}
+		
+		.bodyDiv{
+			border-top: 0px!important;
+		}
+		/*Hide Standard Footer*/
+		.zen{
+			/*display: none!important;*/
+		}
+		.zen-pageFooter{
+			display: none!important;
+		}
+		/* END Hide Standard Footer*/
+		/*Fix SFDC styles*/
+		.detailList tr th, .detailList tr td{
+			border-bottom: 0px!important;
+			/*vertical-align: middle!important;*/
+		}
+		th.vfLabelColTextWrap{
+			vertical-align: middle!important;
+		}
+		
+		.showListButton {
+			background-position: 1px -0px!important;
+		}
+		.hideListButton {
+			background-position: 1px -11px!important;
+		}
+
+	</style>
+		<style>
+	.label,th.labelCol,label { 
+	    font-family: sans-serif!important; 
+	    font-weight: 300!important;
+	    font-size: 10px!important;
+	    color: #6B747B!important;
+	    line-height: 1.20em!important;
+	    text-transform: uppercase!important;
+	    margin-bottom: 5px!important;
+	    white-space:nowrap!important;
+	}     
+	a,a:focus {
+	    outline: none !important;
+	}
+	
+	.menu {
+	    background: #000;
+	}
+	
+	.menu--item,.menu--item:focus {
+	    font-family: 'UniversLTW01-57Condense_723821', sans-serif;
+	    font-size: 15px;
+	    color: #BBBDBF;
+	    line-height: 1.20em;
+	    text-decoration: none;
+	    padding: 25px 20px;
+	    display: inline-block;
+	}
+	
+	.menu--item:hover {
+	    text-decoration: none;
+	    color: #fff;
+	}
+	
+	.menu img {
+	    max-height: 40px;
+	    margin-right: 50px;
+	}
+	
+	.menu--active {
+	    color: #585858;
+	    background-color: white;
+	}
+	
+	.menu--active:hover {
+	    color: #000;
+	}
+	
+	.nav li a {
+	    font-family: 'UniversLTW01-57Condense_723821', sans-serif !important;
+	}
+	
+	h3,h2,.h2,.h3 {
+	    font-family: 'UniversLTW01-57Condense_723821', sans-serif !important;
+	    font-size: 16px !important;
+	    line-height: 1.19em !important;
+	    color: #6B747B;
+	}
+	/*.nav-tabs li a {
+        font-family:'UniversLTW01-57Condense_723821', sans-serif!important;
+        font-size: 14px;
+    }*/
+	body {
+	    font-family: sans-serif !important;
+	    font-weight: 300 !important;
+	    font-size: 14px !important;
+	    color: #6B747B !important;
+	    line-height: 1.71em !important;
+	}
+	
+	input[type=submit],.wuBtn,.btn {
+	    font-family: 'UniversLTW01-57Condense_723821', sans-serif !important;
+	    font-size: 14px !important;
+	    color: black !important;
+	    line-height: 1.21em !important;
+	    border: none !important;
+	    background: #FFDF1A !important;
+	    border: 2px solid #FFEA69 !important;
+	    box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.10) !important;
+	    border-radius: 3px !important;
+	    padding: 10px 15px !important;
+	}
+	
+	.nav-tabs li a,.nav-tabs li.active a,.nav-tabs,.nav-tabs li a:hover,.nav-tabs li a:focus,.nav-tabs li.active a:hover,.nav-tabs li.active a:focus
+	{
+	border: none;
+	}
+	
+	.tab-pane {
+	    margin-top: 30px;
+	}
+	
+	.table {
+	    margin-top: 20px;
+	}
+	
+	.center {
+	    padding-left: 200px;
+	    position: absolute;
+	}
+	
+	.table {
+	    color: #6B747B;
+	}
+	/*Start Upadted By ranjeet for table*/
+	.table thead tr {
+	    font-family: 'UniversLTW01-57Condense_723821', sans-serif !important;
+	    background: #555; /*#ebeff1;*/
+	    color: #fff;
+	    font-weight: bold;
+	}
+	
+	.table .altbg {
+	    background: #f3f3f3;
+	}
+	
+	.table thead th {
+	    color: #fff;
+	    font-size: 14px;
+	    font-weight: normal;
+	}
+	/*End Upadted By ranjeet for table*/
+	.table tbody tr {
+	    background: #fff;
+	}
+	
+	.table>thead>tr>th,.table>tbody>tr>td,.table>tfoot>tr>td {
+	    border-top: solid 1px #f5f5f5;
+	    padding-top: 15px;
+	    padding-left: 30px;
+	    padding-bottom: 15px;
+	}
+	
+	div.palette {
+	    margin: 20px 0;
+	}
+	
+	div.palette span {
+	    margin: 0 10px;
+	}
+	
+	.nav-tabs li a {
+	    color: #aaa;
+	}
+	
+	.nav-tabs li.active a {
+	    color: #000;
+	}
+	
+	.nav-tabs li a:hover,.nav-tabs li.active a:hover {
+	    color: #000;
+	    background: none;
+	    cursor: pointer;
+	}
+	
+	input[type=file] {
+	    margin-top: 5px;
+	}
+	
+	.pbSubheader {
+	    background: #555;
+	}
+	
+	h3 {
+	    color: #333;
+	}
+	span.label {
+	    color: #333;
+	    font-size: 14px;
+	}
+	
+	.forwordContractTbl {
+	    padding: 15px !important;
+	}
+	h4 {
+	    font-family: 'UniversLTW01-57Condense_723821', sans-serif !important;
+	}
+	.h6, h6 {
+		font-family: 'UniversLTW01-57Condense_723821', sans-serif !important;
+  		font-size: 20px!important;
+	}
+      /*Chatter Width Fix*/
+		.chatterexpando .feedpage {
+			padding-left: 20px;
+			width: 900px !important;
+		}
+		
+		.publishercontainer .bottomBar {
+			height: 50px !important;
+		}
+      /*Override SFDC body bgcolor*/
+      body.sfdcBody{
+      	background:#ffffff!important;
+      }
+
+	</style>
+	
+   	<link type="text/css" rel="stylesheet" href="//fast.fonts.net/cssapi/36577704-85c2-4043-bec2-4f47bdea29fa.css"/>
+    <!--apex:stylesheet value="{!URLFOR($Resource.CssWubsBase)}"/--> 
+	
+
+</apex:component>

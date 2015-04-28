@@ -1,0 +1,14 @@
+<apex:page standardStylesheets="true" sidebar="false" showChat="false" id="pg">
+	<apex:composition template="ManageCashCommunityTemplate">
+			<apex:define name="headerHTML">
+				<c:ManageCashMenu menuName="Input" />
+			</apex:define>
+		<apex:define name="body">
+			 <apex:form >
+			 <c:ManageCashInput sourcePage="ManageCashInput" />
+			 </apex:form>
+			<c:ManageCashInputs />
+
+		</apex:define>
+	</apex:composition>
+</apex:page>

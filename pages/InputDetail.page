@@ -1,0 +1,156 @@
+<!-- 
+Author        :   Ashish Goyal(Appirio)
+Created Date :   03 Apr' 2015
+Task         :   T-375814
+Description  :   custom detail page for Input object
+-->
+<apex:page controller="InputDetailController" showHeader="false"
+	 title="Input Detail" label="Input Detail"
+	name="Input Detail" id="pg">
+	<apex:composition template="ManageCashCommunityTemplate">
+		<apex:define name="headerHTML">
+			<c:ManageCashMenu menuName="Report" />
+		</apex:define>
+
+		<!-- Start-->
+		<apex:define name="body">
+			<!-- Start page content -->
+
+			<div class="container-fluid">
+				<apex:sectionHeader title="Input"/>
+				<!-- Standard chatter functionality -->
+				<chatter:feedWithFollowers entityId="{!inputRecord.id}" showHeader="true"
+					id="chatter2" rendered="{!canEdit}"/>
+				<apex:form id="frm">
+					<apex:actionFunction name="deleteAttachment"
+						action="{!delAttachment}" rerender="att">
+						<apex:param name="firstParam" assignTo="{!attachmentIdToDelete}"
+							value="" />
+					</apex:actionFunction>
+					<!-- <apex:outputPanel id="op"></apex:outputPanel> -->
+					<apex:pageMessages />
+
+					<apex:pageBlock >
+					<!-- Code to center align Button -->
+						<apex:outputpanel >
+							<table width="100%" style="width:100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr>
+								<td class="pbTitle" style="position: relative;">									
+									<h2 class="mainTitle" style="float:left;">Input Detail</h2>
+									<div style="position: absolute;left:0px;width:100%">
+										<center class="pbButton " style="width:100%">
+											<apex:outputPanel rendered="{!canEdit}">
+											<input type="button" class="btn" value="Edit"
+												onClick="window.location.href = '{!$Site.Prefix}/apex/InputEdit?id={!inputRecord.id}&retURL={!$Site.Prefix}/apex/InputDetail?id={!inputRecord.id}'" />
+												
+											<apex:commandButton value="Delete" action="{!customDelete}" />
+											</apex:outputPanel>
+											<apex:commandButton value="Cancel" action="{!customCancel}" />
+										</center>
+									</div>
+								</td>
+								</tr></tbody></table>							
+							
+						</apex:outputpanel>
+					<!-- END Code to center align Button -->
+
+				         <apex:pageBlockSection rendered="{!isFixed}">
+					        <apex:repeat value="{!fields}" var="f1">
+                 			 <apex:OutputField value="{!inputRecord[f1.fieldPath]}"
+					        	label="{!if(f1 =='CurrencyIsoCode', 'Currency',LabelMaps[f1.fieldPath])}" styleclass="dataTable"/>
+					        </apex:repeat>
+				        </apex:pageBlockSection>
+				        <apex:pageBlockSection rendered="{!isOption}">
+					        <apex:repeat value="{!fields}" var="f2" >
+<!-- 					        IF(AND(f2 == 'Amount__c', OR( inputRecord.Input_Type__c == 'Option - Other', inputRecord.Input_Type__c == 'Option - WUBS')),IF(OR(inputRecord.Type__c == 'Option Obligation - Other',inputRecord.Type__c == 'Option Obligation - WUBS'), 'Obligation Amount', 'Protection Amount'),LabelMaps[f2.fieldPath]) -->
+					        	<apex:outputField value="{!inputRecord[f2]}" label="{!if(f2 =='CurrencyIsoCode', 'Currency',LabelMaps[f2.fieldPath])}" styleclass="dataTable"/>
+					        </apex:repeat>
+					        <apex:outputField value="{!inputOptionRecord.Amount__c}" label="Obligation Amount" styleclass="dataTable"/>
+				        </apex:pageBlockSection>
+				        
+				        <apex:pageBlockSection rendered="{!isForcast}">
+					        <apex:repeat value="{!fields}" var="f3" >
+					        	<apex:outputField value="{!inputRecord[f3]}" label="{!if(f3 =='CurrencyIsoCode', 'Currency',LabelMaps[f3.fieldPath])}" styleclass="dataTable"/>
+					        	
+					        </apex:repeat>
+				        </apex:pageBlockSection>
+				        <apex:pageBlockSection rendered="{!isWindow}">
+					        <apex:repeat value="{!fields}" var="f4">
+					        	<apex:outputField value="{!inputRecord[f4]}" label="{!if(f4 =='CurrencyIsoCode', 'Currency',LabelMaps[f4.fieldPath])}" styleclass="dataTable"/>
+					        </apex:repeat>
+				        </apex:pageBlockSection>
+				        <apex:pageBlockSection >
+					        <apex:repeat value="{!$ObjectType.Input__c.FieldSets.InputDetailFS1}" var="f5">					        	
+					        	<apex:outputField value="{!inputRecord[f5]}" styleclass="dataTable"/>
+					        </apex:repeat>
+				        </apex:pageBlockSection>
+				        
+					</apex:pageBlock>
+					<!--related lists-->
+					<br />
+					<br />
+
+					<apex:pageBlock id="pb">
+					<!-- Code to center align Button -->
+						<apex:outputpanel >
+							<table width="100%" style="width:100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr>
+								<td class="pbTitle" style="position: relative;">									
+									<h2 class="mainTitle" style="float:left;">Attachments</h2>
+									<div style="position: absolute;left:0px;width:100%">
+										<center class="pbButton " style="width:100%">
+											<apex:commandButton action="{!createNewAttachment}"
+												value="Attach Reference Document" rendered="{!canEdit}"/>
+										</center>
+									</div>
+								</td>
+								</tr></tbody></table>							
+							
+						</apex:outputpanel>
+					<!-- END Code to center align Button -->
+
+						<!-- <apex:inputHidden value="{!attachmentIdToDelete}" id="attToDelete"/>
+						<script>
+							var attToDel_clientid = '{!$Component.attToDelete}';
+						</script> -->
+						<apex:outputpanel id="att" rendered="{!canEdit}">
+							<apex:dataTable value="{!listChildAttachments}"
+								var="eachAttachment" styleClass="table">
+								<apex:column headerValue="Action">
+									<apex:outputLink value="/apex/AttachmentEdit?id={!eachAttachment.Id}&retURL=/apex/InputDetail?id={!inputRecord.id}">Edit</apex:outputLink>
+					      &#160;|&#160;
+					      <apex:outputLink value="/servlet/servlet.FileDownload?file={!eachAttachment.Id}">View</apex:outputLink>
+					      &#160;|&#160;
+					      <apex:outputLink onclick="if (confirm('Are you sure?')) {deleteAttachment('{!eachAttachment.Id}'); }else{return false;}"
+										value="javascript:void(0);">Del</apex:outputLink>
+
+
+								</apex:column>
+								<apex:column headerValue="Type">Attachment</apex:column>
+								<apex:column headerValue="Title">
+									<!--                   <apex:outputLink value="/{!eachAttachment.Id}?btdid={!invoiceId}">{!eachAttachment.name}</apex:outputLink> -->
+									<apex:outputLink value="/servlet/servlet.FileDownload?file={!eachAttachment.Id}">{!eachAttachment.name}</apex:outputLink>
+								</apex:column>
+								<apex:column value="{!eachAttachment.LastModifiedById}"
+									headerValue="Last Modified" />
+								<apex:column value="{!eachAttachment.CreatedById }"
+									headerValue="Created By" />
+							</apex:dataTable>
+						</apex:outputpanel>
+										
+					</apex:pageBlock>
+					<br /><br />
+					<!-- c:Related_List p_objectName="Alert_Threshold__c" rendered="{!canEdit}"
+						p_fieldsCSV="Threshold__c,Active__c,CreatedById,LastModifiedDate" 
+						p_pageSize="2" 
+						p_parentFieldId="{!inputRecord.Id}" 
+						p_parentFieldName="Input__c" 
+						p_orderByFieldName="Name" 
+						p_sortDirection="asc"
+						p_actionToInvoke=""
+						p_title="Alert Threshold"
+						p_returnUrl="/{!inputRecord.Id}"
+						p_showAsStandardRelatedList="true"/--> 
+				</apex:form>
+			</div>
+		</apex:define>
+	</apex:composition>
+</apex:page>

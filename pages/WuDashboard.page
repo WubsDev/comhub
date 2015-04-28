@@ -1,0 +1,21 @@
+<apex:page id="pg" sidebar="false" controller="WuDashboardCtrl">
+	<apex:composition template="ManageCashCommunityTemplate">
+		<apex:define name="headerHTML">
+			<c:ManageCashMenu menuName="SummaryDashboard"/>			
+		</apex:define>
+<!-- Start-->
+		<apex:define name="body"> 
+	        <!-- Start page content -->
+				<a name="skiplink">
+				  <img src="/s.gif" height="1" width="1" alt="Content Starts Here" class="skiplink skipLinkTargetInner zen-skipLinkTarget" title="Content Starts Here"/>
+				</a>
+				<iframe frameborder="no" height="330px" id="066S0000000E00j" marginheight="0" marginwidth="0" name="066S0000000E00j" scrolling="no" src="{!$Site.Prefix}/apex/Account_Holding_Pie_Chart" title="Account_Holding_Pie_Chart" style="width:100%;">
+			    </iframe>
+				<iframe frameborder="no" height="475px" id="066S0000000DypN" marginheight="0" marginwidth="0" name="066S0000000DypN" scrolling="no" src="{!$Site.Prefix}/apex/NetCashFlow" title="NetCashFlow" width="100%">
+				</iframe>
+				<iframe frameborder="no" height="475px" id="066S0000000DypP" marginheight="0" marginwidth="0" name="066S0000000DypP" scrolling="no" src="{!$Site.Prefix}/apex/TopPendingInvoices" title="TopPendingInvoices" width="100%">
+				</iframe>
+	        <!-- END page content -->
+		</apex:define>
+	</apex:composition>
+</apex:page>

@@ -1,0 +1,26 @@
+<apex:page id="pg" sidebar="false" showHeader="true">
+   <apex:composition template="ManageCashCommunityTemplate">
+       <apex:define name="headerHTML">
+           <c:ManageCashMenu menuName="Insights"/> 
+       </apex:define>
+
+       <apex:define name="body"> 
+           <div style="margin-top:15px;">    
+             <apex:canvasApp applicationName="OBIEE Webapp" Id="obieeFrame" height="1000px" width="800px" scrolling="yes" border="0" />
+           </div> 
+           <script>
+               function resizeCanvas(){
+                   if( $( "iframe[Id*='obieeFrame']" ).attr('width') != '' && $( "iframe[Id*='obieeFrame']" ).attr('width').indexOf('px') != -1) {
+                       $( "iframe[Id*='obieeFrame']" ).attr('width',(screen.width-300)+'px');  
+                       clearInterval(canvasIframe );
+                   }
+
+               }
+               //window.setTimeout(resizeCanvas, 5000);
+               var canvasIframe = setInterval(function(){ resizeCanvas() }, 1000);
+               
+           </script> 
+       </apex:define>
+
+   </apex:composition>
+</apex:page>

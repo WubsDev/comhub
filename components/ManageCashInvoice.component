@@ -1,0 +1,252 @@
+<apex:component controller="ManageCashInvoiceCtl" allowDML="true">
+	<apex:attribute name="sourcePage" type="String" description="" default="InvoicesAndPayments" />
+	<apex:attribute name="InsightsAndInputTabCtl" description="" type="InsightsAndInputTabCtrl" assignTo="{!InsightsAndInputCtl}"/>
+	<apex:attribute name="isInputTransaction" type="boolean" description="" default="false" />
+
+				<apex:outputPanel id="New_Invoice">
+		<script type="text/javascript">
+		    function newInvoiceWindow(id) {
+		        //T-361755: Commented out following code to link the invoice number with the new 
+		        // custom vf page for invoice details
+		        //var myWindow = window.open('/managecash/' + id, 'Invoice', 'height=550,width=1000');        
+		        window.open('{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/InvoiceDetail?id=' + id + '&retURL=%2Fapex%2FInvoicesAndPayments', '_blank');
+		    }
+		    
+		    var inputBeneficiary_ClientID = '';
+		    
+		    function openPageInPopup(hasErr){
+				showProgressbarBS(false);
+				debugger;
+		      	if(hasErr == false){
+		      		if($('div[role="alert"]').find('img[alt="ERROR"]').size()==0 || $('div[role="alert"]').find('img[alt="ERROR"]').css("display") == 'none'){
+				    	window.open('{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/AddAnotherInvoice?sourcePage={!sourcePage}','AnotherInvoice','width=850,height=400,left=150,top=200,//toolbar=0,status=0,');
+				    }
+				}
+			}
+			function uploadInvoiceImage() {
+				    progressbarBSMsg('Saving Invoice ...');
+				    showProgressbarBS(true);
+				   var invImageFiles = document.getElementById('invoiceImage').files;
+				   
+				   if(invImageFiles.length > 0) {
+				   var invImage = invImageFiles[0];
+				   var reader = new FileReader();
+			      // Keep a reference to the File in the FileReader so it can be accessed in callbacks
+			      reader.file = invImage;
+			      
+			      reader.onload = function(e)
+			      {
+			          var attName = this.file.name;
+			          var attContentType = this.file.type;
+			          var binary = "";
+			          var bytes = new Uint8Array(e.target.result);
+			          var length = bytes.byteLength;
+			          for (var i = 0; i < length; i++)
+			          {
+			              binary += String.fromCharCode(bytes[i]);
+			          }
+			          var attBody = (new sforce.Base64Binary(binary)).toString();
+			          $('input[id$="invoiceImageName"]').val(attName);
+			          $('input[id$="invoiceImageBody"]').val(attBody);
+			          saveInvoice();
+			      };
+			      reader.readAsArrayBuffer(invImage);
+			      } else {
+			      	saveInvoice();
+			      }
+			}
+			</script>				
+					<apex:pageBlock id="pb">
+						<apex:pageMessages id="msg"></apex:pageMessages>
+						<apex:PageBlockSection id="pbs"
+							 columns="2">
+							<apex:facet name="header">
+								<apex:outputtext value="{!if(sourcePage!='ManageCashInput', inputLink, 'Input Wizard')}" escape="false" />
+							</apex:facet>
+
+							<apex:pageBlock >
+							<apex:outputpanel >
+								<script>    
+									var pbdId = '{!$Component.pbs}';
+								</script>
+							</apex:outputpanel>
+							<apex:actionRegion >
+									<apex:PageBlockSection columns="2"
+										collapsible="false" id="collapse">
+									<apex:facet name="header">
+										<!--  
+										Added By : Ashish Goyal (Ref: T-377272)
+										Descriptio : added img tag to output text value for help test							 
+										-->
+										<center>
+											<h3>Data Input Option: Enter Data Manually</h3>
+											<img src='/s.gif' class='imgclass' data-toggle='tooltip'
+												data-placement='bottom' title='{!$Label.Help_Text_Manual_Invoice}'
+												style='height: 21px; width: 18px;' />
+										</center>
+										<script>
+										$(function () {
+										    $('[data-toggle="tooltip"]').tooltip();
+										})
+									</script>
+									</apex:facet>
+										
+										<apex:PageBlockSectionItem >
+											<label><nobr> Transaction Type</nobr></label>
+											<apex:selectList value="{!InsightsAndInputTabCtl.selectedTranscation}"
+												multiselect="false" size="1">
+												<apex:selectOptions value="{!TransactionTypes}" />
+												<apex:actionSupport event="onchange" reRender="mainPanel" status="status1"
+													action="{!InsightsAndInputTabCtl.changeTransactionType}" />
+											</apex:selectList>
+										</apex:PageBlockSectionItem>
+										<apex:PageBlockSectionItem />
+										<apex:PageBlockSectionItem >
+											<apex:outputLabel value="Invoice Number" />
+											<c:RequiredBlockComponent >
+												<apex:inputField value="{!invoice.Name}" id="acctName" />
+											</c:RequiredBlockComponent>
+										</apex:PageBlockSectionItem>
+										<apex:PageBlockSectionItem >
+											<apex:outputLabel value="Payment Due Date" />
+											<c:RequiredBlockComponent >
+												<apex:inputField value="{!invoice.Due_Date__c}" id="dueDate" />
+											</c:RequiredBlockComponent>
+										</apex:PageBlockSectionItem>
+										<!--commented by Vivek Ojha  I-148135
+                        <apex:PageBlockSectionItem >
+                            <apex:outputLabel value="Product" />
+                            <apex:inputField value="{!invoice.Product__c}" id="product"/>
+                        </apex:PageBlockSectionItem>
+                        -->
+										<apex:PageBlockSectionItem >
+											<!--                            <apex:outputLabel value="Currency" />-->
+											<!--                            <apex:inputField value="{!invoice.ForwardContractCurrency}" id="Currency"/>-->
+											<apex:outputLabel value="Currency" />
+											<c:RequiredBlockComponent >
+												<apex:SelectList size="1" multiselect="false"
+													value="{!selectedForwardContractCurrency}">
+													<apex:SelectOptions value="{!ForwardContractCurrency}" />
+												</apex:SelectList>
+											</c:RequiredBlockComponent>
+										</apex:PageBlockSectionItem>
+										<apex:PageBlockSectionItem >
+											<apex:outputLabel value="Invoice Amount Due" />
+											<c:RequiredBlockComponent >
+												<apex:inputField value="{!invoice.Amount__c}" id="amount" />
+											</c:RequiredBlockComponent>
+										</apex:PageBlockSectionItem>
+										<apex:PageBlockSectionItem >
+											<apex:outputLabel value="Status" />
+											<c:RequiredBlockComponent >
+												<apex:inputField value="{!invoice.Status__c}" id="status" />
+											</c:RequiredBlockComponent>
+										</apex:PageBlockSectionItem>
+										<apex:PageBlockSectionItem >
+											<apex:outputLabel value="Supplier" />
+											<apex:outputpanel >
+												<c:RequiredBlockComponent >
+													<table border="0" style="border-bottom:0px;padding: 0px 0px 0px 0px;">
+														<tr>
+															<td style="border-bottom:0px;padding: 0px 0px 0px 0px;">
+																<apex:inputHidden value="{!invoice.Input_Beneficiary__c}" id="bene"/> 
+																<c:CustomLookup objectName="Input_Beneficiary__c" selectedRefId="{!invoice.Input_Beneficiary__c}"  fieldAPI="Name" fieldToPopulateId="{!$Component.bene}" fieldSetName="Lookup_Fields"/>
+															</td>
+															<td>
+																<apex:commandButton value="New" styleClass="wuBtn" style="padding: 5px 15px 5px!important;" title="Add New Buyer/Supplier"
+																	onClick="window.open('{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/AddInputBeneficiary?aId={!$CurrentPage.parameters.aId}&sourcePage={!sourcePage}&customRefId={!$Component.bene}&customLkNameId='+lookupIdHolder['{!$Component.bene}_name'],'Ratting','width=850,height=400,left=150,top=200,toolbar=0,status=0,');return false;" />
+															</td>
+														</tr>
+													</table>
+												</c:RequiredBlockComponent>
+											</apex:outputpanel>
+										</apex:PageBlockSectionItem>
+
+										<apex:PageBlockSectionItem >
+											<apex:outputLabel value="Attach Reference Document" />
+											<apex:outputPanel >
+												<input type="file" id="invoiceImage" />
+												<apex:inputHidden value="{!invoiceImageBody}"
+													id="invoiceImageBody" />
+												<apex:inputHidden value="{!invoiceImageName}"
+													id="invoiceImageName" />
+											</apex:outputPanel>
+										</apex:PageBlockSectionItem>
+
+
+									</apex:PageBlockSection>
+									<center>
+										<div >									
+											<apex:actionfunction rerender="pb,msg" name="saveInvoice"
+												action="{!saveInvoice}"
+												oncomplete="openPageInPopup({!hasError});" />
+											<input type="button" value="Save"
+												onclick="uploadInvoiceImage();" class="btn wuBtn" />
+											<!-- apex:commandButton value="Save" onclick="uploadInvoiceImage();" styleClass="wuBtn" / -->
+											<apex:commandButton action="{!cancel}" value="Cancel"
+												styleClass="wuBtn" />
+										</div>
+									</center>
+								</apex:actionRegion>
+							</apex:pageBlock>
+
+							<!-- CSV DRAG AND DROP ZONE -->
+					<apex:outputPanel id="cmp1">
+						<apex:pageBlock rendered="{!isInputTransaction}">
+							<apex:PageBlockSection collapsible="false"
+								id="pbSec4" columns="1">
+										<script>
+										$(function () {
+										    $('[data-toggle="tooltip"]').tooltip();
+										})
+									</script>
+									<apex:facet name="header">
+										<!--  
+										Added By : Ashish Goyal (Ref: T-377272)
+										Descriptio : added img tag to output text value for help test							 
+										-->
+										<center>
+											<h3>Data Input Option: Upload CSV</h3>
+											<img src='/s.gif' class='imgclass' data-toggle='tooltip'
+												data-placement='bottom' title='{!$Label.Help_Text_Csv_Upload}'
+												style='height: 21px; width: 18px;' />
+										</center>
+									</apex:facet>
+								<apex:outputpanel >
+									<nobr>
+										<apex:outputLabel value="Transaction Type" />
+			                                          &nbsp;&nbsp;&nbsp;&nbsp;
+			                                          <apex:selectList id="transTypeId" multiselect="false" size="1"
+											styleClass="ctt" onchange="updateCSVSample(this.value)">
+											<apex:selectOptions value="{!lstTransactionType}" />
+										</apex:selectList>
+									</nobr>
+								</apex:outputpanel>
+		
+							</apex:PageBlockSection>
+						</apex:pageBlock>
+						<!--  DRAG AND DROP CSV UPLOAD SECTION      -->
+						<apex:actionRegion >
+							<c:DragnDropFileUploadInput parentId2="{!AccId}"
+								multiple="true" sourcePage="{!sourcePage}" ></c:DragnDropFileUploadInput>
+						</apex:actionRegion>
+				</apex:outputPanel>							
+
+						</apex:PageBlockSection>
+
+						<script>    
+						function querystring(key) {
+						   var re=new RegExp('(?:\\?|&)'+key+'=(.*?)(?=&|$)','gi');
+						   var r=[], m;
+						   while ((m=re.exec(document.location.search)) != null) r[r.length]=m[1];
+						   return r;
+						}
+						if(querystring('fin')=='true'){                          
+                             
+				        	twistSection(document.getElementById(pbdId).getElementsByTagName('img')[0])
+				        }
+				    </script>
+					</apex:pageBlock>
+				</apex:outputPanel>
+
+</apex:component>

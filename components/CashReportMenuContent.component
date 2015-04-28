@@ -1,0 +1,286 @@
+<apex:component controller="InsightsAndInputTabCtrl" layout="none">
+	<div class="tab-pane" id="holding-balance" style="">
+		<apex:form >
+			<h4>Holding Balance by Currency with WUBS</h4>
+			<apex:dataTable value="{!HoldingBalanceReportData}"
+				rendered="{!IF(HoldingBalanceReportData.size > 0, true, false)}"
+				var="c" styleClass="table">
+				<apex:column headerValue="Currency">
+					<apex:outputText value="{!c.HoldingWpr.CurrencyISOCode}" />
+				</apex:column>
+				<apex:column headerValue="Amount">
+					<apex:outputText value="{0, number, ###,##0.00}">
+						<apex:param value="{!c.HoldingWpr.Amount__c}" />
+					</apex:outputText>
+					<!--                                    <apex:outputText value="{!c.HoldingWpr.Amount__c}"/>-->
+				</apex:column>
+			</apex:dataTable>
+			<!--  BELOW TABLE WILL BE DISPLAYED WHEN THERE WILL BE NO DATA -->
+			<apex:outputpanel rendered="{!IF(HoldingBalanceReportData.size = 0, true, false)}">
+				<table cellspacing="0" cellpadding="0" border="0" id="no_data"
+					class="table">
+					<colgroup span="2"></colgroup>
+					<thead class="">
+						<tr class=" ">
+							<th colspan="1" scope="col" class="  ">
+								<div>Currency</div></th>
+							<th colspan="1" scope="col" class="  ">
+								<div>Amount</div></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td colspan="2"
+								style="background-color: #eee; color: #fcd40d; font-size: 28px; font-weight: bold; height: 200px; text-align: center; vertical-align: middle;">
+								No Data To Display</td>
+						</tr>
+					</tbody>
+				</table>
+			</apex:outputpanel>
+		</apex:form>
+	</div>
+
+	<div class="tab-pane" id="forward-contract">
+		<h4>WUBS Forward Contracts</h4>
+		<apex:form >
+			<apex:pageMessages ></apex:pageMessages>
+			<apex:actionregion >
+				<apex:outputPanel id="fwd">
+					<div class="palette">
+						<span><apex:outputLabel value="Currency" />
+						</span> <span> <apex:SelectList size="1" multiselect="false"
+								value="{!selectedForwardCurrency}">
+								<apex:selectOption itemValue="" itemLabel="Select" />
+								<apex:SelectOptions value="{!ForwardContractCurrency}" />
+							</apex:SelectList> </span> <span><apex:commandButton action="{!generateForwardContractReportData}"
+								value="Generate Report"
+								rerender="contract_table, fwdContractTbl, no_data_table_fwdContract, pagination_fwdContractList" />
+						</span>
+					</div>
+				</apex:outputPanel>
+				<apex:outputPanel layout="block" id="contract_table">
+					<apex:dataTable value="{!fwdContractList}"
+						rendered="{!IF(fwdContractList.size > 0, true, false)}" var="c"
+						id="fwdContractTbl" styleClass="table">
+						<!--  
+						<apex:column headerValue="Transaction Number"
+							headerClass="forwordContractTbl">
+							<apex:outputText value="{!c.Transaction_Number__c}" />
+						</apex:column>
+						<apex:column headerValue="Start Date"
+							headerClass="forwordContractTbl">
+							<apex:outputField value="{!c.Start_Date__c}" />
+						</apex:column>
+						 -->
+						<apex:column headerValue="Maturity Date"
+							headerClass="forwordContractTbl">
+							<apex:outputField value="{!c.Maturity_Date__c}" />
+						</apex:column>
+						
+						<!--  
+						<apex:column headerValue="Settlement Currency"
+							headerClass="forwordContractTbl">
+							<apex:outputText value="{!c.Settlement_Currency__c}" />
+						</apex:column>
+						<apex:column headerValue="Settlement Amount*"
+							headerClass="forwordContractTbl">
+							<apex:outputText value="{0, number, ###,##0.00}">
+								<apex:param value="{!c.Settlement_Amount__c}" />
+							</apex:outputText>
+							<!--                                        <apex:outputText value="{!c.Settlement_Amount__c}" />-->
+						<!-- 
+						</apex:column>
+						<apex:column headerValue="Settlement Balance"
+							headerClass="forwordContractTbl">
+							<apex:outputText value="{0, number, ###,##0.00}">
+								<apex:param value="{!c.Settlement_Balance__c}" />
+							</apex:outputText>
+							<!--                                        <apex:outputText value="{!c.Settlement_Balance__c}" />-->
+						<!-- 
+						</apex:column>-->
+
+						<apex:column headerValue="Market Rate"
+							headerClass="forwordContractTbl">
+							<apex:outputText value="{!c.market_rate__r.Ratio_to_USD__c}" />
+						</apex:column>
+
+						<apex:column headerValue="FX Currency "
+							headerClass="forwordContractTbl">
+							<apex:outputText value="{!c.FX_Currency__c}" />
+						</apex:column>
+<!-- 						<apex:column headerValue="FX Amount" -->
+<!-- 							headerClass="forwordContractTbl"> -->
+<!-- 							<apex:outputText value="{0, number, ###,##0.00}"> -->
+<!-- 								<apex:param value="{!c.FX_Amount__c}" /> -->
+<!-- 							</apex:outputText> -->
+							<!--                                        <apex:outputText value="{!c.FX_Amount__c}" />-->
+<!-- 						</apex:column> -->
+						<apex:column headerValue="FX Balance"
+							headerClass="forwordContractTbl">
+							<apex:outputText value="{0, number, ###,##0.00}">
+								<apex:param value="{!c.FX_Balance__c}" />
+							</apex:outputText>
+							<!--                                        <apex:outputText value="{!c.FX_Balance__c}" />-->
+						</apex:column>
+					</apex:dataTable>
+				</apex:outputPanel>
+
+				<!--  BELOW TABLE WILL BE DISPLAYED WHEN THERE WILL BE NO DATA -->
+				<apex:outputpanel id="no_data_table_fwdContract">
+					<apex:outputpanel rendered="{!IF(fwdContractList.size = 0, true, false)}">
+						<table cellspacing="0" cellpadding="0" border="0"
+							id="no_data_historical" class="table">
+							<colgroup span="2"></colgroup>
+							<thead class="">
+								<tr class=" ">
+									<!-- th colspan="1" scope="col" class="  ">
+										<div>Transaction Number</div></th>
+									<th colspan="1" scope="col" class="  ">
+										<div>Start Date</div></th -->
+										
+									<th colspan="1" scope="col" class="  ">
+										<div>Maturity Date</div></th>
+										
+									<!-- th colspan="1" scope="col" class="  ">
+										<div>Settlement Currency</div></th>
+									<th colspan="1" scope="col" class="  ">
+										<div>Settlement Amount</div></th>
+									<th colspan="1" scope="col" class="  ">
+										<div>Settlement Balance</div></th-->
+										
+									<th colspan="1" scope="col" class="  ">
+										<div>Market Rate</div></th>
+									<th colspan="1" scope="col" class="  ">
+										<div>FX Currency</div></th>
+										
+									<!-- th colspan="1" scope="col" class="  ">
+										<div>FX Amount</div></th-->
+										
+									<th colspan="1" scope="col" class="  ">
+										<div>FX Balance</div></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td colspan="10"
+										style="background-color: #eee; color: #fcd40d; font-size: 28px; font-weight: bold; height: 200px; text-align: center; vertical-align: middle;">
+										No Data To Display</td>
+								</tr>
+							</tbody>
+						</table>
+					</apex:outputpanel>
+
+				</apex:outputpanel>
+
+				<div class="text-center">
+					<apex:outputpanel id="pagination_fwdContractList">
+						<apex:commandButton rendered="{!setCon.hasPrevious}" value="First"
+							styleClass="wuBtn" action="{!setCon.first}" />
+						<apex:commandButton rendered="{!setCon.hasPrevious}"
+							value="Previous" action="{!setCon.previous}" />
+						<apex:outputText rendered="{!(setCon.pageNumber * setCon.pageSize) < setCon.ResultSize}"
+							value="{!setCon.pageNumber * setCon.pageSize} Of {!setCon.ResultSize}"></apex:outputText>
+						<apex:outputText rendered="{!(setCon.pageNumber * setCon.pageSize) >= setCon.ResultSize}"
+							value="{!setCon.ResultSize} Of {!setCon.ResultSize}"></apex:outputText>
+						<apex:commandButton rendered="{!setCon.hasNext}" value="Next"
+							styleClass="wuBtn" action="{!setCon.next}" />
+						<apex:commandButton rendered="{!setCon.hasNext}" value="Last"
+							styleClass="wuBtn" action="{!setCon.last}" />
+					</apex:outputpanel>
+				</div>
+			</apex:actionregion>
+			<c:DateTimestampMessage />
+		</apex:form>
+	</div>
+
+	<div class="tab-pane" id="historical-payments">
+		<h4>Historical Payments by Currency with WUBS</h4>
+		<apex:form >
+			<table class="table" border="0" cellpadding="0" cellspacing="0">
+				<colgroup span="4"></colgroup>
+				<thead class="">
+					<tr>
+						<th scope="col" colspan="1"><div>Amount</div>
+						</th>
+						<th scope="col" colspan="1"><div>Year</div>
+						</th>
+						<th scope="col" colspan="1">
+							<div>Fiscal Quarter</div></th>
+						<th scope="col" colspan="1"><div>Month</div>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<apex:repeat value="{!HistoricalPaymentReportData}"
+						rendered="{!IF(HistoricalPaymentReportData.size > 0, true, false)}"
+						var="c">
+						<tr class="{!if(c.currency1=='', '', 'altbg')}">
+							<td colspan="1"><apex:outputpanel rendered="{!(c.currency1 != null)}">
+									<strong><apex:outputText value="{!if(c.currency1=='', '&nbsp;', c.currency1)}"
+											escape="false" />
+									</strong>
+								</apex:outputpanel> <apex:outputpanel rendered="{!(c.currency1 == null)}">
+									<apex:outputText value="{0, number, ###,##0.00}">
+										<apex:param value="{!c.HistoricalWpr.Amount__c}" />
+									</apex:outputText>
+									<!--                                                        <apex:outputText value="{!c.HistoricalWpr.Amount__c}" />-->
+								</apex:outputpanel>
+							</td>
+							<apex:outputpanel rendered="{!(c.currency1 != null)}">
+								<td colspan="3"></td>
+							</apex:outputpanel>
+							<apex:outputpanel rendered="{!(c.currency1 == null)}">
+								<td colspan="1"><apex:outputText value="{!c.HistoricalWpr.Year__c}" />
+								</td>
+								<td colspan="1"><apex:outputText value="{!c.HistoricalWpr.Fiscal_Quarter__c}" />
+								</td>
+								<td colspan="1">
+									<!-- <apex:outputText value="{!c.HistoricalWpr.MOnth__c}"/> -->
+									<apex:outputText value="{!c.month}" /></td>
+							</apex:outputpanel>
+						</tr>
+					</apex:repeat>
+					<apex:outputpanel rendered="{!IF(HistoricalPaymentReportData.size == 0, true, false)}">
+						<tr>
+							<td colspan="4"
+								style="background-color: #eee; color: #fcd40d; font-size: 28px; font-weight: bold; height: 200px; text-align: center; vertical-align: middle;">
+								No Data To Display</td>
+						</tr>
+					</apex:outputpanel>
+				</tbody>
+			</table>
+		</apex:form>
+	</div>
+	<script>
+            
+                function defaultHolding() {
+                	debugger;
+                 var holdingId = getParameterByName('holding');
+                 var forwardId = getParameterByName('forward');
+                 var historicalId = getParameterByName('historical');
+            
+                 if(holdingId == '1') {
+                    $('.nav-tabs a[href="#holding-balance"]').tab('show');
+                 }
+                 if(forwardId == '1') {
+                    $('.nav-tabs a[href="#forward-contract"]').tab('show');
+                 }
+                 if(historicalId == '1'){
+                    $('.nav-tabs a[href="#historical-payments"]').tab('show');
+                 }
+                }
+            
+                function renderForwardContract() {
+                    debugger;
+                    setTimeout(function(){ document.getElementById('ui-id-3').click(); }, 300);
+                }
+            
+                function getParameterByName(name) {
+                        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+                        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                            results = regex.exec(location.search);
+                        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+                    }
+                defaultHolding();
+            </script>
+</apex:component>

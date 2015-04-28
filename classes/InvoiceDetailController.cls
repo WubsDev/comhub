@@ -1,0 +1,167 @@
+/**=====================================================================
+ * Appirio, Inc
+ * Name: InvoiceDetailController
+ * Description: Controller with business logic for InvoiceDetail VF page - T-361755
+ * Created Date: 14 Feb' 2014
+ * Created By: Jinesh Goyal (Appirio)
+ * 
+ * Date Modified                Modified By                  Description of the update
+ *02 March 2015					Ranjeet Singh				Code Review - Should used standard fieldSet binding instead of describe
+ 															Fixed.
+ *23 April 2015					Pratibha Chhimpa			I-156475													
+ =====================================================================*/
+ public without sharing class InvoiceDetailController{
+	 
+	 //class level member variables
+	 public Invoice__c invoiceRecord {get;set;}
+	 transient public List<Attachment> listChildAttachments {get;set;}
+	 public String invoiceId {get;set;}
+	 public String invoiceName {get;set;}
+	 public Decimal settlementCurrency {get;set;}
+	 public String attachmentIdToDelete {get;set;}
+     
+     //added line for test edit permissions
+     public boolean canEdit{get;set;}
+	 /*
+	 public InvoiceDetailController(ApexPages.StandardController stdController) {
+	     //get value from query string parameter
+		 this.invoiceRecord = (Invoice__c)stdController.getRecord();
+	     Schema.FieldSet fieldSet = Schema.SObjectType.Invoice__c.fieldSets.getMap().get('Detail');
+	     Invoice__c tmpInv = [SELECT Name, Amount__c, Currency_Code__c FROM Invoice__c WHERE Id = :this.invoiceRecord.id and Account__c=:Utility.currentAccount LIMIT 1];
+	     invoiceRecord.Settlement_Amount__c = Utility.getSettlementCurrencyAmount(tmpInv.Amount__c, tmpInv.Currency_Code__c, Utility.userCurrency );//UserInfo.getDefaultCurrency()
+	     listChildAttachments = findAttachments();
+
+
+	   
+	 }//END OF CONSTRUCTOR */
+
+	// Constructor
+	public InvoiceDetailController() {
+	 	if(ApexPages.currentPage().getParameters().get('id') != null && ApexPages.currentPage().getParameters().get('id') != ''){
+	 		for(Invoice__c tmpInv : getInvoice(ApexPages.currentPage().getParameters().get('id')) ){
+	 		    this.invoiceRecord = tmpInv;
+	        }
+	     	invoiceRecord.Settlement_Amount__c = Utility.getSettlementCurrencyAmount(invoiceRecord.Amount__c, invoiceRecord.Currency_Code__c, Utility.userCurrency );//UserInfo.getDefaultCurrency()
+	     	listChildAttachments = findAttachments();
+	     	invoiceid=invoiceRecord.id;
+	     	invoiceName = invoiceRecord.Name;
+	     	canEdit = false;
+        	canEdit = [SELECT RecordId, HasEditAccess FROM UserRecordAccess WHERE UserId = :userInfo.getuserId() AND RecordId = :invoiceRecord.id LIMIT 1].HasEditAccess ;	     	
+	 	}
+	 	
+	 }
+	 
+	 //create new attachment record
+	 public PageReference createNewAttachment(){
+	    return new PageReference ('/apex/AttachmentUpload?pid='+invoiceRecord.id+'&retURL=%2Fapex%2FInvoiceDetail?id='+invoiceRecord.id);
+	 }
+	 
+	 //get all the child attachment records
+	 private List<Attachment> findAttachments(){
+	     return [SELECT Id, Name, LastModifiedById, CreatedById, ContentType FROM Attachment 
+	             WHERE ParentId = :this.invoiceRecord.id];
+	 }
+	 
+	 public PageReference delAttachment(){
+	 	system.debug('$$$' + attachmentIdToDelete);
+	   Attachment att = new Attachment(Id=attachmentIdToDelete);
+	   delete att;
+	   attachmentIdToDelete = '';
+	   listChildAttachments = findAttachments();
+	   return null;
+	 }
+	 
+	 public Pagereference customDelete() {
+	 	try{
+	 		delete invoiceRecord;
+	 		if(system.currentPageReference().getParameters().get('retURL') != null) {
+	 			return new Pagereference(system.currentPageReference().getParameters().get('retURL'));
+	 		}
+	 		return Page.wuDashboard;
+	 	} catch(Exception ex) {
+			return null;	 		
+	 	}
+	 }
+	 
+	 public Pagereference customCancel() {
+	 	try{
+	 		if(system.currentPageReference().getParameters().get('retURL') != null) {
+	 			return new Pagereference(system.currentPageReference().getParameters().get('retURL'));
+	 		}
+	 		return Page.ManageCashInput;
+	 	} catch(Exception ex) {
+			return null;	 		
+	 	}
+	 }
+	 /*
+	 public PageReference alertEdit(){
+	 	PageReference pgAlert = Page.NewThresholdAlertPage;
+	 	pgAlert.getParameters().put('retURL', 'Invoice');
+	 	pgAlert.getParameters().put('recId', this.invoiceRecord.id);
+	 	pgAlert.getParameters().put('objectType', 'Invoice');
+	 	//{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/NewThresholdAlertPage?objectType=Invoice&recId={!Invoice__c.id}
+	 	pgAlert.setRedirect(true);
+	 	return pgAlert;
+	 }*/
+	
+	public List<SelectOption> CurrencyOptions{
+    	get{
+    		if(CurrencyOptions==null || CurrencyOptions.size()==0){
+        		CurrencyOptions= Utility.picklistValues('Invoice__c','CurrencyIsoCode', true);
+    		}
+    		return CurrencyOptions;
+    	}
+    	set;
+    }
+    
+  	public map<String, string> LabelMaps{
+  		get{
+  			//String apiName = Utility.changeTransactionType(selectedTranscation);
+  				try{
+	  				return Utility.getFieldLabel('Invoice__c', 'Community Invoice Edit');
+  				}catch(Exception Ex){
+  					
+  				}
+  			return new map<String, string>();
+  		}
+  	}
+
+  	public map<String, string> LabelDetailMaps{
+  		get{
+  			//String apiName = Utility.changeTransactionType(selectedTranscation);
+  				try{
+	  				return Utility.getFieldLabel('Invoice__c', 'Detail');
+  				}catch(Exception Ex){
+  					
+  				}
+  			return new map<String, string>();
+  		}
+  	}
+	
+	
+	// Get fields from fieldset
+	public List<Schema.FieldSetMember> getFields() {
+        return SObjectType.Invoice__c.FieldSets.Detail.getFields();
+    }
+    // GetInvoice with all the fields in the fieldset
+    private List<Invoice__c> getInvoice(String id) {
+        String query = 'SELECT ';
+        for(Schema.FieldSetMember f : this.getFields()) {
+            query += f.getFieldPath() + ', ';
+        }
+        String account = Utility.currentAccount;
+        query += 'Id FROM Invoice__c Where Id =: id and Account__c=:account LIMIT 1';
+        return Database.query(query);
+    }
+    
+    
+    public PageReference save(){
+    	upsert invoiceRecord;
+	    return new PageReference ('/apex/InvoiceDetail?id='+invoiceRecord.id);
+	 }
+	 
+	 public PageReference cancel(){
+	    return new PageReference ('/apex/InvoiceDetail?id='+invoiceRecord.id);
+	 }
+	 
+ }//END OF CLASS

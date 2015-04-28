@@ -1,0 +1,111 @@
+<apex:page controller="portalCashflowReportClone" id="thePage" sidebar="false" tabstyle="Summary_Reports__tab" showheader="false">
+    <head>
+<!--  END Digital style for community-->
+		<meta charset="utf-8" />
+        <!-- Slider js and css -->
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" />
+	    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+		<script src="//code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
+<!-- END Other supporting scripts -->	
+    
+        <style>
+            .CSSTableGenerator {
+                margin:0px;padding:0px;
+                width:100%;
+                box-shadow: 10px 10px 5px #888888;
+                border:1px solid #000000;
+                
+                -moz-border-radius-bottomleft:0px;
+                -webkit-border-bottom-left-radius:0px;
+                border-bottom-left-radius:0px;
+                
+                -moz-border-radius-bottomright:0px;
+                -webkit-border-bottom-right-radius:0px;
+                border-bottom-right-radius:0px;
+                
+                -moz-border-radius-topright:0px;
+                -webkit-border-top-right-radius:0px;
+                border-top-right-radius:0px;
+                
+                -moz-border-radius-topleft:0px;
+                -webkit-border-top-left-radius:0px;
+                border-top-left-radius:0px;
+            }.CSSTableGenerator table{
+                border-collapse: collapse;
+                    border-spacing: 0;
+                width:100%;
+                height:100%;
+                margin:0px;padding:0px;
+            }
+            .CSSTableGenerator tr:first-child td{
+                background: #6B747B;
+            }
+             .CSSTableGenerator td{
+                vertical-align:middle;
+                
+                background-color:#ffffff;
+            
+                border:1px solid #000000;
+                border-width:0px 1px 1px 0px;
+                text-align:right;
+                padding:5px;
+                font-size:13px;
+                font-family:Arial;
+                font-weight:normal;
+                color:#000000;
+            }
+        </style>
+
+       
+        <script type="text/javascript">
+            function altRows(id){
+                if(document.getElementsByTagName){  
+                    
+                    var table = document.getElementById(id);
+                    if(table!=null){  
+	                    var rows = table.getElementsByTagName("tr"); 
+	                    if(rows!=null){
+		                    for(i = 0; i < rows.length; i++){          
+		                        if(i % 2 == 0){
+		                            rows[i].className = "evenrowcolor";
+		                        }else{
+		                            rows[i].className = "oddrowcolor";
+		                        }
+		                    }
+	                    }
+                    }
+                }
+            }
+            window.onload=function(){
+                altRows('alternatecolor');
+            }
+            
+        
+            function checkApplication(cr)
+            {
+                checkApp(cr);
+            }
+        </script>
+    </head>
+    <apex:form id="theForm">
+    	<apex:pageMessages id="msg"></apex:pageMessages>
+        <apex:actionstatus id="status">
+            <apex:facet name="start">
+                <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height: 100%;opacity:0.65;width:100%;"> 
+                    <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+                        <img class="waitingImage" src="/img/loading.gif" title="{!$Label.Loading_Wait_Text}" />
+                            <span class="waitingDescription">{!$Label.Loading_Wait_Text}</span>
+                     </div>
+                </div>
+             </apex:facet>
+        </apex:actionstatus>
+        <apex:outputPanel id="tabPanel" rendered="{!NOT(noCurrencies)}">
+            
+            <apex:outputPanel rendered="{!showTabs}">
+                <c:portalCashFlowReportClone inTitle="{!theCurrency}" con="{!currentContact}" acc="{!currentAccount}" selectedMonth="{!selectedMonth}"/>
+            </apex:outputPanel>
+        </apex:outputPanel>
+        <br></br>
+
+    </apex:form>
+</apex:page>

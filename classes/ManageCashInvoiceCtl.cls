@@ -87,9 +87,13 @@ global without sharing class ManageCashInvoiceCtl {
                 hasError = true;
             }   
             if(!Utility.isValidSfdcId(invoice.Input_Beneficiary__c)) {
-                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, 'Beneficiary Should Not be Blank '));
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, 'Supplier Should Not be Blank '));
                 hasError = true;
-            }    
+            }   
+            if(invoice.CurrencyIsoCode == '' || invoice.CurrencyIsoCode == 'Select' || invoice.CurrencyIsoCode == null) {
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, 'Selected currency is not valid currency. Choose other than Select for Currency.'));
+                hasError = true;
+            }   
             if(!hasError) {
                 invoice.Account__c= Utility.currentAccount;
                 insert invoice;

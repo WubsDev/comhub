@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>FFCO</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>FFCO</shortDescription>
+        <value>Fixed Forward Contract - Other</value>
+    </labels>
+    <labels>
+        <fullName>Forecast_Incoming</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Forecast Incoming</shortDescription>
+        <value>Forecast Incoming</value>
+    </labels>
+    <labels>
+        <fullName>Forecast_Inflow</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Forecast Inflow</shortDescription>
+        <value>Forecast Inflow</value>
+    </labels>
+    <labels>
+        <fullName>Forecast_Outflow</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Forecast Outflow</shortDescription>
+        <value>Forecast Outflow</value>
+    </labels>
+    <labels>
+        <fullName>Forecast_Outgoing</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Forecast Outgoing</shortDescription>
+        <value>Forecast Outgoing</value>
+    </labels>
+    <labels>
+        <fullName>Help_Text_Csv_Upload</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Help Text Csv Upload</shortDescription>
+        <value>Capture file and image upload on mass with a simple drag and drop</value>
+    </labels>
+    <labels>
+        <fullName>Help_Text_Dashboard_netcash</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Help Text Dashboard netcash</shortDescription>
+        <value>Real time snapshot of exposure. Drill down to see each currency you trade in.</value>
+    </labels>
+    <labels>
+        <fullName>Help_Text_Manual_Inputs</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Help Text Manual Inputs</shortDescription>
+        <value>Simplified invoice, file and image upload</value>
+    </labels>
+    <labels>
+        <fullName>Help_Text_Manual_Invoice</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Help Text Manual Invoice</shortDescription>
+        <value>Simplified invoice, file and image upload</value>
+    </labels>
+    <labels>
+        <fullName>Help_Text_Summary_Netcash</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Help Text Summary Netcash</shortDescription>
+        <value>View your net Cash flow exposure, by currency and see the impact currency volatility has to your bottom line</value>
+    </labels>
+    <labels>
+        <fullName>InputHedging</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Input Hedging</shortDescription>
+        <value>Option Protection - Other,Window Forward Contract - WUBS,Option Obligation - Other,Option Obligation - WUBS,Option Protection - WUBS,Window Forward Contract - Other,Fixed Forward Contract - Other,Option - Other</value>
+    </labels>
+    <labels>
+        <fullName>InputViewPagesize</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Input View Pagesize</shortDescription>
+        <value>25</value>
+    </labels>
+    <labels>
+        <fullName>InsightsAndInputsTab</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>InsightsAndInputsTab</shortDescription>
+        <value>01rS000000095lP</value>
+    </labels>
+    <labels>
+        <fullName>Intro_Video_youtube_Id</fullName>
+        <categories>Cash Management</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Intro Video youtube Id</shortDescription>
+        <value>daLo5s4obhs</value>
+    </labels>
+    <labels>
+        <fullName>InvoicesAndPaymentsTab</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>InvoicesAndPaymentsTab</shortDescription>
+        <value>01rS000000095lA</value>
+    </labels>
+    <labels>
+        <fullName>Option_Other</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Option Other</shortDescription>
+        <value>Option - Other</value>
+    </labels>
+    <labels>
+        <fullName>Option_WUBS</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Option WUBS</shortDescription>
+        <value>Option - WUBS</value>
+    </labels>
+    <labels>
+        <fullName>TypeFFC_WUBS</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Type Fixed Forward Contract WUBS</shortDescription>
+        <value>Fixed Forward Contract - WUBS</value>
+    </labels>
+    <labels>
+        <fullName>TypeIncoming</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Type Incoming</shortDescription>
+        <value>Forecast Inflow,Inflow - Other</value>
+    </labels>
+    <labels>
+        <fullName>WFCO</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>WFCO</shortDescription>
+        <value>Window Forward Contract - Other</value>
+    </labels>
+</CustomLabels>

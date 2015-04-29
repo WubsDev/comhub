@@ -5,7 +5,7 @@
 				<table border="0" cellpadding="0" cellspacing="0">
 					<tr>
 						<td class="pbTitle">
-							<h2 class="mainTitle">Input Beneficiary</h2></td>
+							<h2 class="mainTitle">Buyer/Supplier</h2></td>
 						<td class="pbButton" colspan="2" style="padding: 0px !important;">
 							<input value=" View " class="btn" name="view"
 								onclick="navigateToUrl('/managecash/apex/InputBeneficiaryDetailPage?Id={!inputRecord.Id}&retURL=%2Fmanagecash/apex/ManageCashInput',null,'view');"

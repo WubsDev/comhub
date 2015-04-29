@@ -48,7 +48,15 @@
 											value="{!inputRecord[f2]}">
 											<apex:SelectOptions value="{!CurrencyOptions}" />
 										</apex:SelectList>
-	                                	<apex:inputField value="{!inputRecord[f2]}" rendered="{!if(f2!='CurrencyIsoCode', true, false)}" styleclass="dataTable"/>
+										<apex:SelectList size="1" multiselect="false" rendered="{!if(f2=='Buy_Currency__c', true, false)}" 
+											value="{!inputRecord[f2]}">
+											<apex:SelectOptions value="{!CurrencyOptions}" />
+										</apex:SelectList>
+										<apex:SelectList size="1" multiselect="false" rendered="{!if(f2=='Sell_Currency__c', true, false)}" 
+											value="{!inputRecord[f2]}">
+											<apex:SelectOptions value="{!CurrencyOptions}" />
+										</apex:SelectList>
+	                                	<apex:inputField value="{!inputRecord[f2]}" rendered="{!if(AND(f2!='CurrencyIsoCode',f2!='Buy_Currency__c',f2!='Sell_Currency__c'), true, false)}" styleclass="dataTable"/>
 	                                </apex:outputPanel>
                                 </apex:PageBlockSectionItem>
                             </apex:repeat>
@@ -65,7 +73,15 @@
 											value="{!inputRecord[f3]}">
 											<apex:SelectOptions value="{!CurrencyOptions}" />
 										</apex:SelectList>
-										<apex:inputField value="{!inputRecord[f3]}" rendered="{!if(f3!='CurrencyIsoCode', true, false)}"
+										<apex:SelectList size="1" multiselect="false" rendered="{!if(f3=='Buy_Currency__c', true, false)}" 
+											value="{!inputRecord[f3]}">
+											<apex:SelectOptions value="{!CurrencyOptions}" />
+										</apex:SelectList>
+										<apex:SelectList size="1" multiselect="false" rendered="{!if(f3=='Sell_Currency__c', true, false)}" 
+											value="{!inputRecord[f3]}">
+											<apex:SelectOptions value="{!CurrencyOptions}" />
+										</apex:SelectList>
+										<apex:inputField value="{!inputRecord[f3]}" rendered="{!if(AND(f3!='CurrencyIsoCode',f3!='Buy_Currency__c',f3!='Sell_Currency__c'), true, false)}"
 		                      		 		styleclass="dataTable"/>
 		                      		</apex:outputPanel>
 								</apex:PageBlockSectionItem>
@@ -82,7 +98,15 @@
 											value="{!inputRecord[f4]}">
 											<apex:SelectOptions value="{!CurrencyOptions}" />
 										</apex:SelectList>
-										<apex:inputField value="{!inputRecord[f4]}" rendered="{!if(f4!='CurrencyIsoCode', true, false)}"
+										<apex:SelectList size="1" multiselect="false" rendered="{!if(f4=='Buy_Currency__c', true, false)}" 
+											value="{!inputRecord[f4]}">
+											<apex:SelectOptions value="{!CurrencyOptions}" />
+										</apex:SelectList>
+										<apex:SelectList size="1" multiselect="false" rendered="{!if(f4=='Sell_Currency__c', true, false)}" 
+											value="{!inputRecord[f4]}">
+											<apex:SelectOptions value="{!CurrencyOptions}" />
+										</apex:SelectList>
+										<apex:inputField value="{!inputRecord[f4]}" rendered="{!if(AND(f4!='CurrencyIsoCode',f4!='Buy_Currency__c',f4!='Sell_Currency__c'), true, false)}"
 		                      		 		styleclass="dataTable"/>
 		                      		</apex:outputPanel>
 								</apex:PageBlockSectionItem>

@@ -605,7 +605,7 @@ public without sharing class CashFlowComponentClone {
             {
                 addToOutflowOther(i, startDate);
             }
-            else if((i.Type__c == 'Option - Other' || i.Input_Type__c == 'Option - Other') || 
+            else if(//(i.Type__c == 'Option - Other' || i.Input_Type__c == 'Option - Other') || 
                 (i.Type__c == 'Fixed Forward Contract - Other' || i.Input_Type__c == 'Fixed Forward Contract - Other') ||
                 ( i.Type__c == 'Window Forward Contract - Other' || i.Input_Type__c == 'Window Forward Contract - Other')
              ) {

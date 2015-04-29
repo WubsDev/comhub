@@ -124,6 +124,7 @@
 												'CurrencyIsoCode', 'Currency',LabelMaps[f.fieldPath] )} </span>
 											<apex:outputpanel >
 												<nobr>
+												
 													<apex:outputpanel rendered="{!if(f == 'CurrencyIsoCode', true,false )}">
 														<c:RequiredBlockComponent isRequired="{!(f.required || f.dbrequired)}">
 															<apex:SelectList size="1" multiselect="false"
@@ -132,11 +133,30 @@
 															</apex:SelectList>
 														</c:RequiredBlockComponent>
 													</apex:outputpanel>
+													
+													<apex:outputPanel rendered="{!if(f =='Buy_Currency__c', true, false)}">
+														<c:RequiredBlockComponent isRequired="true">
+															<apex:SelectList size="1" multiselect="false" value="{!inputOther[f]}">  
+											    	    		<apex:SelectOptions value="{!InputCurrency}" />
+											        		</apex:SelectList>
+											        	</c:RequiredBlockComponent>
+													</apex:outputPanel>
+													
+													<apex:outputPanel rendered="{!if(f =='Sell_Currency__c', true, false)}">
+														<c:RequiredBlockComponent isRequired="true">
+															<apex:SelectList size="1" multiselect="false" value="{!inputOther[f]}">  
+											    	    		<apex:SelectOptions value="{!InputCurrency}" />
+											        		</apex:SelectList>
+											        	</c:RequiredBlockComponent>
+													</apex:outputPanel>
+													
 													<apex:outputpanel rendered="{!if(f != 'CurrencyIsoCode', true,false )}">
 														<c:RequiredBlockComponent isRequired="{!(f.required || f.dbrequired)}">
-															<apex:outputpanel rendered="{!if(f != 'Input_Beneficiary__c', true,false )}">
+														
+															<apex:outputpanel rendered="{!IF(AND(f != 'Input_Beneficiary__c', AND(f !='Buy_Currency__c', f !='Sell_Currency__c')),true,false)}">
 																<apex:inputField value="{!input[f]}" id="bene1"  />
 															</apex:outputpanel>
+													
 															<apex:outputpanel rendered="{!if(f == 'Input_Beneficiary__c', true,false )}">
 																<table border="0" style="border-bottom:0px;padding: 0px 0px 0px 0px;">
 																	<tr><td style="border-bottom:0px;padding: 0px 0px 0px 0px;">
@@ -159,6 +179,7 @@
 														<apex:selectOption value="{!InputCurrency}"
 																	rendered="{!if(f == 'CurrencyIsoCode', true,false )}" />
 													</apex:outputpanel>
+													
 												</nobr>
 											</apex:outputpanel>
 										</apex:PageBlockSectionItem>
@@ -168,7 +189,9 @@
 												<apex:inputField value="{!inputOther[f]}" />
 											</c:RequiredBlockComponent>
 										</apex:PageBlockSectionItem>
+										
 									</apex:repeat>
+									
 									<apex:PageBlockSectionItem rendered="{!fieldset != null}">								
 										<apex:outputLabel value="Attach Reference Document" />
 										<apex:outputPanel >

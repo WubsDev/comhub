@@ -1,4 +1,4 @@
-<apex:page controller="AddInputBeneficiaryCtrl"  title="Add Input Beneficiary" showHeader="false">
+<apex:page controller="AddInputBeneficiaryCtrl"  title="Add Buyer/Supplier" showHeader="false">
 	<apex:composition template="ManageCashCommunityTemplate">
 		<apex:define name="headerHTML">
 		<!-- Blank Header -->	 
@@ -27,7 +27,7 @@
 					return false;
 		    	}
 		    </script>
-			<apex:pageBlock title="Add New Input Buyer/Supplier " >
+			<apex:pageBlock title="Add New Buyer/Supplier " >
 				<apex:pageMessages id="errors" ></apex:pageMessages>
 			
 		        <apex:PageBlockSection columns="2" collapsible="false" id="collapse">

@@ -34,7 +34,7 @@
         }
         
 		function validateTransactionType(){
-			
+			debugger;
             //alert(document.getElementById('pg:frm:AccountTabPanel:j_id1:tabAccount:j_id5:pBlock1:pbSec1:pbSec4:transTypeId').value);
 		    if($('select[id$="transTypeId"]')==null || $('select[id$="transTypeId"]').size()==0){
 		    	updateCSVSample('Invoice');
@@ -52,8 +52,26 @@
 			}
 			return true;
 		}
-    
+
+		function validateTransactionTypeOnly(){
+			debugger;
+            //alert(document.getElementById('pg:frm:AccountTabPanel:j_id1:tabAccount:j_id5:pBlock1:pbSec1:pbSec4:transTypeId').value);
+		    if($('select[id$="transTypeId"]')==null || $('select[id$="transTypeId"]').size()==0){
+		    }else{
+			    if($('select[id$="transTypeId"]').val() != '' && $('select[id$="transTypeId"]').val() != 'Select' ){
+	            }else{
+	              alert('Please select a transaction type');   
+	                $('input[id$="manualfile"][type="file"]')[0].value = null;
+	                //document.getElementById('pg:frm:pBlock1:pbSec1:j_id54:cmp:file:inputFile:file').value = null;
+	                return false;
+	                
+				}
+			}
+			return true;
+		}
+
     	function validateTransactionTypeLink(){
+    		debugger;
             //alert(document.getElementById('pg:frm:AccountTabPanel:j_id1:tabAccount:j_id5:pBlock1:pbSec1:pbSec4:transTypeId').value);
 		    if($('select[id$="transTypeId"]')==null || $('select[id$="transTypeId"]').size()==0){
 		    	updateCSVSample('Invoice');
@@ -61,7 +79,7 @@
 		    }else{
 			    if($('select[id$="transTypeId"]').val() != '' 
 	               	&& $('select[id$="transTypeId"]').val() != 'Select'){
-	                window.location.href = $('a[id$="downloadLink1"]').attr('href');
+	               	window.location.href = $('a[id$="downloadLink1"]').attr('href');
 	            }else{
 	            	try{
 		              	alert('Please select a transaction type');
@@ -85,7 +103,7 @@
 					Upload
 					<apex:inputFile value="{!attachment.body}"
 						filename="{!attachment.name}" id="manualfile"
-						onchange="validateTransactionType();" onclick="return validateTransactionType();" />
+						onchange="validateTransactionType();" onclick="return validateTransactionTypeOnly();" />
 					<apex:actionfunction name="upload1" action="{!uploadInput}" />
 				</nobr></span>
 			<script>

@@ -45,16 +45,20 @@
 				                </apex:column>
 						<apex:column rendered="{!if(FieldLable.FieldPath=='Buy_Currency__c', true, false)}">
 	              			<apex:facet name="header" >{!csvCTL.fieldLabels[FieldLable.FieldPath]}</apex:facet>
-	              			<apex:SelectList size="1" multiselect="false" value="{!c.BuyCurrency}">  
-			    	    		<apex:SelectOptions value="{!csvCTL.CurrencyOptions}" />
-			        		</apex:SelectList>   
+	              			<c:RequiredBlockComponent isRequired="true">
+		              			<apex:SelectList size="1" multiselect="false" value="{!c.BuyCurrency}">  
+				    	    		<apex:SelectOptions value="{!csvCTL.CurrencyOptions}" />
+				        		</apex:SelectList>   
+				        	</c:RequiredBlockComponent>
                        	</apex:column> 
                        	
                        	<apex:column rendered="{!if(FieldLable.FieldPath=='Sell_Currency__c', true, false)}">
 	              			<apex:facet name="header" >{!csvCTL.fieldLabels[FieldLable.FieldPath]}</apex:facet>
-	              			<apex:SelectList size="1" multiselect="false" value="{!c.SellCurrency}">  
-			    	    		<apex:SelectOptions value="{!csvCTL.CurrencyOptions}" />
-			        		</apex:SelectList>   
+	              			<c:RequiredBlockComponent isRequired="true">
+		              			<apex:SelectList size="1" multiselect="false" value="{!c.SellCurrency}">  
+				    	    		<apex:SelectOptions value="{!csvCTL.CurrencyOptions}" />
+				        		</apex:SelectList>   
+				        	</c:RequiredBlockComponent>
                        	</apex:column>     
                        	
                       	<apex:column rendered="{!if((FieldLable.FieldPath=='Amount__c' && csvCTL.fieldSetName=='Option_Other'), true, false)}">

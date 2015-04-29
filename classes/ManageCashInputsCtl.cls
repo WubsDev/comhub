@@ -645,6 +645,15 @@ public without sharing class ManageCashInputsCtl {
 		return lstCurrency;
     }
     
+    
+    public List<SelectOption> getbuyAndSellCurrency(){
+    	list<Selectoption> lstCurrency = new list<Selectoption>();
+    	lstCurrency.add(new Selectoption('Select','Select'));
+    	lstCurrency.addAll(Utility.picklistValues('Input__c', 'Buy_Currency__c'));
+		return lstCurrency;
+    }
+    
+    
     public void saveBeneficiary() {
         if(ib.Name != '['+System.Label.Add_New+']') {
             insert ib;

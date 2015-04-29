@@ -49,7 +49,7 @@
 									<div style="padding-left:30px;">Invoice Amount Due</div>
 								</th>
 								<th scope="col" colspan="1" >
-									<div >Beneficiary</div>
+									<div >Buyer/Supplier</div>
 								</th>
 								<th scope="col" colspan="1" >
 									<div >Status</div>

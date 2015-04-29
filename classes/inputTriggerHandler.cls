@@ -119,19 +119,16 @@ public class inputTriggerHandler{
     
     public void updateCurrencyAndSettlementDate(List<Input__c> inputList){
     	for(Input__c input : inputList){
-    		if(input.Input_Type__c == 'Option - Other' || input.Input_Type__c == 'Option - WUBS'){
+    		if(input.Input_Type__c == 'Option - Other' || input.Input_Type__c == 'Option - WUBS'
+    				|| input.Input_Type__c == 'Window Forward Contract - Other' || input.Input_Type__c == 'Fixed Forward Contract - Other'){
     			if(input.Buy_Currency__c != null){
-    				system.debug('------ashsih---before---------'+input);
     				input.CurrencyIsoCode = input.Buy_Currency__c;
-    				system.debug('------ashsih---af-ter--------'+input);
     			}
     		}
     		if(input.Input_Type__c == 'Window Forward Contract - Other'){
     			if(input.Window_End_Date__c != null){
-    				system.debug('------ashsih---before---------'+input);
     				input.Transaction_Date__c = input.Window_End_Date__c;
-    				system.debug('------ashsih---af-ter--------'+input);
-    			}
+    			}    			
     		}
     	}
     }

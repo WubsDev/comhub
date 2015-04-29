@@ -146,7 +146,7 @@ global without sharing class InsightsAndInputTabCtrl {
                 }
             }
             if(!Utility.isValidSfdcId(input.Input_Beneficiary__c) ) {
-                 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Beneficiary Should not be Blank'));
+                 ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Supplier/Buyer Should not be Blank'));
                  hasError= true;
             }
             

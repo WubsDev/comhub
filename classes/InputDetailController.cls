@@ -146,7 +146,7 @@ public without sharing class InputDetailController {
 
   	// Get fields from fieldset
 	public List<Schema.FieldSetMember> getFields() {
-		system.debug('**********fieldset 1:'+fieldset);
+
         return Schema.SObjectType.Input__c.fieldSets.getMap().get(fieldset).getFields();
     }
     // GetInvoice with all the fields in the fieldset

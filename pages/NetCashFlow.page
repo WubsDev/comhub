@@ -11,7 +11,25 @@
 <!--Display the top 5 invoices   -->  
 
         <apex:form >
+        <script>
+        		$( document ).ready(function(){
+					$('.pbHeader .pbTitle .mainTitle').append("<img src='/s.gif' data-toggle='tooltip' data-placement='bottom' class='imgclass' title='{!$Label.Help_Text_Dashboard_netcash}' style='height: 21px; width: 18px;' />");
+					var abc = $('#addNewInputLink');
+					if($(abc) != undefined || $(abc) != null){
+		                //var cd = $(abc).attr('onclick');
+					    //$(abc).parent().parent().parent().attr('href', cd);
+					}
+				});
+				
+        </script>
             <style>
+            .imgclass{  
+	            background-image: url(/img/help/helpOrbs.gif);  
+	            background-repeat: no-repeat;  
+	            width: 16px;  
+	            height: 15px;  
+	            background-position: right; 
+	        }  
             .center {
               padding-left:200px;
               position:absolute;
@@ -56,7 +74,7 @@
                             <a href ='{!$Site.Prefix}/apex/InsightsAndInputTab?currency={!selectedCurrency}' target='_parent'>       
                                     <div id="chartBlock" style="height: 300px;width:100%;background-size: cover;">
                                         <center>
-                                        <p id="addNewInputLink" onclick="window.open('{!$Site.Prefix}/apex/ManageCashInput?currency={!selectedCurrency}','_top',false);" style="display:none; padding-top:13%; font-size: 18px;" >
+                                        <p id="addNewInputLink" onclick="{!$Site.Prefix}/apex/ManageCashInput?currency={!selectedCurrency}" style="display:none; padding-top:13%; font-size: 18px;" >
                                             Start Adding Inputs
                                         </p>
                                         </center>
@@ -151,6 +169,12 @@
                  document.getElementById('chartBlock').style.backgroundSize= "100%";
                  document.getElementById('addNewInputLink').style.display = 'block';
                  document.getElementById('addNewInputLink').style.height = '100%;';
+					var abc = $('#addNewInputLink');
+					if($(abc) != undefined || $(abc) != null){
+		                var cd = $(abc).attr('onclick');
+					    $(abc).parent().parent().parent().attr('href', cd);
+					}
+                 
                  
              }
         }
@@ -227,6 +251,7 @@
                   });
                   
              } else{
+             /*
                  var chartDiv = document.getElementById('chartBlockByCurrency');
                  chartDiv.style.backgroundColor ="#eee";
                  chartDiv.style.color= "#fcd40d";
@@ -235,7 +260,7 @@
                  chartDiv.style.height = '200px';
                  chartDiv.style.textAlign = 'center';
                  chartDiv.style.vAlign = 'middle';
-                 chartDiv.innerHTML = '<br/>No Data To Display';
+                 chartDiv.innerHTML = '<br/>No Data To Display';*/
              }
         }       
        // Load the Visualization API and the piechart package.
@@ -266,4 +291,9 @@
           
           window.addEventListener("resize", initCharts);
 </script>                     
+<script type="text/javascript">
+				$(function () {
+				  $('[data-toggle="tooltip"]').tooltip()
+				});
+			</script>
 </apex:page>

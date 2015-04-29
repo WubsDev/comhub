@@ -127,7 +127,7 @@ public without sharing class InvoicesAndPayments {
         selectedStatusSet = new Set<String>();
         
         strQuery = 'Select id,Name, Due_Date__c, Status__c,Amount__c,Beneficiary_Contact__c,CurrencyIsoCode, OwnerId, Input_Beneficiary__c,Input_Beneficiary__r.name FROM Invoice__c' ;
-        
+       
         if (selectedStatus == 'All') {
             selectedStatusSet.add('Pending Approval (Open)');
             selectedStatusSet.add('Approved');

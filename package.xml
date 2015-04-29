@@ -149,6 +149,29 @@
         <name>CustomField</name>
     </types>
     <types>
+        <members>FFCO</members>
+        <members>Forecast_Incoming</members>
+        <members>Forecast_Inflow</members>
+        <members>Forecast_Outflow</members>
+        <members>Forecast_Outgoing</members>
+        <members>Help_Text_Csv_Upload</members>
+        <members>Help_Text_Dashboard_netcash</members>
+        <members>Help_Text_Manual_Inputs</members>
+        <members>Help_Text_Manual_Invoice</members>
+        <members>Help_Text_Summary_Netcash</members>
+        <members>InputHedging</members>
+        <members>InputViewPagesize</members>
+        <members>InsightsAndInputsTab</members>
+        <members>Intro_Video_youtube_Id</members>
+        <members>InvoicesAndPaymentsTab</members>
+        <members>Option_Other</members>
+        <members>Option_WUBS</members>
+        <members>TypeFFC_WUBS</members>
+        <members>TypeIncoming</members>
+        <members>WFCO</members>
+        <name>CustomLabel</name>
+    </types>
+    <types>
         <members>Forward_Contracts__c</members>
         <members>Historical_Payments__c</members>
         <members>Holding_Balance__c</members>

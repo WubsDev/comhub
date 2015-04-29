@@ -18,7 +18,7 @@
         </style>
         <apex:pageMessages id="msg"></apex:pageMessages>
         <apex:outputPanel id="advPanel" rendered="{!showAdvanced}">
-        <table width="100%" align="left" border="1" height="100%">
+        <table width="100%" align="left" border="1" height="100%" class="table">
             <tr>
                 <td style="width: 228px;">{!$Label.Type}</td>
                 <apex:repeat value="{!months}" var="m">
@@ -514,6 +514,70 @@
 	            </tr>
             </apex:outputpanel>
             </apex:outputPanel>
+            
+            <apex:outputPanel layout="none" id="simpleBaseEqiv1" rendered="{!NOT(isTotal)}">
+                <tr>
+                    <td>
+                        &nbsp;
+                    </td>
+                    <apex:repeat value="{!months}" var="m">
+                        <td>&nbsp;</td>
+                    </apex:repeat>
+                </tr>
+                
+                <!--  Blank Row Headding -->
+                <tr style="background: #6B747B;">
+                    <td style="background: #6B747B;">
+                        &nbsp;
+                    </td>
+                     <td colspan="{!months.size}" style="background: #6B747B;text-align: center;color: white;"><b>Amounts Converted in {!defaultCode}</b></td>
+                </tr>                
+            
+                <tr>
+                    <td class="leftTd">
+                        {!UserCurrency} {!$Label.Equivalent_Todays_Rate}
+                        <apex:outputText value="{0, number, ###,###,##0.0000}" style="color:{!IF(currentRate<0,'red','black')}">
+                            <apex:param value="{!conversionRate}"/> <!-- {!currentRate} -->
+                        </apex:outputText>
+                    </td>
+                    <apex:repeat value="{!convertedRate}" var="conRate">
+                    <td>
+                        <b>
+                            <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(conRate<0,'red','black')}">
+                                <apex:param value="{!conRate}"/>
+                            </apex:outputText>
+                        </b>
+                    </td>
+                    </apex:repeat>
+                </tr>
+            </apex:outputPanel>
+			
+			<apex:outputPanel layout="none" id="VolatilityImpact1" rendered="{!NOT(isTotal)}">
+                <tr id="VolatilityImpactRow1">
+                    <td class="leftTd">
+                        <b><nobr>Volatility Impact in Home Currency</nobr></b> <div style="margin-top:10px;">&nbsp;</div>
+                        
+                        <div id="slider-range-min1"></div> 
+                        <div style="margin-top:-6px;">&nbsp;</div>
+                        <div style="text-align: center;"> 
+                            <input type="text" id="sliderAmount1" readonly="readonly" style="border: 0; color: #f6931f; font-weight: bold;text-align: center;" />
+                        </div> <div style="margin-top:-5px;">&nbsp;</div>
+                        <span style="float: left;">
+                        Depreciates
+                        &nbsp;&nbsp;&nbsp; <b>{!cur} </b> &nbsp;&nbsp;&nbsp; 
+                        Appreciates
+                        </span>                        
+                    </td>
+                    <apex:repeat value="{!convertedRate}" var="conRate">
+                    <td>
+                        <b>
+                            <input type="hidden" value="{!conRate}"/>
+                            <span>0</span> 
+                        </b>
+                    </td>
+                    </apex:repeat>
+                </tr>
+            </apex:outputPanel>          
         </table>
         </apex:outputPanel> 
         
@@ -891,7 +955,42 @@
         </div>
 <script type="text/javascript">
  $(function() {
-   $( "#slider-range-min" ).slider({
+   
+   $( "#slider-range-min1" ).slider({
+   
+     range: "min",
+     value: 0,
+     min: -10,
+     step: .5,
+     max: 10,
+     slide: function( event, ui ) {
+     
+     	$( "#sliderAmount1" ).val( ui.value + "%"); 
+        $('.table #VolatilityImpactRow1').each(function(i){
+            $(this).children('td').each(function(j){
+                 if(j != 0) {
+                    var volatilityImpact = parseFloat($(this).find("input").val());
+                    volatilityImpact = (volatilityImpact * (ui.value / 100));
+                    if(volatilityImpact % 1 === 0) {
+                        $(this).find("span").html(formatToCurrency(Math.round(Math.abs(volatilityImpact))));  
+                    } else {
+                        $(this).find("span").html(formatToCurrency(Math.round(Math.abs(volatilityImpact.toFixed(2)))));
+                    } 
+                    if(ui.value > 0) {
+                        $(this).find("span").css('color','red');
+                    } else {
+                        $(this).find("span").css('color','black');
+                    }                   
+                 } 
+            });
+        });       
+     }
+   });
+   $( "#sliderAmount1" ).val( $( "#slider-range-min1" ).slider( "value" )  + "%" );
+ });
+ 
+ $(document).ready(function(){
+ 	$( "#slider-range-min" ).slider({
      range: "min",
      value: 0,
      min: -10,
@@ -920,7 +1019,7 @@
      }
    });
    $( "#sliderAmount" ).val( $( "#slider-range-min" ).slider( "value" )  + "%" );
- });
+ })
  
  function formatToCurrency(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");

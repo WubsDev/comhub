@@ -580,32 +580,28 @@
                     </apex:column-->
                     
                     <apex:column >
-						  <apex:facet name="header">
+						  <apex:facet name="header"> 
                             <apex:commandLink value="Buy Currency {!IF(hedgingPgCtl.sortField=='Buy_Currency__c',IF(hedgingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!togglehedgingSort}" status="status" rerender="Hedge"> 
                                 <apex:param name="sortField" value="Buy_Currency__c" assignTo="{!hedgingPgCtl.sortField}"/> 
                             </apex:commandLink>
                             </apex:facet>
-                    	<apex:outputField value="{!o.input.Buy_Currency__c}" >
-                        	<apex:inlineEditSupport showOnEdit="saveButtonTB,cancelButtonTB,saveButtonT,cancelButtonT"
-                 				event="ondblclick" rendered="{!o.isOwner}"
-                    			changedStyleClass="updateButton" resetFunction="resetInlineEdit"/>
-                        </apex:outputField> 
-                        <apex:outputText value="" rendered="{!!OR(o.input.Input_Type__c == $Label.FFCO, o.input.Input_Type__c == $Label.WFCO, o.input.Input_Type__c == $Label.Option_Other, o.input.Input_Type__c == $Label.Option_WUBS)}" />
-                        
+                            <apex:outputText value="{!o.input.Buy_Currency__c}" rendered="{!AND(o.input!=null, NOT(o.isOwner))}" />
+                            <apex:selectList value="{!o.input.Buy_Currency__c}" multiselect="false" size="1" onchange="showSaveBtns();" rendered="{!AND(o.input!=null, o.isOwner)}">
+				           		<apex:selectOptions value="{!buyAndSellCurrency}" />
+				       		</apex:selectList>
+                        <apex:outputText value="" rendered="{!!OR(o.input.Input_Type__c == $Label.FFCO, o.input.Input_Type__c == $Label.WFCO, o.input.Input_Type__c == $Label.Option_Other, o.input.Input_Type__c == $Label.Option_WUBS)}" />                        
                     </apex:column>
-                    
+                                        
                     <apex:column >
 						  <apex:facet name="header">
                             <apex:commandLink value="Sell Currency {!IF(hedgingPgCtl.sortField=='Sell_Currency__c',IF(hedgingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!togglehedgingSort}" status="status" rerender="Hedge"> 
                                 <apex:param name="sortField" value="Sell_Currency__c" assignTo="{!hedgingPgCtl.sortField}"/> 
                             </apex:commandLink>
                             </apex:facet>
-<!--                             rendered="{!OR(o.input.Input_Type__c == $Label.FFCO, o.input.Input_Type__c == $Label.WFCO, o.input.Input_Type__c == $Label.Option_Other, o.input.Input_Type__c == $Label.Option_WUBS)}" -->
-                    	<apex:outputField value="{!o.input.Sell_Currency__c}" rendered="{!o.isOwner}">
-                        	<apex:inlineEditSupport showOnEdit="saveButtonTB,cancelButtonTB,saveButtonT,cancelButtonT"
-                 				event="ondblclick" rendered="{!o.isOwner}"
-                    			changedStyleClass="updateButton" resetFunction="resetInlineEdit"/>
-                        </apex:outputField> 
+                            <apex:outputText value="{!o.input.Sell_Currency__c}" rendered="{!AND(o.input!=null, NOT(o.isOwner))}" />
+                            <apex:selectList value="{!o.input.Sell_Currency__c}" multiselect="false" size="1" onchange="showSaveBtns();" rendered="{!AND(o.input!=null, o.isOwner)}">
+				           		<apex:selectOptions value="{!buyAndSellCurrency}" />
+				       		</apex:selectList>
                         <apex:outputText value="" rendered="{!!OR(o.input.Input_Type__c == $Label.FFCO, o.input.Input_Type__c == $Label.WFCO, o.input.Input_Type__c == $Label.Option_Other, o.input.Input_Type__c == $Label.Option_WUBS)}" />
                     </apex:column>
                     

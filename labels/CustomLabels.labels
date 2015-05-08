@@ -50,6 +50,14 @@
         <value>Real time snapshot of exposure. Drill down to see each currency you trade in.</value>
     </labels>
     <labels>
+        <fullName>Help_Text_Insights_Volatility</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Help Text Insights Volatility</shortDescription>
+        <value>Insights that help you understand risk using a
+high‑impact simulation of volatility</value>
+    </labels>
+    <labels>
         <fullName>Help_Text_Manual_Inputs</fullName>
         <language>en_US</language>
         <protected>false</protected>

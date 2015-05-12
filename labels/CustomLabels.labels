@@ -40,7 +40,7 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Help Text Csv Upload</shortDescription>
-        <value>Capture file and image upload on mass with a simple drag and drop</value>
+        <value>Simply drag and drop .csv files to mass upload data</value>
     </labels>
     <labels>
         <fullName>Help_Text_Dashboard_netcash</fullName>
@@ -54,29 +54,28 @@
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Help Text Insights Volatility</shortDescription>
-        <value>Insights that help you understand risk using a
-high‑impact simulation of volatility</value>
+        <value>Insights that help you assess risk and protect your profit</value>
     </labels>
     <labels>
         <fullName>Help_Text_Manual_Inputs</fullName>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Help Text Manual Inputs</shortDescription>
-        <value>Simplified invoice, file and image upload</value>
+        <value>Manually enter data and attach reference documents along with your inputs</value>
     </labels>
     <labels>
         <fullName>Help_Text_Manual_Invoice</fullName>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Help Text Manual Invoice</shortDescription>
-        <value>Simplified invoice, file and image upload</value>
+        <value>Manually enter data and attach reference documents along with your invoice</value>
     </labels>
     <labels>
         <fullName>Help_Text_Summary_Netcash</fullName>
         <language>en_US</language>
         <protected>false</protected>
         <shortDescription>Help Text Summary Netcash</shortDescription>
-        <value>View your net Cash flow exposure, by currency and see the impact currency volatility has to your bottom line</value>
+        <value>View your Net Cash Flow by currency and simulate currency volatility impact</value>
     </labels>
     <labels>
         <fullName>InputHedging</fullName>

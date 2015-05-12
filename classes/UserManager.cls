@@ -8,28 +8,34 @@
 //
 public with sharing class UserManager {
 	public static final String EMAIL_TEMPLATE = 'ManageCashWelcomeEmail';
+	public static Set<Id> commProfileIdSet = new Set<Id>();
 	
 	public static void updateFederationIdBI(List<User> userList){
-		for(User tUser : userList){
-			if(tUser.Username != null && tUser.FederationIdentifier == null){
+		getProfileId();
+		for(User tUser : userList){			
+			if(commProfileIdSet.contains(tUser.ProfileId) && tUser.Username != null && tUser.FederationIdentifier == null){
 				tUser.FederationIdentifier = tUser.Username;
 			}
+			/*if(tUser.LocaleSidKey != null){
+				tUser.Region__c = tUser.LocaleSidKey;
+			}*/
 		}
 	}
 	
 	public static void updateFederationIdBU(List<User> userList, Map<Id, User> userMap){
+		getProfileId();
 		for(User tUser : userList){
-			if((tUser.Username != null && tUser.FederationIdentifier == null)||
-					( tUser.Username != null && tUser.Username != userMap.get(tUser.Id).Username)){
+			if(commProfileIdSet.contains(tUser.ProfileId) && ((tUser.Username != null && tUser.FederationIdentifier == null)||
+					( tUser.Username != null && tUser.Username != userMap.get(tUser.Id).Username))){
 				tUser.FederationIdentifier = tUser.Username;
-			}
+			}			
 		}
 	}
 	
 	
 	public static void updateDisclaimer(List<User> userList){
 		system.debug('***updateDisclaimer 1:');
-		Map<String, Email_Disclaimer__c> emailDisclaimerMap = new Map<String, Email_Disclaimer__c>();
+		/*Map<String, Email_Disclaimer__c> emailDisclaimerMap = new Map<String, Email_Disclaimer__c>();
 		for(Email_Disclaimer__c emailDisc : [SELECT Name, Disclaimer__c FROM Email_Disclaimer__c LIMIT 999]){
 			emailDisclaimerMap.put(emailDisc.Name, emailDisc);
 		}
@@ -45,7 +51,7 @@ public with sharing class UserManager {
 				tUser.Disclaimer__c = emailDisclaimerMap.get(tUser.Country).Disclaimer__c;
 				system.debug('***updateDisclaimer 3.2:'+userList);
 			}
-		}
+		}*/
 		system.debug('***updateDisclaimer 3:'+userList);
 	}
 	
@@ -103,4 +109,12 @@ public with sharing class UserManager {
 			}
 		}
 	}*/
+	
+	
+	public static void getProfileId(){
+		String prof = '%'+Label.Community_Profile+'%';
+		for(Profile pf : [SELECT Id from Profile WHERE Name like : prof]){
+			commProfileIdSet.add(pf.Id);
+		}
+	}
 }

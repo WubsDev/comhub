@@ -148,4 +148,12 @@
         <shortDescription>WFCO</shortDescription>
         <value>Window Forward Contract - Other</value>
     </labels>
+    <labels>
+        <fullName>Community_Profile</fullName>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Community Profile</shortDescription>
+        <value>CCT</value>
+    </labels>
+
 </CustomLabels>

@@ -79,7 +79,7 @@
 				<apex:pageBlock id="pBlock1">
 					<apex:PageBlockSection columns="2" id="pbSec1">
 						<apex:facet name="header">
-							<apex:outputtext value="{!if(sourcePage!='ManageCashInput', inputLink, 'Input Wizard')}" escape="false" />
+                            <apex:outputtext value="{!if(sourcePage!='ManageCashInput', 'Input Wizard', 'Input Wizard')}" escape="false" />
 						</apex:facet>				
 						<apex:pageBlock id="pBlock2">
 							<apex:outputpanel >
@@ -121,11 +121,11 @@
 									<apex:repeat value="{!if(fieldset != null, $ObjectType.Input__c.FieldSets[fieldset], null)}" var="f" rendered="{!fieldset != null}">
 										<apex:PageBlockSectionItem >
 											<span class="label" style="align: right"> {!if(f ==
-												'CurrencyIsoCode', 'Currency',LabelMaps[f.fieldPath] )} </span>
+                                                'Custom_Currency__c', 'Currency',LabelMaps[f.fieldPath] )} </span>
 											<apex:outputpanel >
 												<nobr>
 												
-													<apex:outputpanel rendered="{!if(f == 'CurrencyIsoCode', true,false )}">
+                                                    <apex:outputpanel rendered="{!if(f == 'Custom_Currency__c', true,false )}">
 														<c:RequiredBlockComponent isRequired="{!(f.required || f.dbrequired)}">
 															<apex:SelectList size="1" multiselect="false"
 																value="{!input[f]}">
@@ -136,7 +136,7 @@
 													
 													<apex:outputPanel rendered="{!if(f =='Buy_Currency__c', true, false)}">
 														<c:RequiredBlockComponent isRequired="true">
-															<apex:SelectList size="1" multiselect="false" value="{!inputOther[f]}">  
+                                                            <apex:SelectList size="1" multiselect="false" value="{!input[f]}">  
 											    	    		<apex:SelectOptions value="{!InputCurrency}" />
 											        		</apex:SelectList>
 											        	</c:RequiredBlockComponent>
@@ -144,13 +144,13 @@
 													
 													<apex:outputPanel rendered="{!if(f =='Sell_Currency__c', true, false)}">
 														<c:RequiredBlockComponent isRequired="true">
-															<apex:SelectList size="1" multiselect="false" value="{!inputOther[f]}">  
+                                                            <apex:SelectList size="1" multiselect="false" value="{!input[f]}">  
 											    	    		<apex:SelectOptions value="{!InputCurrency}" />
 											        		</apex:SelectList>
 											        	</c:RequiredBlockComponent>
 													</apex:outputPanel>
 													
-													<apex:outputpanel rendered="{!if(f != 'CurrencyIsoCode', true,false )}">
+                                                    <apex:outputpanel rendered="{!if(f != 'Custom_Currency__c', true,false )}">
 														<c:RequiredBlockComponent isRequired="{!(f.required || f.dbrequired)}">
 														
 															<apex:outputpanel rendered="{!IF(AND(f != 'Input_Beneficiary__c', AND(f !='Buy_Currency__c', f !='Sell_Currency__c')),true,false)}">
@@ -177,7 +177,7 @@
 															</apex:outputpanel>
 														</c:RequiredBlockComponent>
 														<apex:selectOption value="{!InputCurrency}"
-																	rendered="{!if(f == 'CurrencyIsoCode', true,false )}" />
+                                                                    rendered="{!if(f == 'Custom_Currency__c', true,false )}" />
 													</apex:outputpanel>
 													
 												</nobr>
@@ -261,6 +261,11 @@
 							</apex:actionRegion>
 						</apex:outputPanel>
 					</apex:PageBlockSection>
+                    
+                    <!-- Net Flow Start -->
+                    </apex:pageBlock>
+            </apex:outputPanel>
+            </apex:outputPanel>
 					<script>    
 						function querystring(key) {
 						   var re=new RegExp('(?:\\?|&)'+key+'=(.*?)(?=&|$)','gi');
@@ -272,9 +277,5 @@
 		  	            	twistSection(document.getElementById(pbSec1Id).getElementsByTagName('img')[0])
 			            }
 			      					</script>
-					<!-- Net Flow Start -->
-					</apex:pageBlock>
-			</apex:outputPanel>
-			</apex:outputPanel>
 			
 </apex:component>

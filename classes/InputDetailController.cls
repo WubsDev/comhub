@@ -18,6 +18,7 @@ public without sharing class InputDetailController {
 	public Boolean isWindow {get; set;}
 	public String selectedTranscation{get;set;}
 	public String fieldset ;
+	public String returnURL {get; set;}
 	 //added line for test edit permissions
     public boolean canEdit{get;set;}
 
@@ -28,6 +29,7 @@ public without sharing class InputDetailController {
 		isFixed = false;
 		isWindow = false;
 		inputOptionRecord = new Input__c();
+		returnURL = ApexPages.currentPage().getParameters().get('retURL');
 		if(ApexPages.currentPage().getParameters().get('id') != null && ApexPages.currentPage().getParameters().get('id') != ''){
 		 	for(Input__C tempInput : [SELECT id, Input_Type__c, Type__c, Option_Protection_Obligation__c from Input__c WHERE Id =: ApexPages.currentPage().getParameters().get('id')]){
 		 		inputRecord = tempInput;
@@ -111,8 +113,8 @@ public without sharing class InputDetailController {
 	 }
 	 public Pagereference customCancel() {
 	 	try{
-	 		if(system.currentPageReference().getParameters().get('retURL') != null) {
-	 			return new Pagereference(system.currentPageReference().getParameters().get('retURL'));
+	 		if(returnURL != null) {
+	 			return new Pagereference(returnURL);
 	 		}
 	 		return Page.ManageCashInput;
 	 	} catch(Exception ex) {
@@ -123,7 +125,7 @@ public without sharing class InputDetailController {
 	 public List<SelectOption> CurrencyOptions{
     	get{
     		if(CurrencyOptions==null || CurrencyOptions.size()==0){
-        		CurrencyOptions= Utility.picklistValues('Input__c','CurrencyIsoCode', true);
+        		CurrencyOptions= Utility.picklistValues('Input__c','Custom_Currency__c', true);
     		}
     		return CurrencyOptions;
     	}
@@ -163,7 +165,14 @@ public without sharing class InputDetailController {
     
     
     public PageReference save(){
+    	boolean hasError = false;
     	try{
+    		hasError = Utility.fieldSetValidation(inputRecord,fieldset, inputRecord.Input_Type__c, true); 
+    		if(!hasError) {
+		    	if(ApexPages.hasMessages(ApexPages.Severity.Error)){
+		    		hasError = true;
+		    		return ApexPages.currentPage();
+		    	}
 	    	if(inputRecord.Input_Type__c == 'Option - Other' || inputRecord.Input_Type__c == 'Option - WUBS'){
 	    		inputOptionRecord.Transaction_Date__c = inputRecord.Transaction_Date__c;
 	    		inputOptionRecord.Buy_Currency__c = inputRecord.Buy_Currency__c;
@@ -173,15 +182,15 @@ public without sharing class InputDetailController {
 	    		update inputOptionRecord;
 	    	}
 	    	update inputRecord;
-	    	
-	    	if(system.currentPageReference().getParameters().get('retURL') != null) {
-	 			return new Pagereference(system.currentPageReference().getParameters().get('retURL'));
+		    	if(returnURL != null) {
+		 			return new Pagereference(returnURL);
 	 		}
 	 		return Page.ManageCashInput;
     	}
+		    	return ApexPages.currentPage();
+    	}
     	catch(DMLException dmlEx){
-    		ApexPages.addMessages(dmlEx);
-    		return null;
+    		return ApexPages.currentPage();
     	}
     	
     }

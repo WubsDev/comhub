@@ -40,7 +40,7 @@
 	            <br/>
 	            <a href="javascript:topPersonalSetup();" class="menuButtonMenuLink" title="My Settings">My Settings</a>&nbsp;|&nbsp;<a href="javascript:void((function(){ window.open('{!URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))}/apex/portalUserCurrency?sfdc.tabName=User Currency','Ratting','width=850,height=400,left=150,top=200,toolbar=0,status=0,');})());" target="_top" class="menuButtonMenuLink" title="My Currency">My Currency</a>
 	            <br/>
-	            <a href="javascript:openIntroVideoModal();" class="menuButtonMenuLink" title="Intro Tutorial">Intro Tutorial</a>&nbsp;
+	            <a href="javascript:openIntroVideoModal();" class="menuButtonMenuLink" title="Tutorials">Tutorials</a>&nbsp;
             </div>
         </div>
   </div>

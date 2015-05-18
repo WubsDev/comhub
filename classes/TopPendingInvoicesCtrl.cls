@@ -36,7 +36,7 @@ public without sharing class TopPendingInvoicesCtrl {
             stset.add(selectedStatus);
         }
         System.debug('----------------> ' + stset);
-        for(Invoice__c record: [SELECT id,Name, CurrencyIsoCode, Due_Date__c, Amount__c,Input_Beneficiary__r.id,Input_Beneficiary__r.name, Status__c 
+        for(Invoice__c record: [SELECT id,Name, Custom_Currency__c, Due_Date__c, Amount__c,Input_Beneficiary__r.id,Input_Beneficiary__r.name, Status__c 
                         FROM Invoice__c 
        					WHERE Status__c In :stset
                         //AND Due_Date__c<=TODAY
@@ -62,7 +62,7 @@ public without sharing class TopPendingInvoicesCtrl {
         
         public InvoiceWrapper(Invoice__c invoice){
             this.invoice = invoice;
-            settlementCurrency = Utility.getSettlementCurrencyAmount(invoice.Amount__c, invoice.CurrencyIsoCode, UserInfo.getDefaultCurrency());
+            settlementCurrency = Utility.getSettlementCurrencyAmount(invoice.Amount__c, invoice.Custom_Currency__c, UserInfo.getDefaultCurrency());
         }
     }
     

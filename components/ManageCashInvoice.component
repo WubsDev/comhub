@@ -183,7 +183,7 @@
 											<input type="button" value="Save"
 												onclick="uploadInvoiceImage();" class="btn wuBtn" />
 											<!-- apex:commandButton value="Save" onclick="uploadInvoiceImage();" styleClass="wuBtn" / -->
-											<apex:commandButton action="{!cancel}" value="Cancel"
+                                            <apex:commandButton action="{!cancel2}" value="Cancel"
 												styleClass="wuBtn" />
 										</div>
 									</center>
@@ -234,18 +234,7 @@
 
 						</apex:PageBlockSection>
 
-						<script>    
-						function querystring(key) {
-						   var re=new RegExp('(?:\\?|&)'+key+'=(.*?)(?=&|$)','gi');
-						   var r=[], m;
-						   while ((m=re.exec(document.location.search)) != null) r[r.length]=m[1];
-						   return r;
-						}
-						if(querystring('fin')=='true'){                          
                              
-				        	twistSection(document.getElementById(pbdId).getElementsByTagName('img')[0])
-				        }
-				    </script>
 					</apex:pageBlock>
 				</apex:outputPanel>
 

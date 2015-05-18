@@ -6,7 +6,8 @@
 	
 <!-- Start-->
 	<apex:define name="body">
-		<c:CSVUploadComp csvCTL="{!self}" />		
+		<c:CSVUploadComp csvCTL="{!self}" />
+		<c:DisclamerComp />		
 	</apex:define>
 	</apex:composition>
 </apex:page>

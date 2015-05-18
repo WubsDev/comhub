@@ -5,21 +5,27 @@
        </apex:define>
 
        <apex:define name="body"> 
-           <div style="margin-top:15px;">    
-             <apex:canvasApp applicationName="OBIEE Webapp" Id="obieeFrame" height="1000px" width="800px" scrolling="yes" border="0" />
+           <div style="margin-top:15px;width:100%;height:100%;">    
+             <apex:canvasApp applicationName="OBIEE_CashManagement" Id="obieeFrame" height="1050px" width="100%" scrolling="no" border="0" />
            </div> 
            <script>
                function resizeCanvas(){
-                   if( $( "iframe[Id*='obieeFrame']" ).attr('width') != '' && $( "iframe[Id*='obieeFrame']" ).attr('width').indexOf('px') != -1) {
-                       $( "iframe[Id*='obieeFrame']" ).attr('width',(screen.width-300)+'px');  
-                       clearInterval(canvasIframe );
+               		
+               		if($( "iframe[Id*='obieeFrame']" ).size()>0){
+                   		var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+                   		if(height>200){
+                   			height = height-170;
+                   		}
+                   		if($( "iframe[Id*='obieeFrame']" ).attr('height')!= (height+'px')){
+                   			$( "iframe[Id*='obieeFrame']" ).attr('height', height+'px');
+                   		}
                    }
 
                }
-               //window.setTimeout(resizeCanvas, 5000);
-               var canvasIframe = setInterval(function(){ resizeCanvas() }, 1000);
+               var canvasIframe = setInterval(function(){ resizeCanvas(); }, 1000);
                
            </script> 
+           <c:DisclamerComp />
        </apex:define>
 
    </apex:composition>

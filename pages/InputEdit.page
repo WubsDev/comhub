@@ -24,14 +24,16 @@
                         <apex:pageBlockSection rendered="{!isFixed}">
                             <apex:repeat value="{!$ObjectType.Input__c.FieldSets.Fixed_Forward_Contract_Other}" var="f1">
 					        	<apex:PageBlockSectionItem >
-						        	<span class="label" style="align: right"> {!if(f1 =='CurrencyIsoCode', 'Currency',LabelMaps[f1.fieldPath] )} </span>
+						        	<span class="label" style="align: right"> {!if(f1 =='Custom_Currency__c', 'Currency',LabelMaps[f1.fieldPath] )} </span>
 						        	<apex:outputPanel >
-										<apex:SelectList size="1" multiselect="false" rendered="{!if(f1=='CurrencyIsoCode', true, false)}" 
+						        		<c:RequiredBlockComponent isRequired="{!(f1.required || f1.dbrequired)}">
+											<apex:SelectList size="1" multiselect="false" rendered="{!if(f1=='Custom_Currency__c', true, false)}" 
 											value="{!inputRecord[f1]}">
 											<apex:SelectOptions value="{!CurrencyOptions}" />
 										</apex:SelectList>
-										<apex:inputField value="{!inputRecord[f1]}" rendered="{!if(f1!='CurrencyIsoCode', true, false)}"
+											<apex:inputField value="{!inputRecord[f1]}" rendered="{!if(f1!='Custom_Currency__c', true, false)}"
 		                      		 		styleclass="dataTable"/>
+			                      		 </c:RequiredBlockComponent>
 		                      		</apex:outputPanel>		                      		
 								</apex:PageBlockSectionItem>
               				</apex:repeat>              				
@@ -42,9 +44,10 @@
                             <apex:repeat value="{!$ObjectType.Input__c.FieldSets.InputDetailFS2}" var="f2" >
                             	<apex:PageBlockSectionItem >
 <!--                             	IF(AND(f2 == 'Amount__c', OR( Input__c.Input_Type__c == 'Option - Other', Input__c.Input_Type__c == 'Option - WUBS')),IF(OR(Input__c.Type__c == 'Option Obligation - Other',Input__c.Type__c == 'Option Obligation - WUBS'), 'Obligation Amount', 'Protection Amount'),LabelMaps[f2.fieldPath]) -->
-						        	<span class="label" style="align: right"> {!if(f2 =='CurrencyIsoCode', 'Currency',LabelMaps[f2.fieldPath])} </span>
+						        	<span class="label" style="align: right"> {!if(f2 =='Custom_Currency__c', 'Currency',LabelMaps[f2.fieldPath])} </span>
 						        	<apex:outputPanel >
-										<apex:SelectList size="1" multiselect="false" rendered="{!if(f2=='CurrencyIsoCode', true, false)}" 
+						        		<c:RequiredBlockComponent isRequired="{!(f2.required || f2.dbrequired)}">
+											<apex:SelectList size="1" multiselect="false" rendered="{!if(f2=='Custom_Currency__c', true, false)}" 
 											value="{!inputRecord[f2]}">
 											<apex:SelectOptions value="{!CurrencyOptions}" />
 										</apex:SelectList>
@@ -56,7 +59,8 @@
 											value="{!inputRecord[f2]}">
 											<apex:SelectOptions value="{!CurrencyOptions}" />
 										</apex:SelectList>
-	                                	<apex:inputField value="{!inputRecord[f2]}" rendered="{!if(AND(f2!='CurrencyIsoCode',f2!='Buy_Currency__c',f2!='Sell_Currency__c'), true, false)}" styleclass="dataTable"/>
+		                                	<apex:inputField value="{!inputRecord[f2]}" rendered="{!if(AND(f2!='Custom_Currency__c',f2!='Buy_Currency__c',f2!='Sell_Currency__c'), true, false)}" styleclass="dataTable"/>
+		                                </c:RequiredBlockComponent>
 	                                </apex:outputPanel>
                                 </apex:PageBlockSectionItem>
                             </apex:repeat>
@@ -67,9 +71,10 @@
                         <apex:pageBlockSection rendered="{!isForcast}">
                             <apex:repeat value="{!$ObjectType.Input__c.FieldSets.InputDetailFS3}" var="f3" >
                                 <apex:PageBlockSectionItem >
-						        	<span class="label" style="align: right"> {!if(f3 =='CurrencyIsoCode', 'Currency',LabelMaps[f3.fieldPath] )} </span>
+						        	<span class="label" style="align: right"> {!if(f3 =='Custom_Currency__c', 'Currency',LabelMaps[f3.fieldPath] )} </span>
 						        	<apex:outputPanel >
-										<apex:SelectList size="1" multiselect="false" rendered="{!if(f3=='CurrencyIsoCode', true, false)}" 
+						        		<c:RequiredBlockComponent isRequired="{!(f3.required || f3.dbrequired)}">
+											<apex:SelectList size="1" multiselect="false" rendered="{!if(f3=='Custom_Currency__c', true, false)}" 
 											value="{!inputRecord[f3]}">
 											<apex:SelectOptions value="{!CurrencyOptions}" />
 										</apex:SelectList>
@@ -81,8 +86,9 @@
 											value="{!inputRecord[f3]}">
 											<apex:SelectOptions value="{!CurrencyOptions}" />
 										</apex:SelectList>
-										<apex:inputField value="{!inputRecord[f3]}" rendered="{!if(AND(f3!='CurrencyIsoCode',f3!='Buy_Currency__c',f3!='Sell_Currency__c'), true, false)}"
+											<apex:inputField value="{!inputRecord[f3]}" rendered="{!if(AND(f3!='Custom_Currency__c',f3!='Buy_Currency__c',f3!='Sell_Currency__c'), true, false)}"
 		                      		 		styleclass="dataTable"/>
+		                      		 	</c:RequiredBlockComponent>
 		                      		</apex:outputPanel>
 								</apex:PageBlockSectionItem>
                             </apex:repeat>
@@ -92,9 +98,10 @@
                         <apex:pageBlockSection rendered="{!isWindow}">
                             <apex:repeat value="{!$ObjectType.Input__c.FieldSets.Window_Forward_Contract_Other}" var="f4">
                                 <apex:PageBlockSectionItem >
-						        	<span class="label" style="align: right"> {!if(f4 =='CurrencyIsoCode', 'Currency',LabelMaps[f4.fieldPath] )} </span>
+						        	<span class="label" style="align: right"> {!if(f4 =='Custom_Currency__c', 'Currency',LabelMaps[f4.fieldPath] )} </span>
 						        	<apex:outputPanel >
-										<apex:SelectList size="1" multiselect="false" rendered="{!if(f4=='CurrencyIsoCode', true, false)}" 
+						        		<c:RequiredBlockComponent isRequired="{!(f4.required || f4.dbrequired)}">
+											<apex:SelectList size="1" multiselect="false" rendered="{!if(f4=='Custom_Currency__c', true, false)}" 
 											value="{!inputRecord[f4]}">
 											<apex:SelectOptions value="{!CurrencyOptions}" />
 										</apex:SelectList>
@@ -106,8 +113,9 @@
 											value="{!inputRecord[f4]}">
 											<apex:SelectOptions value="{!CurrencyOptions}" />
 										</apex:SelectList>
-										<apex:inputField value="{!inputRecord[f4]}" rendered="{!if(AND(f4!='CurrencyIsoCode',f4!='Buy_Currency__c',f4!='Sell_Currency__c'), true, false)}"
+											<apex:inputField value="{!inputRecord[f4]}" rendered="{!if(AND(f4!='Custom_Currency__c',f4!='Buy_Currency__c',f4!='Sell_Currency__c'), true, false)}"
 		                      		 		styleclass="dataTable"/>
+			                      		 </c:RequiredBlockComponent>
 		                      		</apex:outputPanel>
 								</apex:PageBlockSectionItem>
                             </apex:repeat>
@@ -115,6 +123,7 @@
                     </apex:pageBlock>
                 </apex:form>
             </div>
+            <c:DisclamerComp />
         </apex:define>
     </apex:composition>
 </apex:page>

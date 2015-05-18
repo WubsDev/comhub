@@ -12,10 +12,10 @@ public virtual class GenericBaseCsvWrapper {
 	//public member
 	public String CurrencyVal{
 		get{
-			return mapPicklistSelect.get('CurrencyIsoCode');
+			return mapPicklistSelect.get('Custom_Currency__c');
 		}
 		set{
-			mapPicklistSelect.put('CurrencyIsoCode', value);
+			mapPicklistSelect.put('Custom_Currency__c', value);
 		}
 	}
 	public String Status{
@@ -74,7 +74,7 @@ public virtual class GenericBaseCsvWrapper {
 	public GenericBaseCsvWrapper(String[] tempFields, string transtype){
 		parseRecInit();
     	mapPicklistSelect = new map<string, string>();
-    	mapPicklistSelect.put('CurrencyIsoCode', '');
+    	mapPicklistSelect.put('Custom_Currency__c', '');
     	mapPicklistSelect.put('Status__c', '');
     	mapPicklistSelect.put('Buy_Currency__c', '');
     	mapPicklistSelect.put('Sell_Currency__c', '');
@@ -110,7 +110,7 @@ public virtual class GenericBaseCsvWrapper {
     public virtual void parseCsvLine(String[] tempFields){
     	Integer indexCount = 0;
     	parseRecInit();
-    	mapPicklistSelect.put('CurrencyIsoCode', '');
+    	mapPicklistSelect.put('Custom_Currency__c', '');
     	mapPicklistSelect.put('Buy_Currency__c', '');
     	mapPicklistSelect.put('Sell_Currency__c', '');
     	
@@ -171,10 +171,10 @@ public virtual class GenericBaseCsvWrapper {
        	if(Schema.getGlobalDescribe().get(getsObjectName()).getDescribe().fieldSets.getMap().get(fieldSetName)!=null){
         	for(Schema.FieldSetMember f : Schema.getGlobalDescribe().get(getsObjectName()).getDescribe().fieldSets.getMap().get(fieldSetName).getFields()){
         		if(f.dbrequired || f.required){
-        			//custom Validate CurrencyIsoCode.
+        			//custom Validate Custom_Currency__c.
 			        if(f.getType()==Schema.DisplayType.PICKLIST){
 			        	system.debug('**********mapPicklistSelect:>>'+this.mapPicklistSelect.get(f.FieldPath));
-				        if (!Utility.isValidText(this.mapPicklistSelect.get(f.FieldPath)) || !this.mapPicklistSelect.containsKey(f.FieldPath) ) {//invoice.CurrencyIsoCode
+				        if (!Utility.isValidText(this.mapPicklistSelect.get(f.FieldPath)) || !this.mapPicklistSelect.containsKey(f.FieldPath) ) {//invoice.Custom_Currency__c
 				             this.isValid = false;
 							 if(logPageMessage) ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,fieldLabels.get(f.FieldPath)+Utility.getValidationTextByFieldType(f)+errorMsgPart(this.mapCSVvalues.get(f.FieldPath))));
 							 if(this.mapPicklistSelect.containsKey(f.FieldPath)){
@@ -207,7 +207,7 @@ public virtual class GenericBaseCsvWrapper {
 			        system.debug('**********mapPicklistSelect:>>'+this.mapPicklistSelect.get(f.FieldPath));
 			        //!Utility.isValidText(this.mapPicklistSelect.get(f.FieldPath)) ||
 			        //its not required, so picklist can be blank.
-			        if ( !this.mapPicklistSelect.containsKey(f.FieldPath) ) {//invoice.CurrencyIsoCode
+			        if ( !this.mapPicklistSelect.containsKey(f.FieldPath) ) {//invoice.Custom_Currency__c
 			             this.isValid = false;
 						 if(logPageMessage) ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,fieldLabels.get(f.FieldPath)+Utility.getValidationTextByFieldType(f)+errorMsgPart(this.mapCSVvalues.get(f.FieldPath))));
 						 if(this.mapPicklistSelect.containsKey(f.FieldPath)){

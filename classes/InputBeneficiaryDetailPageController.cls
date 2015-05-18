@@ -97,5 +97,17 @@ public without sharing class InputBeneficiaryDetailPageController {
 			return null;	 		
 	 	}
 	 }
+	 
+	 public map<String, string> LabelDetailMaps{
+  		get{
+  			//String apiName = Utility.changeTransactionType(selectedTranscation);
+  				try{
+	  				return Utility.getFieldLabel('Input_Beneficiary__c', 'Detail');
+  				}catch(Exception Ex){
+  					
+  				}
+  			return new map<String, string>();
+  		}
+  	}
 
 }

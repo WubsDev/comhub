@@ -15,24 +15,24 @@ public without sharing class Utility {
 		// Get the Currency List From Current LoggedIn User Account    
         list<Selectoption> lstCurrency = new list<Selectoption>();
         Set<String> currencySet = new Set<String>();
-        for(AggregateResult invoiceRec: [SELECT count(Id), CurrencyIsoCode 
+        for(AggregateResult invoiceRec: [SELECT count(Id), Custom_Currency__c 
                                          FROM Invoice__c 
                                          WHERE Account__c  =:currentAccount
-                                         group by  CurrencyIsoCode]) {
-            String currencyCode = (String) invoiceRec.get('CurrencyIsoCode');
+                                         group by  Custom_Currency__c]) {
+            String currencyCode = (String) invoiceRec.get('Custom_Currency__c');
             if(!currencySet.contains(currencyCode)) {
             	currencySet.add(currencyCode);
             }
           }
-		for(AggregateResult inputRec: [SELECT count(Id), CurrencyIsoCode 
+    for(AggregateResult inputRec: [SELECT count(Id), Custom_Currency__c 
                                          FROM Input__c 
                                          WHERE Parent_account__c=:currentAccount
-                                         and CurrencyIsoCode not in :currencySet
+                                         and Custom_Currency__c not in :currencySet
                                          and (Type__c in ('Forecast Inflow', 'Inflow - Other', 'Purchase Order','Forecast Order','Outflow - Other', 'Forecast Outflow') 
                                          		or Input_Type__c in ('Forecast Inflow', 'Inflow - Other', 'Purchase Order','Forecast Order','Outflow - Other', 'Forecast Outflow')
                                          	)
-                                         group by  CurrencyIsoCode]) {
-            String currencyCode = (String) inputRec.get('CurrencyIsoCode');
+                                         group by  Custom_Currency__c]) {
+            String currencyCode = (String) inputRec.get('Custom_Currency__c');
             if(!currencySet.contains(currencyCode)) {
             	currencySet.add(currencyCode);
 			}
@@ -53,21 +53,22 @@ public without sharing class Utility {
 		// Get the Currency List From Current LoggedIn User Account    
         list<Selectoption> lstCurrency = new list<Selectoption>();
         Set<String> currencySet = new Set<String>();
-        for(AggregateResult invoiceRec: [SELECT count(Id), CurrencyIsoCode 
+        for(AggregateResult invoiceRec: [SELECT count(Id), Custom_Currency__c 
                                          FROM Invoice__c 
                                          WHERE Account__c  =:currentAccount
-                                         group by  CurrencyIsoCode]) {
-            String currencyCode = (String) invoiceRec.get('CurrencyIsoCode');
+                                         group by  Custom_Currency__c]) {
+            String currencyCode = (String) invoiceRec.get('Custom_Currency__c');
             if(!currencySet.contains(currencyCode)) {
             	currencySet.add(currencyCode);
             }
           }
-		for(AggregateResult inputRec: [SELECT count(Id), CurrencyIsoCode 
+    for(AggregateResult inputRec: [SELECT count(Id), Custom_Currency__c 
                                          FROM Input__c 
                                          WHERE Parent_account__c=:currentAccount
-                                         and CurrencyIsoCode not in :currencySet
-                                         group by  CurrencyIsoCode]) {
-            String currencyCode = (String) inputRec.get('CurrencyIsoCode');
+                                         and Custom_Currency__c not in :currencySet
+                                         and Input_Type__c !='Fixed Forward Contract - WUBS'
+                                         group by  Custom_Currency__c]) {
+            String currencyCode = (String) inputRec.get('Custom_Currency__c');
             if(!currencySet.contains(currencyCode)) {
             	currencySet.add(currencyCode);
 			}
@@ -419,6 +420,7 @@ public without sharing class Utility {
      	map<String, string> mapLabelNames = getFieldLabelByFieldsetAPIname('input__c', fieldSetName, selectedTranscation);
      	for(Schema.FieldSetMember f : oBjsObject.getSObjectType().getDescribe().fieldSets.getMap().get(fieldSetName).getFields()) {
      		if(f.required || f.dbrequired){
+          system.debug('--------ashish---------'+f.getFieldPath()+'-----------------'+oBjsObject.get(f.getFieldPath()));
      			if(oBjsObject.get(f.getFieldPath())==null){
 		     		if(isRenderErrorMessage){
 		     			ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, mapLabelNames.get(f.FieldPath)+' Should Not be Blank '));
@@ -488,7 +490,7 @@ public without sharing class Utility {
      			}
      		}
      		
-     		if(f.getFieldPath().equalsIgnoreCase('CurrencyIsoCode')){
+        if(f.getFieldPath().equalsIgnoreCase('Custom_Currency__c')){
      				isSet = true;
      				labelName.put(f.getFieldPath(), 'Currency Code');
      		}
@@ -624,7 +626,7 @@ public without sharing class Utility {
         	optionInput.put('Counter_Party__c', input.get('Counter_Party__c'));
         	optionInput.put('Transaction_Date__c', input.get('Transaction_Date__c'));
         	optionInput.put('input_Type__c', input.get('input_Type__c'));
-        	optionInput.put('CurrencyIsoCode', input.get('CurrencyIsoCode'));
+          optionInput.put('CurrencyIsoCode', input.get('Custom_Currency__c'));
         	optionInput.put('Input_Beneficiary__c', input.get('Input_Beneficiary__c'));
         	optionInput.put('Reference_Number__c', input.get('Reference_Number__c'));
         	//input.Reference_Number__c='';
@@ -672,4 +674,33 @@ REFERENCE
         return false;
     }
 
+    //Added by Rohit B on 30/Apr/2015 for Test User Creation
+    public static User createTestUser(boolean isInsert){
+      Account acc = new Account();
+      acc.Name = 'testname';
+      insert acc;
+      
+      Contact contact = new Contact();
+      contact.AccountId =  acc.Id;
+      contact.LastName = 'testlastname';
+      insert contact;
+      
+      User testUser = new User();
+      testUser.alias = 'testuser';
+      testUser.Email = 'testuser@test123.com';
+      testUser.EmailEncodingKey = 'ISO-8859-1';
+      testUser.LanguageLocaleKey = 'en_US';
+      testUser.LastName = 'Test User567';
+      testUser.LocaleSidKey = 'en_AU';
+      testUser.Account_Administrator__c = false;
+      testUser.ProfileId = [SELECT Id FROM Profile WHERE Name LIKE 'Partner community - FX management tool' LIMIT 1].Id;
+      testUser.TimeZoneSidKey = 'Australia/Sydney';
+      testUser.UserName = 'testuser@travelex.com.au';
+      testUser.ContactId = contact.Id;
+      testUser.DefaultCurrencyIsoCode = 'INR';
+      
+      if(isInsert)
+        insert testUser;
+      return testUser;
+    }
 }

@@ -7,7 +7,7 @@
 // 05 May, 2015    Ashish Goyal  Original (Ref. T-392409, T-392431)
 //
 public with sharing class UserManager {
-	public static final String EMAIL_TEMPLATE = 'ManageCashWelcomeEmail';
+	public static final String EMAIL_TEMPLATE = 'ManageCashWelcomeEmail2';
 	public static Set<Id> commProfileIdSet = new Set<Id>();
 	
 	public static void updateFederationIdBI(List<User> userList){

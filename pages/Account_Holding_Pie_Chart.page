@@ -34,7 +34,7 @@ data.push(product);
 </apex:repeat>
     <apex:pageblock >    
         <apex:pageblocksection columns="{!if(isNonCCTuser=true, '2', '3')}">
-<!--         <apex:outputPanel rendered="{!IF(pieData.size > 0 , true, false)}"> -->
+        <apex:outputPanel rendered="{!NOT(isNonCCTuser)}">
            <apex:pageblocksection collapsible="false" title="Holding Balance by Currency" columns="1" >
             <apex:facet name="header"><div style="width:100%;text-align:center;">Holding Balance by Currency with WUBS</div></apex:facet>
               <apex:outputPanel layout="block" id="pieDiv" style="height:250px;" rendered="{!IF(pieData.size > 0 , true, false)}">
@@ -59,7 +59,7 @@ data.push(product);
             </center>
          </apex:outputPanel>
             </apex:pageblocksection>
-<!--          </apex:outputPanel> -->
+         </apex:outputPanel>
          
          
 <!--           <apex:outputPanel rendered="{!IF(pieData1.size > 0, true, false)}"> -->

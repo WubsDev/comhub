@@ -46,6 +46,7 @@ global without sharing class NetCashFlowCtrl {
     	list<Selectoption> lstCurrency = new list<Selectoption>();
         lstCurrency.add(new Selectoption('Total','Total in ' + Utility.userCurrency));
     	lstCurrency.addAll(Utility.getaccountTradedCurrency());
+    	system.debug('----------ashish---------'+lstCurrency);
 		return lstCurrency;
     }
     
@@ -74,10 +75,10 @@ global without sharing class NetCashFlowCtrl {
 	        Date startdt = Date.today().toStartOfMonth();
 	        //Date lastdt = startdt.addMonths(selectedMonth1-1);
 	        Date lastdt = startdt.addMonths(selectedMonth1).addDays(-1);
-	        String queryStr = 'SELECT CALENDAR_MONTH({0}) m,CALENDAR_YEAR({1}) y, SUM(Amount__c) s, CurrencyIsoCode code' 
+	        String queryStr = 'SELECT CALENDAR_MONTH({0}) m,CALENDAR_YEAR({1}) y, SUM(Amount__c) s, Custom_Currency__c code' 
 	                      + ' FROM {2} Where {3} {4} {5}';
 	        if(selectedCurrency != 'Total') { // All currency
-	        	queryStr = queryStr + ' AND CurrencyIsoCode = :selectedCurrency ';
+	        	queryStr = queryStr + ' AND Custom_Currency__c = :selectedCurrency ';
 	        }
 	        queryStr = queryStr + ' GROUP BY {6} '
 	                    + 'ORDER BY {7}';
@@ -88,7 +89,7 @@ global without sharing class NetCashFlowCtrl {
 											'Parent_account__c=\''+accId+'\' ',
 											'AND (Type__c in (\'Forecast Inflow\', \'Inflow - Other\') or Input_Type__c in (\'Forecast Inflow\', \'Inflow - Other\'))',
 											'AND (Transaction_Date__c >= :startdt AND Transaction_Date__c <= :lastdt)',
-											'CALENDAR_MONTH(Transaction_Date__c),CALENDAR_YEAR(Transaction_Date__c), CurrencyIsoCode',
+											'CALENDAR_MONTH(Transaction_Date__c),CALENDAR_YEAR(Transaction_Date__c), Custom_Currency__c',
 											'CALENDAR_YEAR(Transaction_Date__c),CALENDAR_MONTH(Transaction_Date__c)'
 										})); 
 	        getUpdateAmount(mapWpr, true);
@@ -99,7 +100,7 @@ global without sharing class NetCashFlowCtrl {
 											'Parent_account__c=\''+accId+'\' ',
 											'AND (Type__c in (\'Purchase Order\',\'Forecast Order\',\'Outflow - Other\', \'Forecast Outflow\') or Input_Type__c in (\'Purchase Order\',\'Forecast Order\',\'Outflow - Other\', \'Forecast Outflow\'))',
 											'AND (Transaction_Date__c >= :startdt AND Transaction_Date__c <= :lastdt)',
-											'CALENDAR_MONTH(Transaction_Date__c),CALENDAR_YEAR(Transaction_Date__c), CurrencyIsoCode',
+											'CALENDAR_MONTH(Transaction_Date__c),CALENDAR_YEAR(Transaction_Date__c), Custom_Currency__c',
 											'CALENDAR_YEAR(Transaction_Date__c),CALENDAR_MONTH(Transaction_Date__c)'
 										})); 	        
 	        getUpdateAmount(mapWpr, false); 
@@ -112,7 +113,7 @@ global without sharing class NetCashFlowCtrl {
 											'Account__c =: accId',
 											'AND (Due_Date__c >= :startdt AND Due_Date__c <= :lastdt)',
 											'And Status__c not in (\'Void\', \'Paid\')',
-											'CALENDAR_MONTH(Due_Date__c),CALENDAR_YEAR(Due_Date__c), CurrencyIsoCode',
+											'CALENDAR_MONTH(Due_Date__c),CALENDAR_YEAR(Due_Date__c), Custom_Currency__c',
 											'CALENDAR_YEAR(Due_Date__c),CALENDAR_MONTH(Due_Date__c)'
 										})); 	        
 	        getUpdateAmount(mapWpr, false); 	   
@@ -158,14 +159,14 @@ global without sharing class NetCashFlowCtrl {
         User userLoggedIn = Utility.loggedInUser;
         Map<String, InvoicByCurrencyWrap> invoiceMap = new map<String, InvoicByCurrencyWrap>();
         try{
-        	for(AggregateResult agResult : [SELECT SUM(Amount__c) s, CurrencyIsoCode c FROM Input__c WHERE Parent_Account__c =: accId and (Type__c in (:TRADING_RECEIPTS, :INFLOW_OTHER) or Input_Type__c in (:TRADING_RECEIPTS, :INFLOW_OTHER)) GROUP BY CurrencyIsoCode]) {
+        	for(AggregateResult agResult : [SELECT SUM(Amount__c) s, Custom_Currency__c c FROM Input__c WHERE Parent_Account__c =: accId and (Type__c in (:TRADING_RECEIPTS, :INFLOW_OTHER) or Input_Type__c in (:TRADING_RECEIPTS, :INFLOW_OTHER)) GROUP BY Custom_Currency__c]) {
 	        	addRecordToInvoiceCurrencyMap(agResult, invoiceMap, true);
 	        }
-        	for(AggregateResult agResult : [SELECT SUM(Amount__c) s, CurrencyIsoCode c FROM Input__c WHERE Parent_Account__c =: accId and (Type__c in (:PURCHASE_ORDER, :FORECAST_ORDER, :OUTFLOW_OTHER) or Input_Type__c in (:PURCHASE_ORDER, :FORECAST_ORDER, :OUTFLOW_OTHER)) GROUP BY CurrencyIsoCode]) {
+        	for(AggregateResult agResult : [SELECT SUM(Amount__c) s, Custom_Currency__c c FROM Input__c WHERE Parent_Account__c =: accId and (Type__c in (:PURCHASE_ORDER, :FORECAST_ORDER, :OUTFLOW_OTHER) or Input_Type__c in (:PURCHASE_ORDER, :FORECAST_ORDER, :OUTFLOW_OTHER)) GROUP BY Custom_Currency__c]) {
 	        	addRecordToInvoiceCurrencyMap(agResult, invoiceMap, false);
   			    
 	        }
-        	for(AggregateResult agResult : [SELECT SUM(Amount__c) s, CurrencyIsoCode c From Invoice__c WHERE Account__c =: accId GROUP BY CurrencyIsoCode]) {
+        	for(AggregateResult agResult : [SELECT SUM(Amount__c) s, Custom_Currency__c c From Invoice__c WHERE Account__c =: accId GROUP BY Custom_Currency__c]) {
 				addRecordToInvoiceCurrencyMap(agResult, invoiceMap, false);
 	        }	
         }catch(Exception Ex){

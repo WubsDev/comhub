@@ -25,8 +25,8 @@ public with sharing class HoldingBalanceTriggerHandler {
 		// set of currency associated with forward contacts passed in
 		Set<String> currencySet = new Set<String>();
 		for(Holding_Balance__c newHB : holdingBalanceList ) {
-			if(oldMap == null || newHB.CurrencyIsoCode != oldMap.get(newHB.id).CurrencyIsoCode) {
-				currencySet.add(newHB.CurrencyIsoCode);
+			if(oldMap == null || (newHB.Market_Rate__c==null || newHB.Custom_Currency__c != oldMap.get(newHB.id).Custom_Currency__c)) {
+				currencySet.add(newHB.Custom_Currency__c);
 			}
 		}	
 		// Market rate associated with above added currency 
@@ -38,8 +38,8 @@ public with sharing class HoldingBalanceTriggerHandler {
     	}
 
 		for(Holding_Balance__c newHB : holdingBalanceList ) {
-			if(marketRateMap.containsKey(newHB.CurrencyIsoCode)) {
-				newHB.Market_Rate__c = marketRateMap.get(newHB.CurrencyIsoCode).Id;
+			if(marketRateMap.containsKey(newHB.Custom_Currency__c)) {
+				newHB.Market_Rate__c = marketRateMap.get(newHB.Custom_Currency__c).Id;
 			}
 		}
 	}

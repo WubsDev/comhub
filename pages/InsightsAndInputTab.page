@@ -1,144 +1,148 @@
 <apex:page id="pg" controller="InsightsAndInputTabCtrl" sidebar="false">
-	<apex:composition template="ManageCashReportTemplate">
-			<apex:define name="headerHTML">
-				<c:ManageCashMenu menuName="Reports" />
-			</apex:define>
-		<apex:define name="body">
-		 <!-- 	
+    <apex:composition template="ManageCashReportTemplate">
+            <apex:define name="headerHTML">
+                <c:ManageCashMenu menuName="Reports" />
+            </apex:define>
+        <apex:define name="body">
+         <!--   
             Added By : @Ashish Goyal
-			Ref: T-377272
-			Description : Added css and js library for custom tooltip
-		 -->
-		<style type="text/css">  	          
-	        .imgclass{  
-	            background-image: url(/img/help/helpOrbs.gif);  
-	            background-repeat: no-repeat;  
-	            width: 16px;  
-	            height: 15px;  
-	            background-position: right; 
-	        }  
-	    </style> 
-	<!-- End @Ashish Goyal -->
-	
-	
-			<apex:define name="headerHTMLReportMenuHeader">
-				<c:CashReportMenu menuName="NetExposureReport"/>
-			</apex:define>
-			<div class="tab-content">
-				<div class="tab-pane active" id="fx-management">
-			<script>
-				
-				$( document ).ready(function(){
-					$('.pbHeader .pbTitle .mainTitle').append("<img src='/s.gif' data-toggle='tooltip' data-placement='bottom' class='imgclass' title='{!$Label.Help_Text_Summary_Netcash}' style='height: 21px; width: 18px;' />");
-				});
+            Ref: T-377272
+            Description : Added css and js library for custom tooltip
+         -->
+        <style type="text/css">               
+            .imgclass{  
+                background-image: url(/img/help/helpOrbs.gif);  
+                background-repeat: no-repeat;  
+                width: 16px;  
+                height: 15px;  
+                background-position: right; 
+            }  
+        </style> 
+    <!-- End @Ashish Goyal -->
+    
+    
+            <apex:define name="headerHTMLReportMenuHeader">
+                <c:CashReportMenu menuName="NetExposureReport"/>
+            </apex:define>
+            <div class="tab-content">
+                <div class="tab-pane active" id="fx-management">
+            <script>
+                
+                $( document ).ready(function(){
+                    $('.pbHeader .pbTitle .mainTitle').append("<img src='/s.gif' data-toggle='tooltip' data-placement='bottom' class='imgclass' title='{!$Label.Help_Text_Summary_Netcash}' style='height: 21px; width: 18px;' />");
+                });
                 
                 function openPageInPopup(hasErrorval){
-                	showProgressbarBS(false);
+                    showProgressbarBS(false);
                     if(hasErrorval == false){
-                       	window.open('{!URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))}/apex/AddAnotherInput','AnotherInput','width=850,height=400,left=150,top=200,//toolbar=0,status=0,');
+                        window.open('{!URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))}/apex/AddAnotherInput','AnotherInput','width=850,height=400,left=150,top=200,//toolbar=0,status=0,');
                     }
                 }
 
-				function  showProgressbarBS(check) {
-				  if(check) {
-				      $('#progressbarBS').show();
-				  } else {
-				      $('#progressbarBS').hide();
-				      $('#progressText').html('');
-				  }
-				}
-				
-				function  progressbarBSMsg(message) {
-				  $('#progressText').html(message);
-				}                
+                function  showProgressbarBS(check) {
+                  if(check) {
+                      $('#progressbarBS').show();
+                  } else {
+                      $('#progressbarBS').hide();
+                      $('#progressText').html('');
+                  }
+                }
+                
+                function  progressbarBSMsg(message) {
+                  $('#progressText').html(message);
+                }                
                 function saveInputWithImage(){
-					progressbarBSMsg('Saving Input ...');
-				    showProgressbarBS(true);
-				   	var invImageFiles = document.getElementById('invoiceImage').files;
-				   
-					if(invImageFiles.length > 0) {
-					var invImage = invImageFiles[0];
-					var reader = new FileReader();
-					  // Keep a reference to the File in the FileReader so it can be accessed in callbacks
-					reader.file = invImage;
-					
-					reader.onload = function(e)
-					{
-					    var attName = this.file.name;
-					    var attContentType = this.file.type;
-					    var binary = "";
-					    var bytes = new Uint8Array(e.target.result);
-					    var length = bytes.byteLength;
-					    for (var i = 0; i < length; i++)
-					    {
-					        binary += String.fromCharCode(bytes[i]);
-					    }
-					    var attBody = (new sforce.Base64Binary(binary)).toString();
-					    $('input[id$="invoiceImageName"]').val(attName);
-					    $('input[id$="invoiceImageBody"]').val(attBody);
-					    saveInput();
-					};
-					reader.readAsArrayBuffer(invImage);
-					} else {
-						saveInput();
-					}                    
+                    progressbarBSMsg('Saving Input ...');
+                    showProgressbarBS(true);
+                    var invImageFiles = document.getElementById('invoiceImage').files;
+                   
+                    if(invImageFiles.length > 0) {
+                    var invImage = invImageFiles[0];
+                    var reader = new FileReader();
+                      // Keep a reference to the File in the FileReader so it can be accessed in callbacks
+                    reader.file = invImage;
+                    
+                    reader.onload = function(e)
+                    {
+                        var attName = this.file.name;
+                        var attContentType = this.file.type;
+                        var binary = "";
+                        var bytes = new Uint8Array(e.target.result);
+                        var length = bytes.byteLength;
+                        for (var i = 0; i < length; i++)
+                        {
+                            binary += String.fromCharCode(bytes[i]);
+                        }
+                        var attBody = (new sforce.Base64Binary(binary)).toString();
+                        $('input[id$="invoiceImageName"]').val(attName);
+                        $('input[id$="invoiceImageBody"]').val(attBody);
+                        saveInput();
+                    };
+                    reader.readAsArrayBuffer(invImage);
+                    } else {
+                        saveInput();
+                    }                    
                     //saveInputAF();
                 }
-            </script>			
-			<apex:form id="frm">
-				<div class="tab-content">
-					<div class="tab-pane active" id="fx-management">
-						<apex:pageMessages id="msg"></apex:pageMessages>
-						<apex:outputPanel id="inputTab">
-							<apex:pageBlock id="pBlock1">
-								<!-- c:ManageCashInput sourcePage="InsightsAndInputTab" /-->
-								<apex:pageBlock id="pb">
-									<apex:PageBlockSection id="pbs"
-										 columns="2" collapsible="false" >
-										<apex:facet name="header">
-											<apex:outputtext value="{!inputLink}" escape="false" />
-										</apex:facet>
-									</apex:PageBlockSection>
-								</apex:pageBlock>								
-								<!-- Net Flow Start -->
+            </script>           
+            <apex:form id="frm">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="fx-management">
+                        <apex:pageMessages id="msg"></apex:pageMessages>
+                        <apex:outputPanel id="inputTab">
+                            <apex:pageBlock id="pBlock1">
+                                <!-- c:ManageCashInput sourcePage="InsightsAndInputTab" /-->
+                                <apex:pageBlock id="pb">
+                                    <apex:PageBlockSection id="pbs"
+                                         columns="2" collapsible="false" >
+                                        <apex:facet name="header">
+                                            <apex:outputtext value="{!inputLink}" escape="false" />
+                                        </apex:facet>
+                                    </apex:PageBlockSection>
+                                </apex:pageBlock>                               
+                                <!-- Net Flow Start -->
 
-								<apex:pageBlock title="Net Cash Flow without Hedging">
-									<div class="palette">
-										<span><apex:outputLabel value="Currency" /></span> <span>
-											<apex:selectList value="{!NetCashFlow.selectedCurrency}"
-												multiselect="false" size="1">
-												<apex:selectOptions value="{!NetCashFlow.accountTradedCurrency}" />
-											</apex:selectList>
-										</span> <span><apex:outputLabel value="Months" /></span> <span>
-											<apex:selectList value="{!NetCashFlow.selectedMonth}"
-												multiselect="false" size="1">
-												<apex:selectOption itemValue="3" itemLabel="3 Months" />
-												<apex:selectOption itemValue="6" itemLabel="6 Months" />
-												<apex:selectOption itemValue="9" itemLabel="9 Months" />
-												<apex:selectOption itemValue="12" itemLabel="12 Months" />
-											</apex:selectList>
-										</span> <span><apex:commandButton value="Refresh"
-												action="{!NetCashFlow.search}" /></span>
-									</div>
+                                <apex:pageBlock title="Net Cash Flow without Hedging">
+                                    <div class="palette">
+                                        <span><apex:outputLabel value="Currency" /></span> <span>
+                                            <apex:selectList value="{!NetCashFlow.selectedCurrency}"
+                                                multiselect="false" size="1">
+                                                <apex:selectOptions value="{!NetCashFlow.accountTradedCurrency}" />
+                                            </apex:selectList>
+                                        </span> <span><apex:outputLabel value="Months" /></span> <span>
+                                            <apex:selectList value="{!NetCashFlow.selectedMonth}"
+                                                multiselect="false" size="1">
+                                                <apex:selectOption itemValue="3" itemLabel="3 Months" />
+                                                <apex:selectOption itemValue="6" itemLabel="6 Months" />
+                                                <apex:selectOption itemValue="9" itemLabel="9 Months" />
+                                                <apex:selectOption itemValue="12" itemLabel="12 Months" />
+                                            </apex:selectList>
+                                        </span> <span><apex:commandButton value="Refresh"
+                                                action="{!NetCashFlow.search}" /></span>
+                                    </div>
 
-									<apex:pageBlockSection columns="1">
-										<apex:outputPanel >
-											<center>
-												<div id="chartBlock1" style="width: 100%; height: 300px;" />
-											</center>
-											<script type="text/javascript">
-									var chart =null;
-							        var view = null;
-									var chartData = null;
-									function rerederGraph(result){
-							             if(result==null){
-							             	return null;
-							             }
-							             //update width of <Div dir='ltr'> node
-							             /*START Fix the google chart to fix the with for resize**/
-							             if(document.getElementById('chartBlock1')!=null && document.getElementById('chartBlock1').children.length>0 && document.getElementById('chartBlock1').children[0].children.length>0){
-							             	document.getElementById('chartBlock1').children[0].children[0].setAttribute("style","width:50px");
-							             }
+                                    <apex:pageBlockSection columns="1">
+                                        <apex:outputPanel >
+                                                <div id="chartBlock1" style="width: 100%; height: 300px;" >
+                                                    <center>
+                                                        <a id="addNewInputLink" href="{!$Site.Prefix}/apex/ManageCashInput" style="display:none; padding-top:13%; font-size: 18px;" >
+                                                            Start Adding Inputs
+                                                        </a>
+                                                    </center>
+                                                </div>
+                                            <script type="text/javascript">
+                                    var chart =null;
+                                    var view = null;
+                                    var chartData = null;
+                                    function rerederGraph(result){
+                                         if(result==null){
+                                            return null;
+                                         }
+                                         //update width of <Div dir='ltr'> node
+                                         /*START Fix the google chart to fix the with for resize**/
+                                         if(document.getElementById('chartBlock1')!=null && document.getElementById('chartBlock1').children.length>0 && document.getElementById('chartBlock1').children[0].children.length>0){
+                                            document.getElementById('chartBlock1').children[0].children[0].setAttribute("style","width:50px");
+                                         }
                                          if(result.length > 0){
                                               document.getElementById('chartBlock1').style.background="none";
                                               // load Column chart
@@ -150,41 +154,41 @@
                                               data.addColumn('string', 'invoiceMonth');
                                               data.addColumn('number', 'Amount');
                                               data.addColumn({type:'string', role:'style'});
-                 			                 data.addColumn({type :'string', role: 'tooltip'}); 
-                			                 // add rows from the remoting results
-                			                 try{
-                			                  for(var i =0; i<result.length;i++){
-                			                     var r = result[i];
-                			                     var barColor = '#ffffff';
-                			                     if(r.amount<0){
-                			                         barColor = '#C9626E';
-                			                     }
-                			                     if(r.amount>0){
-                			                         barColor = '#585858';
-                			                     }
-                			                     data.addRow([r.invoiceMonth, r.amount, barColor, r.toolTipAmount]);
-                			                   }
-                			                  }catch(e){
-                								alert('Chart Error '+e);
-                			                  }
-                			                  view = new google.visualization.DataView(data);
-                			                  view.setColumns([0, 1, 2,
-                			                                   { calc: "stringify",
-                			                                     sourceColumn: 3,
-                			                                     type: "string",
-                			                                     role: "annotation" }
-                			                                   ,3]);
-                			            
-                						     var options = {
-                						                         title: "Amount showed in 1000s",
-                						                         width: "100%",
-                						                         height: 300,
-                						                         bar: {groupWidth: "65%"},
-                						                         vAxis: { textPosition: 'none',gridlineColor: '#fff', baseline: 3 },
-                						                         legend: { position: "none" },
-                						                         chartArea: {width: '96%', height: '55%'}
-                						         };        
-                						     //vAxis to hide vAxis and caption
+                                             data.addColumn({type :'string', role: 'tooltip'}); 
+                                             // add rows from the remoting results
+                                             try{
+                                              for(var i =0; i<result.length;i++){
+                                                 var r = result[i];
+                                                 var barColor = '#ffffff';
+                                                 if(r.amount<0){
+                                                     barColor = '#C9626E';
+                                                 }
+                                                 if(r.amount>0){
+                                                     barColor = '#585858';
+                                                 }
+                                                 data.addRow([r.invoiceMonth, r.amount, barColor, r.toolTipAmount]);
+                                               }
+                                              }catch(e){
+                                                alert('Chart Error '+e);
+                                              }
+                                              view = new google.visualization.DataView(data);
+                                              view.setColumns([0, 1, 2,
+                                                               { calc: "stringify",
+                                                                 sourceColumn: 3,
+                                                                 type: "string",
+                                                                 role: "annotation" }
+                                                               ,3]);
+                                        
+                                             var options = {
+                                                                 title: "Amount showed in 1000s",
+                                                                 width: "100%",
+                                                                 height: 300,
+                                                                 bar: {groupWidth: "65%"},
+                                                                 vAxis: { textPosition: 'none',gridlineColor: '#fff', baseline: 3 },
+                                                                 legend: { position: "none" },
+                                                                 chartArea: {width: '96%', height: '55%'}
+                                                 };        
+                                             //vAxis to hide vAxis and caption
                                               var chart = new google.visualization.ColumnChart(document.getElementById("chartBlock1"));
                                               chart.draw(view, options);
          
@@ -197,18 +201,25 @@
                                          else{
                                              document.getElementById('chartBlock1').style.background="url({!$Resource.NetCashFlowSampleDataImage}) no-repeat";
                                              document.getElementById('chartBlock1').style.backgroundSize= "100%";
-                                         }							             
-							        }                                    
+                                             document.getElementById('addNewInputLink').style.display = 'block';
+                                             document.getElementById('addNewInputLink').style.height = '100%';
+                                             document.getElementById('addNewInputLink').style.width = '151px';
+                                             //document.getElementById('addNewInputLink').style.padding-top = '13%';
+                                             document.getElementById('addNewInputLink').style.padding = '10% 0 0 0';
+                                             document.getElementById('addNewInputLink').style.color = "blue";
+                                             $('#addNewInputLink').css('text-decoration','underline');
+                                         }                                       
+                                    }                                    
                                     function initCharts() {
-							          	if(chartData==null){
-								          InsightsAndInputTabCtrl.loadOpps('{!NetCashFlow.selectedCurrency}', {!NetCashFlow.selectedMonth},
-								                 function(result, event){				
-													chartData = result;
-													rerederGraph(chartData);
-								              }, {escape:true});
-								         }else{
-							          		rerederGraph(chartData);
-							          	 }
+                                        if(chartData==null){
+                                          InsightsAndInputTabCtrl.loadOpps('{!NetCashFlow.selectedCurrency}', {!NetCashFlow.selectedMonth},
+                                                 function(result, event){               
+                                                    chartData = result;
+                                                    rerederGraph(chartData);
+                                              }, {escape:true});
+                                         }else{
+                                            rerederGraph(chartData);
+                                         }
                                       }
                                    // Load the Visualization API and the piechart package.
                                     google.load('visualization', '1.0', {'packages':['corechart']});
@@ -217,44 +228,45 @@
                                     google.setOnLoadCallback(initCharts);
                                     window.addEventListener("resize", initCharts);
                                 </script>
-										</apex:outputPanel>
-									</apex:pageBlockSection>
-								</apex:pageBlock>
-								<!-- -->
-							</apex:pageBlock>
-						</apex:outputPanel>
-						<apex:pageBlock id="theCashFlow">
-							<iframe src="{!$Site.Prefix}/apex/portalCashFlowReportClone?aId={!currentAccount}&currency={!NetCashFlow.selectedCurrency}&dateRange={!NetCashFlow.selectedMonth}"
-								scrolling="no" id="theIframe" height="700px;" width="98%" frameborder="0" onload="ResizeIframeFromParent('theIframe');"/>
-								<script type="text/javascript">
-									function ResizeIframeFromParent(id) {
-									    if (jQuery('#'+id).length > 0) {
-									        var window = document.getElementById(id).contentWindow;
-									        var prevheight = jQuery('#'+id).attr('height');
-									        var newheight = Math.max( window.document.body.scrollHeight, window.document.body.offsetHeight, window.document.documentElement.clientHeight, window.document.documentElement.scrollHeight, window.document.documentElement.offsetHeight );
-									        if (newheight != prevheight && newheight > 0) {
-									            jQuery('#'+id).attr('height', newheight);
-									            console.log("Adjusting iframe height for "+id+": " +prevheight+"px => "+newheight+"px");
-									        }
-									    }
-									}
-							</script>
-						</apex:pageBlock>
-						<c:DateTimestampMessage />
-					</div>
+                                        </apex:outputPanel>
+                                    </apex:pageBlockSection>
+                                </apex:pageBlock>
+                                <!-- -->
+                            </apex:pageBlock>
+                        </apex:outputPanel>
+                        <apex:pageBlock id="theCashFlow">
+                            <iframe src="{!$Site.Prefix}/apex/portalCashFlowReportClone?aId={!currentAccount}&currency={!NetCashFlow.selectedCurrency}&dateRange={!NetCashFlow.selectedMonth}"
+                                scrolling="no" id="theIframe" height="700px;" width="98%" frameborder="0" onload="ResizeIframeFromParent('theIframe');"/>
+                                <script type="text/javascript">
+                                    function ResizeIframeFromParent(id) {
+                                        if (jQuery('#'+id).length > 0) {
+                                            var window = document.getElementById(id).contentWindow;
+                                            var prevheight = jQuery('#'+id).attr('height');
+                                            var newheight = Math.max( window.document.body.scrollHeight, window.document.body.offsetHeight, window.document.documentElement.clientHeight, window.document.documentElement.scrollHeight, window.document.documentElement.offsetHeight );
+                                            if (newheight != prevheight && newheight > 0) {
+                                                jQuery('#'+id).attr('height', newheight);
+                                                console.log("Adjusting iframe height for "+id+": " +prevheight+"px => "+newheight+"px");
+                                            }
+                                        }
+                                    }
+                            </script>
+                        </apex:pageBlock>
+                        <c:DateTimestampMessage />
+                        <c:DisclamerComp />
+                    </div>
 
 
-					</div>
-			</apex:form>
-			
-			</div>
-			<c:CashReportMenuContent />
-			</div>
-			<script type="text/javascript">
-				$(function () {
-				  $('[data-toggle="tooltip"]').tooltip()
-				});
-			</script>
-		</apex:define>
-	</apex:composition>
+                    </div>
+            </apex:form>
+            
+            </div>
+            <c:CashReportMenuContent />
+            </div>
+            <script type="text/javascript">
+                $(function () {
+                  $('[data-toggle="tooltip"]').tooltip()
+                });
+            </script>
+        </apex:define>
+    </apex:composition>
 </apex:page>

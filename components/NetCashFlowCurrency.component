@@ -21,6 +21,36 @@
                         }    
         </style>
         <script>
+        
+    function createGroup(svgDoc) {
+    	var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        //g.setAttribute('id', 'group');
+        //g.setAttribute('shape-rendering', 'inherit');
+        g.setAttribute('pointer-events', 'all');
+        svgDoc.appendChild(g);
+        return g;
+    }
+	function createRect(svgDoc, currencyName, color) {
+	  debugger;
+	  var currencyObj = $('text:contains('+currencyName+')')[0];
+      var newRect = document.createElementNS("http://www.w3.org/2000/svg","rect");
+      newRect.setAttributeNS(null,"width",10);	
+      newRect.setAttributeNS(null,"height",10);		
+      newRect.setAttributeNS(null,"x",currencyObj.offsetLeft);		
+      newRect.setAttributeNS(null,"y",currencyObj.offsetTop);	
+      //newRect.setAttributeNS(null,"fill-opacity",Math.random());		
+      newRect.setAttributeNS(null,"fill",color);
+      firstGroup = createGroup(svgDoc);
+      firstGroup.appendChild(newRect);
+      //currencyObj.appendChild(newRect);
+      //svgDoc.appendChild(firstGroup);
+    }	
+        
+        	function timeoutFn(){
+        	//createGroup()
+        	createRect($("svg")[1], 'EUR', '#3366cc');
+        	debugger;
+        	}
                function renderNetCashFlowByCurrencyChart(result){
                      if(result==null){
                         return null;
@@ -84,15 +114,20 @@
                                              width: "100%",
                                              height: 274,
                                              bar: {groupWidth: "45%"},
-                                             vAxis: { textPosition: 'none',gridlineColor: '#fff', baseline: 3 },
-                                             legend: { position: "none" },
+                                             vAxis: { textPosition: 'none',gridlineColor: '#fff', baseline: 1 },
                                              chartArea: {width: '76%', height: '55%'},
                                              backgroundColor: '#F8F8F8',
+                                             legend: {position: 'none'}
                              };        
                           
                           //vAxis to hide vAxis and caption
                           chart = new google.visualization.ColumnChart(document.getElementById("chartBlockByCurrency"));
                           chart.draw(view, options);
+                          //setTimeout(function(){ timeoutFn() }, 3000);
+                          //
+                          //ledgentNetCash
+						//Amount Shown in 1000s
+                          
                           google.visualization.events.addListener(chart, 'select', function() {
                                 var selectedItem = chart.getSelection()[0];
                                 if (selectedItem) {
@@ -110,8 +145,8 @@
                          chartDiv.style.height = '60px';
                          chartDiv.style.textAlign = 'center';
                          chartDiv.style.vAlign = 'middle';
-                         chartDiv.innerHTML = "<br/>No Data To Display";
-                         document.getElementById('addNewInputLink').style.display = 'block';
+                         chartDiv.innerHTML = "<img src='{!URLFOR($Resource.Dashboard_Chart_NoData_Images, '/Dashboard_Chart_NoData_Images/HPBC.png')}' />";
+                         document.getElementById('addNewInputLink2').style.display = 'block';
                          document.getElementById('addNewInputLink').style.height = '300px;';
                      }
                         }       
@@ -129,22 +164,41 @@
                           }
                   
                   window.addEventListener("resize", initCharts);
+                             /*
+                                            debugger;
+                          var chartDiv = document.getElementById('chartBlockByCurrency');
+                          if(chartDiv.lastChild!=null){
+                          	chartDiv.lastChild.appendChild(document.getElementById('ledgentNetCash'));
+                          }*/
         </script>
         
         <apex:form style="margin-top:15px;min-width:350px;">
                      <div style="padding: 3px 2px;background-color:#222;color:white;font-weight:bold;text-align:center;">Total Net Cash Flow by Currency</div>
-                <apex:outputPanel layout="block" id="pieDiv" style="height:250px;">
+                <apex:outputPanel layout="block" id="pieDiv" style="height:235px;">
                      <center>
-                        <div id="chartBlockByCurrency" style="height: 230px;width:100%;cursor: pointer;" ></div>                    
+                        <div id="chartBlockByCurrency" style="height: 230px;width:100%;cursor: pointer;" >
+                        </div>
+						<!-- svg id="ledgentNetCash" width="394" height="70" aria-label="A chart." style="overflow: hidden;display:none;">
+						            <rect x="0" y="0" width="394" height="70" stroke="none" stroke-width="0" fill="#ff0"></rect>
+						            <g>
+						               <g>
+						                  <g>
+						                     <text text-anchor="start" x="85" y="56.35" font-family="Arial" font-size="11" stroke="none" stroke-width="0" fill="#222222">amount</text>
+						                  </g>
+						                  <rect x="70" y="47" width="11" height="11" stroke="none" stroke-width="0" fill="#3366cc"></rect>
+						               </g>
+						            </g>
+						         </svg-->
                    </center>
+                   
+                </apex:outputPanel>
                    <center><a>
                     <div>
-                        <p id="addNewInputLink2" onclick="window.open('{!$Site.Prefix}/apex/ManageCashInput','_top',false);" style="cursor: pointer; display:block; backgroundColor:#eee;font-size: 18px;" >
+                        <p id="addNewInputLink2" onclick="window.open('{!$Site.Prefix}/apex/ManageCashInput','_top',false);" style="position: absolute;top: 130px;right: 162px;  text-decoration: underline;color: blue;cursor: pointer; display:none; backgroundColor:#eee;font-size: 18px;" >
                         
                             Start Adding Inputs
                         </p>
                     </div></a></center>
-                </apex:outputPanel>
          </apex:form> 
                  
                  

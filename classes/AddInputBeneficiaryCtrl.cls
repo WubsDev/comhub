@@ -6,7 +6,7 @@
  * 
  * Date Modified                Modified By                  Description of the update
  =====================================================================*/
-public with sharing class AddInputBeneficiaryCtrl {
+public without sharing class AddInputBeneficiaryCtrl {
 	
 	public Input_Beneficiary__c inputBene{get;set;}
 	public String benefComId{get;set;}

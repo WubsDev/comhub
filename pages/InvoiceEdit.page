@@ -26,15 +26,17 @@
 <!-- 				        </apex:repeat> -->
 				        <apex:repeat value="{!$ObjectType.Invoice__c.FieldSets.Community_Invoice_Edit}" var="f">
 				        	<apex:PageBlockSectionItem >
-					        	<span class="label" style="align: right"> {!if(f =='CurrencyIsoCode', 'Currency',LabelMaps[f.fieldPath] )} </span>
+					        	<span class="label" style="align: right"> {!if(f =='Custom_Currency__c', 'Currency',LabelMaps[f.fieldPath] )} </span>
 					        	<apex:outputPanel >
-									<apex:SelectList size="1" multiselect="false" rendered="{!if(f=='CurrencyIsoCode', true, false)}" 
-										value="{!invoiceRecord[f.fieldPath]}">
-										<apex:SelectOptions value="{!CurrencyOptions}" />
-									</apex:SelectList>
-	
-	                 			 	<apex:inputField value="{!invoiceRecord[f.fieldPath]}" rendered="{!if(f!='CurrencyIsoCode', true, false)}" 
-	                      		 		styleclass="dataTable"/>
+					        		<c:RequiredBlockComponent isRequired="{!(f.required || f.dbrequired)}">
+										<apex:SelectList size="1" multiselect="false" rendered="{!if(f=='Custom_Currency__c', true, false)}" 
+											value="{!invoiceRecord[f.fieldPath]}">
+											<apex:SelectOptions value="{!CurrencyOptions}" />
+										</apex:SelectList>
+		
+		                 			 	<apex:inputField value="{!invoiceRecord[f.fieldPath]}" rendered="{!if(f!='Custom_Currency__c', true, false)}" 
+		                      		 		styleclass="dataTable"/>
+		                      		 </c:RequiredBlockComponent>
 	                      		</apex:outputPanel>
 							</apex:PageBlockSectionItem>
               			</apex:repeat>
@@ -42,6 +44,7 @@
 				    </apex:pageBlock>
 		    	</apex:form>
     		</div>
+    		<c:DisclamerComp />
     	</apex:define>
    	</apex:composition>
 </apex:page>

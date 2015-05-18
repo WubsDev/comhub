@@ -56,7 +56,7 @@
 				        </apex:repeat> -->
 				        <apex:repeat value="{!fields}" var="f">
 				        	<apex:pageBlockSectionItem >
-					        	<span class="label" style="align: right"> {!if(f =='CurrencyIsoCode', 'Currency',LabelDetailMaps[f.fieldPath] )} </span>
+					        	<span class="label" style="align: right"> {!if(f =='Custom_Currency__c', 'Currency',LabelDetailMaps[f.fieldPath] )} </span>
 	                 			<apex:OutputField value="{!invoiceRecord[f.fieldPath]}" 
 	                      		 styleclass="dataTable"/>
               				</apex:pageBlockSectionItem>
@@ -129,6 +129,7 @@
 						p_showAsStandardRelatedList="true"/--> 
 				</apex:form>
 			</div>
+			<c:DisclamerComp />
 		</apex:define>
 	</apex:composition>
 </apex:page>

@@ -45,19 +45,22 @@ global without sharing class ManageCashInvoiceCtl {
     }
     public List<SelectOption> getForwardContractCurrency(){
         selectedForwardContractCurrency = '';
-       List<SelectOption> currList =  Utility.picklistValues('Invoice__c','CurrencyIsoCode', true);
+       List<SelectOption> currList =  Utility.picklistValues('Invoice__c','Custom_Currency__c', true);
        if(currList.size() > 0){
         selectedForwardContractCurrency = currList[0].getValue();
        }
        return currList;
     }
 	// To Cancel the record    
-    public void cancel() {
+    public void cancel2() {
     	if(InsightsAndInputCtl!=null){
-    		InsightsAndInputCtl.selectedTranscation = '';
+    		//InsightsAndInputCtl.selectedTranscation = '';
     	}
         if(invoice.id != null)
         delete invoice;
+        else{
+        	invoice = new Invoice__c();
+        }
     }
     
     
@@ -65,7 +68,7 @@ global without sharing class ManageCashInvoiceCtl {
     public pagereference saveInvoice() {
         try{
             hasError = false;
-            invoice.CurrencyIsoCode = selectedForwardContractCurrency;
+            invoice.Custom_Currency__c = selectedForwardContractCurrency;
             if(invoice.Name == null || invoice.Name == '') {
                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Invoice Number Should Not be Blank '));
                 hasError = true;                
@@ -74,7 +77,7 @@ global without sharing class ManageCashInvoiceCtl {
                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Status Should Not be Blank '));
                 hasError = true;                
             }       
-            /*if(invoice.CurrencyIsoCode == null) {
+            /*if(invoice.Custom_Currency__c == null) {
                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Currency Should Not be Blank '));
                 hasError = true;
             }*/
@@ -90,7 +93,7 @@ global without sharing class ManageCashInvoiceCtl {
                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, 'Supplier Should Not be Blank '));
                 hasError = true;
             }   
-            if(invoice.CurrencyIsoCode == '' || invoice.CurrencyIsoCode == 'Select' || invoice.CurrencyIsoCode == null) {
+            if(invoice.Custom_Currency__c == '' || invoice.Custom_Currency__c == 'Select' || invoice.Custom_Currency__c == null) {
                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, 'Selected currency is not valid currency. Choose other than Select for Currency.'));
                 hasError = true;
             }   

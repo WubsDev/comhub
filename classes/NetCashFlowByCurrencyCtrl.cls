@@ -12,14 +12,14 @@ global without sharing class NetCashFlowByCurrencyCtrl {
         User userLoggedIn = Utility.loggedInUser;
         Map<String, NetCashFlowCtrl.InvoicByCurrencyWrap> invoiceMap = new map<String, NetCashFlowCtrl.InvoicByCurrencyWrap>();
         try{
-        	for(AggregateResult agResult : [SELECT SUM(Amount__c) s, CurrencyIsoCode c FROM Input__c WHERE Parent_Account__c =: accId and (Type__c in (:TRADING_RECEIPTS, :INFLOW_OTHER) or Input_Type__c in (:TRADING_RECEIPTS, :INFLOW_OTHER)) GROUP BY CurrencyIsoCode]) {
+        	for(AggregateResult agResult : [SELECT SUM(Amount__c) s, Custom_Currency__c c FROM Input__c WHERE Parent_Account__c =: accId and (Type__c in (:TRADING_RECEIPTS, :INFLOW_OTHER) or Input_Type__c in (:TRADING_RECEIPTS, :INFLOW_OTHER)) GROUP BY Custom_Currency__c]) {
 	        	NetCashFlowCtrl.addRecordToInvoiceCurrencyMap(agResult, invoiceMap, true);
 	        }
-        	for(AggregateResult agResult : [SELECT SUM(Amount__c) s, CurrencyIsoCode c FROM Input__c WHERE Parent_Account__c =: accId and (Type__c in (:PURCHASE_ORDER, :FORECAST_ORDER, :OUTFLOW_OTHER) or Input_Type__c in (:PURCHASE_ORDER, :FORECAST_ORDER, :OUTFLOW_OTHER)) GROUP BY CurrencyIsoCode]) {
+        	for(AggregateResult agResult : [SELECT SUM(Amount__c) s, Custom_Currency__c c FROM Input__c WHERE Parent_Account__c =: accId and (Type__c in (:PURCHASE_ORDER, :FORECAST_ORDER, :OUTFLOW_OTHER) or Input_Type__c in (:PURCHASE_ORDER, :FORECAST_ORDER, :OUTFLOW_OTHER)) GROUP BY Custom_Currency__c]) {
 	        	NetCashFlowCtrl.addRecordToInvoiceCurrencyMap(agResult, invoiceMap, false);
   			    
 	        }
-        	for(AggregateResult agResult : [SELECT SUM(Amount__c) s, CurrencyIsoCode c From Invoice__c WHERE Account__c =: accId GROUP BY CurrencyIsoCode]) {
+        	for(AggregateResult agResult : [SELECT SUM(Amount__c) s, Custom_Currency__c c From Invoice__c WHERE Account__c =: accId GROUP BY Custom_Currency__c]) {
 				NetCashFlowCtrl.addRecordToInvoiceCurrencyMap(agResult, invoiceMap, false);
 	        }	
         }catch(Exception Ex){

@@ -26,7 +26,7 @@ public with sharing class ForwardContractTriggerHandler {
 		// set of currency ISO codes associated with forward contacts passed in
 		Set<String> currencyIsoCodes = new Set<String>();
 		for(Forward_Contracts__c newfc : forwardContractList ) {
-			if(oldMap == null || newfc.Custom_Currency__c != oldMap.get(newfc.id).Custom_Currency__c /*|| newfc.FX_Amount__c != oldMap.get(newfc.id).FX_Amount__c
+			if(oldMap == null || (newfc.Market_Rate__c==null|| newfc.Custom_Currency__c != oldMap.get(newfc.id).Custom_Currency__c) /*|| newfc.FX_Amount__c != oldMap.get(newfc.id).FX_Amount__c
 				|| newfc.Account_ID__c != oldMap.get(newfc.id).Account_ID__c || newfc.Converted_Amount__c != oldMap.get(newfc.id).Converted_Amount__c
 				|| newfc.FX_Balance__c != oldMap.get(newfc.id).FX_Balance__c || newfc.FX_Currency__c != oldMap.get(newfc.id).FX_Currency__c
 				|| newfc.Maturity_Date__c != oldMap.get(newfc.id).Maturity_Date__c || newfc.Maturity_Date__c != oldMap.get(newfc.id).Maturity_Date__c

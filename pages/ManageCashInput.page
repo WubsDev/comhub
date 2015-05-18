@@ -8,7 +8,7 @@
 			 <c:ManageCashInput sourcePage="ManageCashInput" />
 			 </apex:form>
 			<c:ManageCashInputs />
-
+			<c:DisclamerComp />
 		</apex:define>
 	</apex:composition>
 </apex:page>

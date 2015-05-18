@@ -22,6 +22,7 @@
      
      //added line for test edit permissions
      public boolean canEdit{get;set;}
+     public String returnURL{get; set;}
 	 /*
 	 public InvoiceDetailController(ApexPages.StandardController stdController) {
 	     //get value from query string parameter
@@ -37,6 +38,7 @@
 
 	// Constructor
 	public InvoiceDetailController() {
+		returnURL = ApexPages.currentPage().getParameters().get('retURL');
 	 	if(ApexPages.currentPage().getParameters().get('id') != null && ApexPages.currentPage().getParameters().get('id') != ''){
 	 		for(Invoice__c tmpInv : getInvoice(ApexPages.currentPage().getParameters().get('id')) ){
 	 		    this.invoiceRecord = tmpInv;
@@ -77,7 +79,7 @@
 	 		if(system.currentPageReference().getParameters().get('retURL') != null) {
 	 			return new Pagereference(system.currentPageReference().getParameters().get('retURL'));
 	 		}
-	 		return Page.wuDashboard;
+	 		return Page.ManageCashInput;
 	 	} catch(Exception ex) {
 			return null;	 		
 	 	}
@@ -85,8 +87,8 @@
 	 
 	 public Pagereference customCancel() {
 	 	try{
-	 		if(system.currentPageReference().getParameters().get('retURL') != null) {
-	 			return new Pagereference(system.currentPageReference().getParameters().get('retURL'));
+	 		if(returnURL != null) {
+	 			return new Pagereference(returnURL);
 	 		}
 	 		return Page.ManageCashInput;
 	 	} catch(Exception ex) {
@@ -107,7 +109,7 @@
 	public List<SelectOption> CurrencyOptions{
     	get{
     		if(CurrencyOptions==null || CurrencyOptions.size()==0){
-        		CurrencyOptions= Utility.picklistValues('Invoice__c','CurrencyIsoCode', true);
+        		CurrencyOptions= Utility.picklistValues('Invoice__c','Custom_Currency__c', true);
     		}
     		return CurrencyOptions;
     	}
@@ -150,14 +152,47 @@
             query += f.getFieldPath() + ', ';
         }
         String account = Utility.currentAccount;
-        query += 'Id FROM Invoice__c Where Id =: id and Account__c=:account LIMIT 1';
+        query += 'Id, Currency_Code__c FROM Invoice__c Where Id =: id and Account__c=:account LIMIT 1';
         return Database.query(query);
     }
     
     
     public PageReference save(){
-    	upsert invoiceRecord;
-	    return new PageReference ('/apex/InvoiceDetail?id='+invoiceRecord.id);
+    	Boolean hasError = false;
+    	try{
+	    	if(invoiceRecord.Name == null || invoiceRecord.Name == '') {
+	            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Invoice Number Should Not be Blank '));
+	            hasError = true;                
+	        }   
+	        if(invoiceRecord.Status__c == null || invoiceRecord.Status__c == ''){
+	            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Status Should Not be Blank '));
+	            hasError = true;                
+	        }       
+	        if(invoiceRecord.Due_Date__c == null) {
+	            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Payment Date Should Not be Blank '));
+	            hasError = true;
+	        }
+	        if(invoiceRecord.Amount__c == null ) {
+	            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, 'Amount Should Not be Blank '));
+	            hasError = true;
+	        }   
+	        if(!Utility.isValidSfdcId(invoiceRecord.Input_Beneficiary__c)) {
+	            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, 'Supplier Should Not be Blank '));
+	            hasError = true;
+	        }   
+	        if(invoiceRecord.Custom_Currency__c == '' || invoiceRecord.Custom_Currency__c == 'Select' || invoiceRecord.Custom_Currency__c == null) {
+	            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, 'Selected currency is not valid currency. Choose other than Select for Currency.'));
+	            hasError = true;
+	        }   
+	        if(!hasError) {
+	        	update invoiceRecord;
+				return new PageReference(returnURL);
+	        }
+	        return ApexPages.currentPage();
+	    }catch(Exception ex){
+    		ApexPages.addMessages(ex);
+    		return ApexPages.currentPage();
+    	}
 	 }
 	 
 	 public PageReference cancel(){

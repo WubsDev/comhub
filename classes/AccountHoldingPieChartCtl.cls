@@ -8,7 +8,7 @@
  =====================================================================*/
 
 
-public class AccountHoldingPieChartCtl
+public without sharing class AccountHoldingPieChartCtl
 {  
     public static String accId;
     public AccountHoldingPieChartCtl(){
@@ -116,7 +116,7 @@ public class AccountHoldingPieChartCtl
         }
         List<sObject> holdbalance= new List<sObject>();  
         //Amount__c = Converted_Amount__c * Market_rate
-        String sql = 'select CurrencyIsoCode, SUM(Converted_Amount__c)total, SUM(Amount__c) MarketRate FROM Holding_Balance__c where Converted_Amount__c>0 and Account__c =: accId group by CurrencyIsoCode';
+        String sql = 'select Custom_Currency__c, SUM(Converted_Amount__c)total, SUM(Amount__c) MarketRate FROM Holding_Balance__c where Converted_Amount__c>0 and Account__c =: accId group by Custom_Currency__c ';
         //String sql = 'SELECT CurrencyIsoCode, Converted_Amount__c FROM Holding_Balance__c where Account__c =: accId ';
         holdbalance = Database.Query(sql);
         Decimal total=0;
@@ -133,12 +133,12 @@ public class AccountHoldingPieChartCtl
         Set<String>newColor4Currency = new Set<String>();
         for(sObject temp:holdbalance)
         {
-            String CurrencyIsoCode = (String)temp.get('CurrencyIsoCode');            
+            String CurrencyIsoCode = (String)temp.get('Custom_Currency__c');            
             if(!String.isEmpty(CurrencyIsoCode) && !colorOrderset.contains(CurrencyIsoCode)){
                 colorOrder.add(CurrencyIsoCode);
             }
            // dataList.add(new PieWedgeData(temp.CurrencyIsoCode,(((temp.Converted_Amount__c)/total)*100)));
-            mapPieWedgeData.put(CurrencyIsoCode, new PieWedgeData((String)temp.get('CurrencyIsoCode'),((Decimal)temp.get('total') ),
+            mapPieWedgeData.put(CurrencyIsoCode, new PieWedgeData((String)temp.get('Custom_Currency__c'),((Decimal)temp.get('total') ),
             ((Decimal)temp.get('MarketRate')))) ;
             if(String.isEmpty(getColorNextCodeForCurrency(CurrencyIsoCode, holdingColorCurrencyMap, false))){
                 newColor4Currency.add(CurrencyIsoCode);

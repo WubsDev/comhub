@@ -158,6 +158,7 @@ global without sharing class InsightsAndInputTabCtrl {
                 hasError = true;
             }
             */
+           
             if(!hasError) {
 		    	if(ApexPages.hasMessages(ApexPages.Severity.Error)){
 		    		hasError = true;
@@ -262,9 +263,9 @@ global without sharing class InsightsAndInputTabCtrl {
   			return ;
   		}
     //if(selectedCurrencyHolding == 'All') {
-        holdingBalancesList = [SELECT Name, Amount__c, CurrencyISOCode FROM Holding_Balance__c
+        holdingBalancesList = [SELECT Name, Amount__c, CurrencyISOCode,Custom_Currency__c FROM Holding_Balance__c
                                                                        WHERE Account__c =:accId
-                                                                       order by CurrencyISOCode ];
+                                                                       order by Custom_Currency__c ];
         /*}else {
             holdingBalancesList = [SELECT Name, Amount__c FROM Holding_Balance__c
                                                           WHERE Account__c =:accId
@@ -280,9 +281,9 @@ global without sharing class InsightsAndInputTabCtrl {
   			return HoldingBalanceWprList;
   		}        
         String lastCurrency = '';
-      for(Holding_Balance__c holdingBal: [SELECT Name, Amount__c, CurrencyISOCode FROM Holding_Balance__c
+      for(Holding_Balance__c holdingBal: [SELECT Name, Amount__c,Custom_Currency__c, CurrencyISOCode FROM Holding_Balance__c
                                                                        WHERE Account__c =:accId
-                                                                       order by CurrencyISOCode desc]){
+                                                                       order by Custom_Currency__c desc]){
                 /*if(lastCurrency != holdingBal.CurrencyISOCode){
                     if(lastCurrency!=''){
                         HoldingBalanceWprList.add(new HoldingBalanceWpr(''));
@@ -326,7 +327,7 @@ global without sharing class InsightsAndInputTabCtrl {
 
 // Used To Get the Currency Code From The CurrencyIsoCode
     public List<SelectOption> getInputCurrency(){
-        return Utility.picklistValues('Input__c','CurrencyIsoCode', true);
+        return Utility.picklistValues('Input__c','Custom_Currency__c', true);
     }
 
 // Used To Get the Currency Code From The CurrencyIsoCode

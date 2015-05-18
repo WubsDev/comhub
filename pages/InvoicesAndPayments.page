@@ -227,7 +227,7 @@
 					<h4>My Invoices</h4>
 
 					<apex:outputPanel id="opPanel">
-						<apex:dataTable value="{!invoicePgCtl_genericList}" var="c" styleClass="table">
+						<apex:dataTable value="{!invoicePgCtl_genericList}" var="c" styleClass="table" rendered="{!invoicePgCtl_genericList.size > 0}">
 
 							<apex:column >
 								<apex:inputCheckbox id="cb1" value="{!c.isSelected}" />
@@ -264,10 +264,10 @@
 											assignTo="{!invoicePgCtl.sortField}" />
 									</apex:commandLink>
 								</apex:facet>
-								<apex:outputText value="{!c.invoice.CurrencyIsoCode}{0, number, ###,##0.00}">
+								<apex:outputText value="{!c.invoice.Custom_Currency__c}{0, number, ###,##0.00}">
 									<apex:param value="{!c.amount}" />
 								</apex:outputText>
-								<!--                 <apex:outputtext value="{!c.invoice.CurrencyIsoCode} {!c.amount}"/>  -->
+								<!--                 <apex:outputtext value="{!c.invoice.Custom_Currency__c} {!c.amount}"/>  -->
 							</apex:column>
 							<apex:column >
 								<apex:facet name="header">
@@ -320,10 +320,9 @@
 							</apex:column>
 
 						</apex:dataTable>
-
 						</apex:outputpanel>
 						<div class="text-center">
-							<apex:outputpanel >
+							<apex:outputpanel rendered="{!invoicePgCtl_genericList.size > 0}">
 								<apex:commandButton rendered="{!invoicePgCtl.paginater.showPrevious}"
 									value="First" styleClass="wuBtn" action="{!invoicePgCtl.firstPage}" status="status" rerender="opPanel"/>
 								<apex:commandButton rendered="{!invoicePgCtl.paginater.showPrevious}"
@@ -337,12 +336,22 @@
 								<apex:commandButton rendered="{!invoicePgCtl.paginater.showNext}" value="Last"
 									styleClass="wuBtn" action="{!invoicePgCtl.lastPage}" status="status" rerender="opPanel"/>
 							</apex:outputpanel>
+							
+							<apex:outputPanel rendered="{!invoicePgCtl_genericList.size = 0}">
+								<apex:image id="theImage1" value="{!URLFOR($Resource.Dashboard_Chart_NoData_Images, '/Dashboard_Chart_NoData_Images/NIF.png')}" />
+								<div style="background-color: transparent;width:100%;position: relative;top: -150px;  left: 10px;">
+					                <apex:outputLink value="{!$Site.Prefix}/apex/ManageCashInput?lid=01rS000000095lA&#38;ic=1" target="_top" style="text-decoration: underline;color: blue;background-color:white;text-decoration: underline;color: blue;font-size: 18px;">
+					                    Start Adding Invoices
+					                </apex:outputLink>
+					            </div>
+					        </apex:outputPanel>
+							
+<!-- 							<apex:image id="theImage1" value="{!URLFOR($Resource.Dashboard_Chart_NoData_Images, '/Dashboard_Chart_NoData_Images/NIF.png')}"  -->
+<!-- 									rendered="{!invoicePgCtl_genericList.size = 0}" /> -->
+									
 						</div>
-						<center>
-							<div style="float: left; width: 100%;">
-								<c:DateTimestampMessage />
-							</div>
-						</center>
+						<c:DateTimestampMessage />
+						<c:DisclamerComp />
 					<!-- END OF MY INVOICES SECTION  -->
 					
 				</apex:outputPanel>

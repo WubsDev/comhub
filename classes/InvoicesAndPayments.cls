@@ -81,7 +81,7 @@ public without sharing class InvoicesAndPayments {
         sortOrder = ApexPages.currentPage().getParameters().get('orderType');
         
         //Updated T-358322, By Ranjeet Singh, Please make Default Invoice Status = Open in Type drop down in "My Invoices" table
-        selectedStatus = 'Pending Approval (Open)';
+        selectedStatus = 'All';
         selectedCurrency = 'ShowAll';
         
         // To get the AccountId of logged in user
@@ -100,12 +100,13 @@ public without sharing class InvoicesAndPayments {
         list<Selectoption> lstCurrency = new list<Selectoption>();
         lstCurrency.add(new Selectoption('ShowAll','-----Show All-----'));
         Set<String> currencySet = new Set<String>();
-        for(AggregateResult invoiceRec: [SELECT count(Id), CurrencyIsoCode 
+        for(AggregateResult invoiceRec: [SELECT count(Id), Custom_Currency__c 
                                          FROM Invoice__c 
                                          WHERE Account__c  =:accId
-                                         group by  CurrencyIsoCode]) {
-            String currencyCode = (String) invoiceRec.get('CurrencyIsoCode');
-            if(!currencySet.contains(currencyCode)) {
+                                         group by  Custom_Currency__c]) {
+            String currencyCode = (String) invoiceRec.get('Custom_Currency__c');
+            //Fix currencyCode should not be null: Fixed Error.
+            if(!String.isEmpty(currencyCode)&& !currencySet.contains(currencyCode)) {
             currencySet.add(currencyCode);
             lstCurrency.add(new Selectoption(currencyCode,currencyCode));
             }
@@ -126,7 +127,7 @@ public without sharing class InvoicesAndPayments {
         String selectCurrency = '';
         selectedStatusSet = new Set<String>();
         
-        strQuery = 'Select id,Name, Due_Date__c, Status__c,Amount__c,Beneficiary_Contact__c,CurrencyIsoCode, OwnerId, Input_Beneficiary__c,Input_Beneficiary__r.name FROM Invoice__c' ;
+        strQuery = 'Select id,Name, Due_Date__c, Status__c,Amount__c,Beneficiary_Contact__c,Custom_Currency__c, OwnerId, Input_Beneficiary__c,Input_Beneficiary__r.name FROM Invoice__c' ;
        
         if (selectedStatus == 'All') {
             selectedStatusSet.add('Pending Approval (Open)');
@@ -145,7 +146,7 @@ public without sharing class InvoicesAndPayments {
           sortOrder = 'desc';
         }
         if(selectedCurrency != 'ShowAll'){
-            selectCurrency = ' AND CurrencyIsoCode =: selectedCurrency ';
+            selectCurrency = ' AND Custom_Currency__c =: selectedCurrency ';
         }
         
         strQuery +=' WHERE Status__c In :selectedStatusSet AND Account__c = :accId '+selectCurrency+' limit 40000';//+ ' order By '+compareField + ' ' + sortOrder; 
@@ -206,7 +207,7 @@ public without sharing class InvoicesAndPayments {
         for(AggregateResult aggregateResult : [SELECT sum(Amount__c) holdingBalance 
                                                FROM Holding_Balance__c 
                                                WHERE Account__c =: accId
-                                               AND CurrencyIsoCode =: selectedCurrency]) {
+                                               AND Custom_Currency__c =: selectedCurrency]) {
                                                     
            if(aggregateResult.get('holdingBalance') != null)
            holdingBalance = (Decimal)   aggregateResult.get('holdingBalance');                                                                  
@@ -214,7 +215,7 @@ public without sharing class InvoicesAndPayments {
          hedgedTotal = hedgeAccount + holdingBalance;
          for(List<inputWpr> lstWpr: (List<List<inputWpr>>)invoicePgCtl.fullGenericList){
 	         for(inputWpr invoiceRec: lstWpr){
-	            if(invoiceRec.invoice.CurrencyIsoCode == selectedCurrency && invoiceRec.invoice.Amount__c != null) {
+	            if(invoiceRec.invoice.Custom_Currency__c == selectedCurrency && invoiceRec.invoice.Amount__c != null) {
 	                aggregateTotal += invoiceRec.invoice.Amount__c;
 	            }
 	         }
@@ -272,7 +273,7 @@ public without sharing class InvoicesAndPayments {
     public pagereference saveInvoice() {
         try{
             hasError = false;
-            invoice.CurrencyIsoCode = selectedForwardContractCurrency;
+            invoice.Custom_Currency__c = selectedForwardContractCurrency;
             if(invoice.Name == null || invoice.Name == '') {
                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Invoice Number Should Not be Blank '));
                 hasError = true;                
@@ -281,7 +282,7 @@ public without sharing class InvoicesAndPayments {
                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Status Should Not be Blank '));
                 hasError = true;                
             }       
-            /*if(invoice.CurrencyIsoCode == null) {
+            /*if(invoice.Custom_Currency__c == null) {
                 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Currency Should Not be Blank '));
                 hasError = true;
             }*/
@@ -371,7 +372,7 @@ public without sharing class InvoicesAndPayments {
     
     public List<SelectOption> getForwardContractCurrency(){
         selectedForwardContractCurrency = '';
-       List<SelectOption> currList =  picklistValues('Invoice__c','CurrencyIsoCode');
+       List<SelectOption> currList =  picklistValues('Invoice__c','Custom_Currency__c');
        if(currList.size() > 0){
         selectedForwardContractCurrency = currList[0].getValue();
        }

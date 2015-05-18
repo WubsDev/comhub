@@ -8,12 +8,18 @@
 //
 -->
 <apex:page standardController="Input_Beneficiary__c" showHeader="false"
-    tabStyle="Input_Beneficiary__c" title="Input Edit" label="Input Edit"
-    name="Input Buyer/Supplier Detail" id="pg" extensions="InputBeneficiaryDetailPageController">
+    tabStyle="Input_Beneficiary__c" title="Input Edit" label="Input Buyer/Supplier Edit"
+    name="Input Buyer/Supplier Edit" id="pg" extensions="InputBeneficiaryDetailPageController">
     <apex:composition template="ManageCashCommunityTemplate">
         <apex:define name="headerHTML">
             <c:ManageCashMenu menuName="Report" />
         </apex:define>
+
+        <style>
+			 .dataCol .first > td{
+				vertical-align: inherit !important;
+			} 
+		</style>
 
         <!-- Start-->
         <apex:define name="body">
@@ -29,12 +35,18 @@
                         </apex:pageBlockButtons> 
                         <apex:pageBlockSection >
                             <apex:repeat value="{!$ObjectType.Input_Beneficiary__c.FieldSets.Detail}" var="f1">
-                                <apex:inputField value="{!Input_Beneficiary__c[f1]}"/>
+                            	<apex:PageBlockSectionItem >
+						        	<span class="label" style="align: right"> {!if(f1 =='Name', 'Buyer/Supplier Name',LabelDetailMaps[f1.fieldPath])} </span>
+						        	<apex:outputPanel >
+                                		<apex:inputField value="{!inputRecord[f1.fieldPath]}" />
+                                	</apex:outputPanel>
+                                </apex:PageBlockSectionItem>
                             </apex:repeat>
                         </apex:pageBlockSection>
                     </apex:pageBlock>
                 </apex:form>
             </div>
+            <c:DisclamerComp />
         </apex:define>
     </apex:composition>
 </apex:page>

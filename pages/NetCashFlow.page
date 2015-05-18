@@ -15,10 +15,10 @@
         		$( document ).ready(function(){
 					$('.pbHeader .pbTitle .mainTitle').append("<img src='/s.gif' data-toggle='tooltip' data-placement='bottom' class='imgclass' title='{!$Label.Help_Text_Dashboard_netcash}' style='height: 21px; width: 18px;' />");
 					var abc = $('#addNewInputLink');
-					if($(abc) != undefined || $(abc) != null){
-		                //var cd = $(abc).attr('onclick');
-					    //$(abc).parent().parent().parent().attr('href', cd);
-					}
+					//if($(abc) != undefined || $(abc) != null){
+		            //    var cd = $(abc).attr('onclick');
+					//    $(abc).parent().parent().parent().attr('href', cd);
+					//}
 				});
 				
         </script>
@@ -168,13 +168,14 @@
                  document.getElementById('chartBlock').style.background="url({!$Resource.NetCashFlowSampleDataImage}) no-repeat";
                  document.getElementById('chartBlock').style.backgroundSize= "100%";
                  document.getElementById('addNewInputLink').style.display = 'block';
-                 document.getElementById('addNewInputLink').style.height = '100%;';
-					var abc = $('#addNewInputLink');
-					if($(abc) != undefined || $(abc) != null){
-		                var cd = $(abc).attr('onclick');
-					    $(abc).parent().parent().parent().attr('href', cd);
-					}
-                 
+                 document.getElementById('addNewInputLink').style.height = '100%';
+                 document.getElementById('addNewInputLink').style.color = "blue";
+                 $('#addNewInputLink').css('text-decoration','underline');
+				var abc = $('#addNewInputLink');
+				if($(abc) != undefined || $(abc) != null){
+	                var cd = $(abc).attr('onclick');
+				    $(abc).parent().parent().parent().attr('href', cd);
+				}                 
                  
              }
         }

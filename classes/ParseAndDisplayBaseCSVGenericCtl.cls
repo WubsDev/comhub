@@ -183,7 +183,7 @@ public virtual without sharing class ParseAndDisplayBaseCSVGenericCtl {
     public List<SelectOption> CurrencyOptions{
     	get{
     		if(CurrencyOptions==null || CurrencyOptions.size()==0){
-        		CurrencyOptions= Utility.picklistValues(getsObjectName(),'CurrencyIsoCode', true);
+        		CurrencyOptions= Utility.picklistValues(getsObjectName(),'Custom_Currency__c', true);
     		}
     		return CurrencyOptions;
     	}
@@ -206,7 +206,7 @@ public virtual without sharing class ParseAndDisplayBaseCSVGenericCtl {
         try{
 	        if(this.isValidCsv){
 	        	for(GenericBaseCsvWrapper incWpr : parsedInput){
-	        		if(!incWpr.isValidData(true)){
+	        		if(!incWpr.isValidData(true, true)){
 	        			hasError = true;
 	        		}        		
 	        	}
@@ -225,7 +225,7 @@ public virtual without sharing class ParseAndDisplayBaseCSVGenericCtl {
             List<sObject> inputListInsert = new List<sObject>();
 			system.debug('********this.isValidCsv >-3-> ');
             for(GenericBaseCsvWrapper inv : parsedInput){
-                inv.input.put('CurrencyIsoCode', inv.mapPicklistSelect.get('CurrencyIsoCode'));
+                inv.input.put('CurrencyIsoCode', inv.mapPicklistSelect.get('Custom_Currency__c'));
                 system.debug('Invoice:' + inv.input);
                 OnSaveUpdate(inv);
                 system.debug('********this.isValidCsv >-33-> '+inv.input);

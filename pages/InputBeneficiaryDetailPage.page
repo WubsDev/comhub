@@ -49,12 +49,18 @@
 
                         <apex:pageBlockSection >
                             <apex:repeat value="{!$ObjectType.Input_Beneficiary__c.FieldSets.Detail}" var="f1">
+                            	<apex:PageBlockSectionItem >
+						        	<span class="label" style="align: right"> {!if(f1 =='Name', 'Buyer/Supplier Name',LabelDetailMaps[f1.fieldPath])} </span>
+						        	<apex:outputPanel >
                                 <apex:outputField value="{!inputRecord[f1.fieldPath]}" styleclass="dataTable"/>
+                                	</apex:outputPanel>
+                                </apex:PageBlockSectionItem>
                             </apex:repeat>
                         </apex:pageBlockSection>                        
                     </apex:pageBlock>
                 </apex:form>
             </div>
+            <c:DisclamerComp />
         </apex:define>
     </apex:composition>
     

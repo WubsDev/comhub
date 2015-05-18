@@ -421,7 +421,7 @@ public without sharing class CashFlowComponentClone {
            holdBalList =  [SELECT Amount__c 
                               FROM Holding_Balance__c
                               WHERE Account__c =: acc
-                              AND CurrencyIsoCode =: theCurrency];
+                              AND Custom_Currency__c =: theCurrency];
          }else {
             holdBalList =  [SELECT Amount__c
                               FROM Holding_Balance__c
@@ -442,17 +442,17 @@ public without sharing class CashFlowComponentClone {
         if(theCurrency != 'Total')
         {
             system.debug('Searching based on the account. Account has been passed in Invoice.');
-            invList = [Select Id, Name, Account__c, Amount__c, CurrencyISOCode, Due_Date__c, 
+            invList = [Select Id, Name, Account__c, Amount__c, Custom_Currency__c, Due_Date__c, 
                         Status__c, Seller__c, Product__c
                         From Invoice__c where Account__c =: acc
                         And Status__c not in ('Void', 'Paid')
                         And Due_Date__c >=: startDate
                         And Due_Date__c <=: endDate
-                        And CurrencyIsoCode = :theCurrency ];
+                        And Custom_Currency__c = :theCurrency ];
             
         }else
         {
-            invList = [Select Id, Name, Account__c, Amount__c, CurrencyISOCode, Due_Date__c, 
+            invList = [Select Id, Name, Account__c, Amount__c, Custom_Currency__c, Due_Date__c, 
                         Status__c, Seller__c, Product__c
                         From Invoice__c where Account__c =: acc
                         And Status__c not in ('Void', 'Paid')
@@ -530,7 +530,7 @@ public without sharing class CashFlowComponentClone {
             {
                  System.debug('startdt =>' + startDate + ' lastdt =>' + endDate);
                 system.debug('Searching based on the account. Account has been passed in.');
-                incList = [SELECT   Id, Amount__c, Type__c, Transaction_Date__c, CurrencyIsoCode, Paid__c,ContactId__c,
+                incList = [SELECT   Id, Amount__c, Type__c, Transaction_Date__c, Custom_Currency__c, Paid__c,ContactId__c,
                                         User__c, Sort_Order__c, Input_Type__c, Parent_Account__c
                                 FROM    Input__c
                                 WHERE   Transaction_Date__c != null 
@@ -538,13 +538,13 @@ public without sharing class CashFlowComponentClone {
                                         //AND Parent_Account__c =: acc
                                         //AND Paid__c = false
                                         AND Parent_account__c=:Utility.currentAccount
-                                        AND (CurrencyIsoCode =: theCurrency )  //CurrencyIsoCode =: theCurrency
+                                        AND (Custom_Currency__c =: theCurrency )  //CurrencyIsoCode =: theCurrency
                                         AND Transaction_Date__c <=: endDate
                                         ORDER BY Sort_Order__c ASC];
             }else
             {
                 system.debug('query in else 1 ??? ');
-                incList = [SELECT   Id, Amount__c, Type__c, Transaction_Date__c, CurrencyIsoCode, Paid__c,ContactId__c,
+                incList = [SELECT   Id, Amount__c, Type__c, Transaction_Date__c, Custom_Currency__c, Paid__c,ContactId__c,
                                         User__c, Sort_Order__c, Input_Type__c, Parent_Account__c
                                 FROM    Input__c
                                 WHERE   Transaction_Date__c != null 
@@ -560,7 +560,7 @@ public without sharing class CashFlowComponentClone {
         {
             if(theCurrency != 'Total')
             {
-                incList = [SELECT   Id, Amount__c, Type__c, Transaction_Date__c, CurrencyIsoCode, Paid__c,ContactId__c,
+                incList = [SELECT   Id, Amount__c, Type__c, Transaction_Date__c, Custom_Currency__c, Paid__c,ContactId__c,
                                         User__c, Sort_Order__c, Input_Type__c, Parent_Account__c, CreatedDate
                                 FROM    Input__c
                                 WHERE   Transaction_Date__c != null 
@@ -568,13 +568,13 @@ public without sharing class CashFlowComponentClone {
                                         //AND Parent_Account__c =: u2.contact.AccountId
                                         AND Parent_account__c=:Utility.currentAccount
                                         //AND Paid__c = false
-                                        AND (CurrencyIsoCode =: theCurrency ) //CurrencyIsoCode =: theCurrency
+                                        AND (Custom_Currency__c =: theCurrency ) //CurrencyIsoCode =: theCurrency
                                         AND Transaction_Date__c <=: endDate
                                         ORDER BY Sort_Order__c ASC];
             }else
             {
                 system.debug('query in else 2 ??? ');
-                incList = [SELECT   Id, Amount__c, Type__c, Transaction_Date__c, CurrencyIsoCode, Paid__c,ContactId__c,
+                incList = [SELECT   Id, Amount__c, Type__c, Transaction_Date__c, Custom_Currency__c, Paid__c,ContactId__c,
                                         User__c, Sort_Order__c, Input_Type__c
                                 FROM    Input__c
                                 WHERE   Transaction_Date__c != null 
@@ -814,14 +814,14 @@ public without sharing class CashFlowComponentClone {
         {
             User uc = Utility.loggedInUser;//classUser;
             system.debug('Adding Invoices based on the current account details');
-            c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyISOCode, uc.DefaultCurrencyIsoCode ));
+            c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             mi = od.monthsBetween(i.Due_Date__c);
         }
         else
         {
             User uc = Utility.loggedInUser;//classUser;
             system.debug('Adding Invoices based on the current contact details');
-            c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyISOCode, uc.DefaultCurrencyIsoCode ));
+            c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             mi = od.monthsBetween(i.Due_Date__c);   
         }
         Invoices[mi] += c; 
@@ -853,10 +853,10 @@ public without sharing class CashFlowComponentClone {
         if(currentAccount != null || currentAccount != '')
         {
             User uc = classUser;
-            if(i.CurrencyIsoCode!= null) {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));  
+            if(i.Custom_Currency__c!= null) {
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));  
             }else {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             }
             
             mo = od.monthsBetween(i.Transaction_Date__c);
@@ -864,10 +864,10 @@ public without sharing class CashFlowComponentClone {
         else
         {
             User uc = classUser;
-            if(i.CurrencyIsoCode!= null) {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));  
+            if(i.Custom_Currency__c!= null) {
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));  
             }else {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             }
             mo = od.monthsBetween(i.Transaction_Date__c);
         }
@@ -901,20 +901,20 @@ public without sharing class CashFlowComponentClone {
         User uc = Utility.loggedInUser;//classUser;
         if(currentAccount != null || currentAccount != '')
         {            
-            if(i.CurrencyIsoCode!= null) {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));  
+            if(i.Custom_Currency__c!= null) {
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));  
             }else {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             }
             
             mo = od.monthsBetween(i.Transaction_Date__c);
         }
         else
         {
-            if(i.CurrencyIsoCode!= null) {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));  
+            if(i.Custom_Currency__c!= null) {
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));  
             }else {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             }
             mo = od.monthsBetween(i.Transaction_Date__c);
         }
@@ -948,17 +948,17 @@ public without sharing class CashFlowComponentClone {
         if(currentAccount != null || currentAccount != '')
         {
             User uc = Utility.loggedInUser;//classUser;
-            if(i.CurrencyIsoCode!= null) {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));  
+            if(i.Custom_Currency__c!= null) {
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));  
             }else {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             }
             mo = od.monthsBetween(i.Transaction_Date__c);
         }
         else
         {
             User uc = Utility.loggedInUser;//classUser;
-            c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));
+            c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             mo = od.monthsBetween(i.Transaction_Date__c);
         }
         
@@ -991,20 +991,20 @@ public without sharing class CashFlowComponentClone {
         if(currentAccount != null || currentAccount != '')
         {
             User uc = Utility.loggedInUser;//classUser;
-            if(i.CurrencyIsoCode!= null) {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));  
+            if(i.Custom_Currency__c!= null) {
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));  
             }else {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             }
             mo = od.monthsBetween(i.Transaction_Date__c);
         }
         else
         {
             User uc = Utility.loggedInUser;//classUser;
-            if(i.CurrencyIsoCode!= null) {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));  
+            if(i.Custom_Currency__c!= null) {
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));  
             }else {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             }
             mo = od.monthsBetween(i.Transaction_Date__c);
         }
@@ -1039,20 +1039,20 @@ public without sharing class CashFlowComponentClone {
         if(currentAccount != null || currentAccount != '')
         {
             User uc = Utility.loggedInUser;//classUser;
-            if(i.CurrencyIsoCode!= null) {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));  
+            if(i.Custom_Currency__c!= null) {
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));  
             }else {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             }
             mo = od.monthsBetween(i.Transaction_Date__c);
         }
         else
         {
             User uc = Utility.loggedInUser;//classUser;
-            if(i.CurrencyIsoCode!= null) {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));  
+            if(i.Custom_Currency__c!= null) {
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));  
             }else {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             }
             mo = od.monthsBetween(i.Transaction_Date__c);
         }
@@ -1091,18 +1091,8 @@ public without sharing class CashFlowComponentClone {
             }else {
                 c = Double.valueOf(convert(double.valueOf(i.FX_Balance__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             }
-            /*if(System.today() < i.Start_Date__c) {
-                mo = od.monthsBetween(i.Start_Date__c);
-            } else */
-            if(System.today() <= i.Maturity_Date__c) {		// System.today() >= i.Start_Date__c && 
-                //mo = od.monthsBetween(System.today());
-                //Set the current month exist in date-span, consider current month
-                mo = od.monthsBetween(System.today());
-            } else if(system.today() > i.Maturity_Date__c) {
-            	//This value will not apear in summary report, for forward months.
                 mo = od.monthsBetween(i.Maturity_Date__c);
             }
-        }
         else
         {
             User uc = Utility.loggedInUser;//classUser;
@@ -1111,19 +1101,9 @@ public without sharing class CashFlowComponentClone {
             }else {
                 c = Double.valueOf(convert(double.valueOf(i.FX_Balance__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             }
-            
-            /*if(System.today() < i.Start_Date__c) {
-                mo = od.monthsBetween(i.Start_Date__c);
-            } else */
-            if(System.today() <= i.Maturity_Date__c) {		// System.today() >= i.Start_Date__c && 
-                //mo = od.monthsBetween(System.today());
-                //Set the current month exist in date-span, consider current month
-                mo = od.monthsBetween(System.today());
-            } else if(system.today() > i.Maturity_Date__c) {
-            	//This value will not apear in summary report, for forward months.
                 mo = od.monthsBetween(i.Maturity_Date__c);
             }
-        }        
+        system.debug('*****Maturity_Date__c 3: '+mo+' > '+i.Maturity_Date__c+'@'+c);
         ForwardContractsWUBS[mo] += c;
         hedgeTotalProtection[mo] += c;
         hedgeTotalObligation[mo] += c;
@@ -1155,20 +1135,20 @@ public without sharing class CashFlowComponentClone {
         if(currentAccount != null || currentAccount != '')
         {
             User uc = classUser;
-            if(i.CurrencyIsoCode!= null) {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));  
+            if(i.Custom_Currency__c!= null) {
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));  
             }else {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             }
             mo = od.monthsBetween(i.Transaction_Date__c);
         }
         else
         {
             User uc = classUser;
-            if(i.CurrencyIsoCode!= null) {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));  
+            if(i.Custom_Currency__c!= null) {
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));  
             }else {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             }
             mo = od.monthsBetween(i.Transaction_Date__c);
         }
@@ -1204,20 +1184,20 @@ public without sharing class CashFlowComponentClone {
         if(currentAccount != null || currentAccount != '')
         {
             User uc = classUser;
-            if(i.CurrencyIsoCode!= null) {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));  
+            if(i.Custom_Currency__c!= null) {
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));  
             }else {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             }
             mo = od.monthsBetween(i.Transaction_Date__c);
         }
         else
         {
             User uc = classUser;
-            if(i.CurrencyIsoCode!= null) {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));  
+            if(i.Custom_Currency__c!= null) {
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));  
             }else {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             }
             mo = od.monthsBetween(i.Transaction_Date__c);
         }
@@ -1249,20 +1229,20 @@ public without sharing class CashFlowComponentClone {
         if(currentAccount != null || currentAccount != '')
         {
             User uc = classUser;
-            if(i.CurrencyIsoCode!= null) {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));  
+            if(i.Custom_Currency__c!= null) {
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));  
             }else {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             }
             mo = od.monthsBetween(i.Transaction_Date__c);
         }
         else
         {
             User uc = classUser;
-            if(i.CurrencyIsoCode!= null) {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));  
+            if(i.Custom_Currency__c!= null) {
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));  
             }else {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             }
             mo = od.monthsBetween(i.Transaction_Date__c);
         }
@@ -1294,20 +1274,20 @@ public without sharing class CashFlowComponentClone {
         if(currentAccount != null || currentAccount != '')
         {
             User uc = classUser;
-            if(i.CurrencyIsoCode!= null) {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));  
+            if(i.Custom_Currency__c!= null) {
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));  
             }else {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             }
             mo = od.monthsBetween(i.Transaction_Date__c);
         }
         else
         {
             User uc = classUser;
-            if(i.CurrencyIsoCode!= null) {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));  
+            if(i.Custom_Currency__c!= null) {
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));  
             }else {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             }
             mo = od.monthsBetween(i.Transaction_Date__c);
         }
@@ -1339,20 +1319,20 @@ public without sharing class CashFlowComponentClone {
         if(currentAccount != null || currentAccount != '')
         {
             User uc = classUser;
-            if(i.CurrencyIsoCode!= null) {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));  
+            if(i.Custom_Currency__c!= null) {
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));  
             }else {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             }
             mo = od.monthsBetween(i.Transaction_Date__c);
         }
         else
         {
             User uc = classUser;
-            if(i.CurrencyIsoCode!= null) {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));  
+            if(i.Custom_Currency__c!= null) {
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));  
             }else {
-                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.CurrencyIsoCode, uc.DefaultCurrencyIsoCode ));
+                c = Double.valueOf(convert(double.valueOf(i.Amount__c), i.Custom_Currency__c, uc.DefaultCurrencyIsoCode ));
             }
             mo = od.monthsBetween(i.Transaction_Date__c);
         }

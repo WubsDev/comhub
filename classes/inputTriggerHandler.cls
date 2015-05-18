@@ -122,7 +122,7 @@ public class inputTriggerHandler{
     		if(input.Input_Type__c == 'Option - Other' || input.Input_Type__c == 'Option - WUBS'
     				|| input.Input_Type__c == 'Window Forward Contract - Other' || input.Input_Type__c == 'Fixed Forward Contract - Other'){
     			if(input.Buy_Currency__c != null){
-    				input.CurrencyIsoCode = input.Buy_Currency__c;
+    				input.Custom_Currency__c = input.Buy_Currency__c;
     			}
     		}
     		if(input.Input_Type__c == 'Window Forward Contract - Other'){

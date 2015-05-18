@@ -13,7 +13,7 @@
 							<apex:column >
 								
                         		<apex:facet name="header" >{!csvCTL.fieldLabels[FieldLable.FieldPath]}</apex:facet>
-                        		<apex:variable var="schIndex" value="{!(schIndex+1)}" rendered="{!if(FieldLable.Type=='picklist' && FieldLable.FieldPath=='CurrencyIsoCode', true, false)}">
+                        		<apex:variable var="schIndex" value="{!(schIndex+1)}" rendered="{!if(FieldLable.Type=='picklist' && FieldLable.FieldPath=='Custom_Currency__c', true, false)}">
                         			<c:RequiredBlockComponent isRequired="{!(FieldLable.required || FieldLable.dbrequired)}">
 										<apex:SelectList size="1" multiselect="false" value="{!c.CurrencyVal}">  
 						    	    		<apex:SelectOptions value="{!csvCTL.CurrencyOptions}" />
@@ -36,7 +36,7 @@
 													<apex:inputHidden value="{!c.input[FieldLable.FieldPath]}" id="benef"/> 
 													<c:CustomLookup selectedRefId="{!c.input[FieldLable.FieldPath]}" objectName="Input_Beneficiary__c" fieldAPI="Name" fieldToPopulateId="{!$Component.benef}" fieldSetName="Lookup_Fields"/>
 					                    		</td><td style="border-bottom:0px;padding: 0px 0px 0px 0px;">
-						                        	<apex:commandButton value="Add" styleClass="wuBtn" onClick="window.open('{!IF($Site.Prefix != null,URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/AddInputBeneficiary?aId={!$CurrentPage.parameters.aId}&customRefId={!$Component.benef}&customLkNameId='+lookupIdHolder['{!$Component.benef}_name'],'Ratting','width=850,height=400,left=150,top=200,toolbar=0,status=0,');return false;"/>
+						                        	<apex:commandButton value="Add" title="Add New Buyer/Supplier" styleClass="wuBtn" onClick="window.open('{!IF($Site.Prefix != null,URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/AddInputBeneficiary?aId={!$CurrentPage.parameters.aId}&customRefId={!$Component.benef}&customLkNameId='+lookupIdHolder['{!$Component.benef}_name'],'Ratting','width=850,height=400,left=150,top=200,toolbar=0,status=0,');return false;"/>
 					                        	</td>
 					                        	</tr>
 				                    		</table>

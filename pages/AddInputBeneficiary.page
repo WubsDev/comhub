@@ -67,6 +67,7 @@
 			    </div>
 		   </apex:pageBlock>
 		</apex:form>
+		<c:DisclamerComp />
 	</apex:define>
 </apex:composition>
 </apex:page>

@@ -6,7 +6,7 @@
 				rendered="{!IF(HoldingBalanceReportData.size > 0, true, false)}"
 				var="c" styleClass="table">
 				<apex:column headerValue="Currency">
-					<apex:outputText value="{!c.HoldingWpr.CurrencyISOCode}" />
+                    <apex:outputText value="{!c.HoldingWpr.Custom_Currency__c}" />
 				</apex:column>
 				<apex:column headerValue="Amount">
 					<apex:outputText value="{0, number, ###,##0.00}">
@@ -17,27 +17,10 @@
 			</apex:dataTable>
 			<!--  BELOW TABLE WILL BE DISPLAYED WHEN THERE WILL BE NO DATA -->
 			<apex:outputpanel rendered="{!IF(HoldingBalanceReportData.size = 0, true, false)}">
-				<table cellspacing="0" cellpadding="0" border="0" id="no_data"
-					class="table">
-					<colgroup span="2"></colgroup>
-					<thead class="">
-						<tr class=" ">
-							<th colspan="1" scope="col" class="  ">
-								<div>Currency</div></th>
-							<th colspan="1" scope="col" class="  ">
-								<div>Amount</div></th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td colspan="2"
-								style="background-color: #eee; color: #fcd40d; font-size: 28px; font-weight: bold; height: 200px; text-align: center; vertical-align: middle;">
-								No Data To Display</td>
-						</tr>
-					</tbody>
-				</table>
+                <apex:image id="theImage1" value="{!URLFOR($Resource.Dashboard_Chart_NoData_Images, '/Dashboard_Chart_NoData_Images/HBRSF.png')}" />
 			</apex:outputpanel>
 		</apex:form>
+        <c:DisclamerComp />
 	</div>
 
 	<div class="tab-pane" id="forward-contract">
@@ -47,7 +30,7 @@
 			<apex:actionregion >
 				<apex:outputPanel id="fwd">
 					<div class="palette">
-						<span><apex:outputLabel value="Currency" />
+                        <span><apex:outputLabel value="Currency Filter" />
 						</span> <span> <apex:SelectList size="1" multiselect="false"
 								value="{!selectedForwardCurrency}">
 								<apex:selectOption itemValue="" itemLabel="Select" />
@@ -99,14 +82,14 @@
 						<!-- 
 						</apex:column>-->
 
-						<apex:column headerValue="Market Rate"
-							headerClass="forwordContractTbl">
-							<apex:outputText value="{!c.market_rate__r.Ratio_to_USD__c}" />
-						</apex:column>
+<!--                        <apex:column headerValue="Market Rate" -->
+<!--                            headerClass="forwordContractTbl"> -->
+<!--                            <apex:outputText value="{!c.market_rate__r.Ratio_to_USD__c}" /> -->
+<!--                        </apex:column> -->
 
-						<apex:column headerValue="FX Currency "
+                        <apex:column headerValue="Currency "
 							headerClass="forwordContractTbl">
-							<apex:outputText value="{!c.FX_Currency__c}" />
+                            <apex:outputText value="{!c.Custom_Currency__c}" />
 						</apex:column>
 <!-- 						<apex:column headerValue="FX Amount" -->
 <!-- 							headerClass="forwordContractTbl"> -->
@@ -115,7 +98,7 @@
 <!-- 							</apex:outputText> -->
 							<!--                                        <apex:outputText value="{!c.FX_Amount__c}" />-->
 <!-- 						</apex:column> -->
-						<apex:column headerValue="FX Balance"
+                        <apex:column headerValue="Outstanding Amount"
 							headerClass="forwordContractTbl">
 							<apex:outputText value="{0, number, ###,##0.00}">
 								<apex:param value="{!c.FX_Balance__c}" />
@@ -128,46 +111,7 @@
 				<!--  BELOW TABLE WILL BE DISPLAYED WHEN THERE WILL BE NO DATA -->
 				<apex:outputpanel id="no_data_table_fwdContract">
 					<apex:outputpanel rendered="{!IF(fwdContractList.size = 0, true, false)}">
-						<table cellspacing="0" cellpadding="0" border="0"
-							id="no_data_historical" class="table">
-							<colgroup span="2"></colgroup>
-							<thead class="">
-								<tr class=" ">
-									<!-- th colspan="1" scope="col" class="  ">
-										<div>Transaction Number</div></th>
-									<th colspan="1" scope="col" class="  ">
-										<div>Start Date</div></th -->
-										
-									<th colspan="1" scope="col" class="  ">
-										<div>Maturity Date</div></th>
-										
-									<!-- th colspan="1" scope="col" class="  ">
-										<div>Settlement Currency</div></th>
-									<th colspan="1" scope="col" class="  ">
-										<div>Settlement Amount</div></th>
-									<th colspan="1" scope="col" class="  ">
-										<div>Settlement Balance</div></th-->
-										
-									<th colspan="1" scope="col" class="  ">
-										<div>Market Rate</div></th>
-									<th colspan="1" scope="col" class="  ">
-										<div>FX Currency</div></th>
-										
-									<!-- th colspan="1" scope="col" class="  ">
-										<div>FX Amount</div></th-->
-										
-									<th colspan="1" scope="col" class="  ">
-										<div>FX Balance</div></th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td colspan="10"
-										style="background-color: #eee; color: #fcd40d; font-size: 28px; font-weight: bold; height: 200px; text-align: center; vertical-align: middle;">
-										No Data To Display</td>
-								</tr>
-							</tbody>
-						</table>
+                        <apex:image id="theImage1" value="{!URLFOR($Resource.Dashboard_Chart_NoData_Images, '/Dashboard_Chart_NoData_Images/FFRSF.png')}" />
 					</apex:outputpanel>
 
 				</apex:outputpanel>
@@ -190,6 +134,7 @@
 				</div>
 			</apex:actionregion>
 			<c:DateTimestampMessage />
+            <c:DisclamerComp />
 		</apex:form>
 	</div>
 
@@ -250,6 +195,7 @@
 				</tbody>
 			</table>
 		</apex:form>
+        <c:DisclamerComp />
 	</div>
 	<script>
             

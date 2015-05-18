@@ -17,10 +17,10 @@
 	public Decimal settlementCurrency{
 		get{
 			if(invoice!=null){
-				return Utility.getSettlementCurrencyAmount(invoice.Amount__c, invoice.CurrencyIsoCode, Utility.userCurrency);
+				return Utility.getSettlementCurrencyAmount(invoice.Amount__c, invoice.Custom_Currency__c, Utility.userCurrency);
 			}
 			if(input!=null){
-				return Utility.getSettlementCurrencyAmount(input.Amount__c, input.CurrencyIsoCode, Utility.userCurrency);
+				return Utility.getSettlementCurrencyAmount(input.Amount__c, input.Custom_Currency__c, Utility.userCurrency);
 			}
 			return 0;
 		}
@@ -63,7 +63,7 @@
 	//Methods for sorting
     static map<string, string> fieldMappingForInvoice = new map<string, string>{
 	    	'Transaction_Date__c'=>'Due_Date__c',
-	    	'CurrencyIsoCode'=> 'CurrencyIsoCode',
+	    	'CurrencyIsoCode'=> 'Custom_Currency__c',
 	    	'Amount__c' => 'Amount__c', 
 	    	'Input_Beneficiary__r.Name'=> 'Input_Beneficiary__r.Name',
 	    	'Reference_Number__c' => 'Name'}; 

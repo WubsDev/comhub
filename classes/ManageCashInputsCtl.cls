@@ -301,6 +301,7 @@ public without sharing class ManageCashInputsCtl {
 	        	update(outsObjs);
         	}
         	if(ouInvoicesObjs.size()>0){
+        		system.debug('---ashishssssss--------'+ouInvoicesObjs);
         		update ouInvoicesObjs;
         	}
 	        /*
@@ -363,7 +364,7 @@ public without sharing class ManageCashInputsCtl {
         populateBeneficiaries();
         // SELECT
         soql = 'SELECT id, Input_Beneficiary__c, Input_Type__c, Window_Start_Date__c, Window_End_Date__c, Counter_Party__c,Rate__c,';
-        soql += 'LastModifiedDate, LastModifiedBy.Name, Input_Beneficiary__r.Name, Name, CurrencyIsoCode, Amount__c, Show_Input__c, ';
+        soql += 'LastModifiedDate, LastModifiedBy.Name, Input_Beneficiary__r.Name, Name, Custom_Currency__c, Amount__c, Show_Input__c, ';
         soql += 'ShowAlert__c, Beneficiary_Customer__c, Description__c, Paid__c, Invoice_Number__c, Payment_Date__c, PO_Number__c, Sort_Order__c, ';
         soql += 'Transaction_Date__c, Type__c, Reference_Number__c, Option_Protection_Obligation__c, Option_Protection_Obligation__r.Id, ';
         soql += 'Option_Protection_Obligation__r.Amount__c, CreatedDate, Parent_Account__c, OwnerId, Currency_Code__c,Sell_Currency__c, Buy_Currency__c';
@@ -403,7 +404,7 @@ public without sharing class ManageCashInputsCtl {
         String soqlFilter ='';
         
         if(!String.isEmpty(selectedCurrency)){
-        	soqlFilter +=	 ' AND CurrencyIsoCode = \''+selectedCurrency+'\'';
+        	soqlFilter +=	 ' AND Custom_Currency__c = \''+selectedCurrency+'\'';
         }
         String objTypeField = (objType=='input')? 'Transaction_Date__c': 'Due_Date__c';
         if(input.Window_Start_Date__c!=null){
@@ -420,7 +421,7 @@ public without sharing class ManageCashInputsCtl {
 	}
     private List<inputWpr> getInvoiceData( String selectedCurrency, Date startDate, Date endDate){
     	List<Invoice__c>invoices = new List<Invoice__c>();
-    	String invoiceSoql = 'select Name, Account__c, Settlement_Amount__c, Input_Beneficiary__c, Input_Beneficiary__r.Name, Due_Date__c, Amount__c, Status__c,OwnerId from invoice__c where account__c=\''+Utility.currentAccount+'\' ';
+    	String invoiceSoql = 'select Name, Account__c, Settlement_Amount__c, Input_Beneficiary__c, Input_Beneficiary__r.Name, Due_Date__c, Amount__c, Status__c,Custom_Currency__c,OwnerId from invoice__c where account__c=\''+Utility.currentAccount+'\' ';
     	invoiceSoql +=	 getCurrencyDatetimeFilter('invoice', selectedCurrency, startDate, endDate);
     	system.debug('************::'+invoiceSoql);
     	return getInvoiceData(Database.query(invoiceSoql));
@@ -648,7 +649,7 @@ public without sharing class ManageCashInputsCtl {
     
     public List<SelectOption> getbuyAndSellCurrency(){
     	list<Selectoption> lstCurrency = new list<Selectoption>();
-    	lstCurrency.add(new Selectoption('Select','Select'));
+    	// lstCurrency.add(new Selectoption('Select','Select'));
     	lstCurrency.addAll(Utility.picklistValues('Input__c', 'Buy_Currency__c'));
 		return lstCurrency;
     }

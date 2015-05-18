@@ -7,6 +7,7 @@
 <!-- Start-->
 		<apex:define name="body">            
 			<c:CSVLoadInvoiceComp csvCTL="{!self}" /> 
+			<c:DisclamerComp />
 		</apex:define>
 	</apex:composition>    
 </apex:page>

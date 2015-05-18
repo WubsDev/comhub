@@ -1,4 +1,4 @@
-trigger UserUpdateCurrency on User (before insert, before update){      //,after insert) {
+trigger UserUpdateCurrency on User (before insert, before update, after insert) {
 
     
     
@@ -14,6 +14,7 @@ trigger UserUpdateCurrency on User (before insert, before update){      //,after
                 newUser.Currency_Custom_Field__c = newUser.DefaultCurrencyIsoCode;
             }
             UserManager.updateFederationIdBI(Trigger.new);
+    		UserManager.updateDisclaimer(Trigger.new);
         }
         
         // Updated By : 05th May 2015   @Ashish Goyal   
@@ -30,7 +31,7 @@ trigger UserUpdateCurrency on User (before insert, before update){      //,after
             newUser.Currency_Custom_Field__c = newUser.DefaultCurrencyIsoCode;
         }
         //Updated Disabled FederationId On Sushant Request for update 10 May-2015
-        //UserManager.updateFederationIdBU(Trigger.new, Trigger.oldMap);
+        UserManager.updateFederationIdBU(Trigger.new, Trigger.oldMap);
     }
     
     // End @Ashish Goyal

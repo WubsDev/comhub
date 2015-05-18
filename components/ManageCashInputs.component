@@ -224,7 +224,7 @@
                         <apex:inputCheckbox value="{!o.isSelected}" id="deleteInputOutgoingChk" onclick="showDeleteBtns('deleteInputOutgoingChk');" styleClass="deleteInputChk" rendered="{!o.isOwner}" />
                         <span style="padding:0px 12px 0px 0px;display:block;float:left;display:{!if(o.isOwner, 'none;', 'block;')}">&nbsp;</span>
                         </td><td><nobr>
-                        <u><a href="{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))+'/apex/'+IF(o.input != null, 'InputDetail?Id='+o.input.Id, 'InvoiceDetail?Id='+o.invoice.Id), '/'+IF(o.input != null, o.input.Id, o.invoice.Id))}">View Details</a></u>
+                        <u><a href="{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))+'/apex/'+IF(o.input != null, 'InputDetail?Id='+o.input.Id, 'InvoiceDetail?Id='+o.invoice.Id), '/'+IF(o.input != null, o.input.Id, o.invoice.Id))}{!IF($Site.Prefix != null,'&','?')}retURL=/managecash/apex/ManageCashInput">View Details</a></u>
                         </nobr></td></tr></table>
                     </apex:column>
 
@@ -248,18 +248,20 @@
                    
                     <apex:column >
                         <apex:facet name="header">
-                            <apex:commandLink value="{!$Label.Payment_Currency} {!IF(outgoingPgCtlCTM.sortField=='CurrencyIsoCode',IF(outgoingPgCtlCTM.sortDir='asc','▲','▼'),'')}" action="{!toggleoutgoingSort}" status="status" rerender="Outgoing">
-                                <apex:param name="sortField" value="CurrencyIsoCode" assignTo="{!outgoingPgCtlCTM.sortField}"/> <!-- CurrencyIsoCode -->
+                            <apex:commandLink value="{!$Label.Payment_Currency} {!IF(outgoingPgCtlCTM.sortField=='Custom_Currency__c',IF(outgoingPgCtlCTM.sortDir='asc','▲','▼'),'')}" action="{!toggleoutgoingSort}" status="status" rerender="Outgoing">
+                                <apex:param name="sortField" value="Custom_Currency__c" assignTo="{!outgoingPgCtlCTM.sortField}"/> <!-- CurrencyIsoCode -->
                             </apex:commandLink>
                         </apex:facet>
-							<apex:selectList value="{!o.input.CurrencyIsoCode}" multiselect="false" size="1" onchange="showSaveBtns();" rendered="{!AND(o.input!=null, o.isOwner)}">
-				           		<apex:selectOptions value="{!accountTableCurrency}" />
+							<apex:selectList value="{!o.input.Custom_Currency__c}" multiselect="false" size="1" onchange="showSaveBtns();" rendered="{!AND(o.input!=null, o.isOwner)}">
+<!-- 				           		<apex:selectOptions value="{!accountTableCurrency}" /> -->
+				           		<apex:selectOptions value="{!buyAndSellCurrency}" />
 				       		</apex:selectList>    
-				       		<apex:outputText value="{!o.input.CurrencyIsoCode}" rendered="{!AND(o.input!=null, NOT(o.isOwner))}" />               
-							<apex:selectList value="{!o.invoice.CurrencyIsoCode}" multiselect="false" size="1" onchange="showSaveBtns();" rendered="{!AND(o.invoice!=null, o.isOwner)}">
-				           		<apex:selectOptions value="{!accountTableCurrency}" />
+				       		<apex:outputText value="{!o.input.Custom_Currency__c}" rendered="{!AND(o.input!=null, NOT(o.isOwner))}" />               
+							<apex:selectList value="{!o.invoice.Custom_Currency__c}" multiselect="false" size="1" onchange="showSaveBtns();" rendered="{!AND(o.invoice!=null, o.isOwner)}">
+<!-- 				           		<apex:selectOptions value="{!accountTableCurrency}" /> -->
+				           		<apex:selectOptions value="{!buyAndSellCurrency}" />
 				       		</apex:selectList>                         
-				       		<apex:outputText value="{!o.invoice.CurrencyIsoCode}" rendered="{!AND(o.invoice!=null, NOT(o.isOwner))}" />  
+				       		<apex:outputText value="{!o.invoice.Custom_Currency__c}" rendered="{!AND(o.invoice!=null, NOT(o.isOwner))}" />  
 
                     </apex:column>
                     
@@ -294,7 +296,7 @@
 									</td>
 									<td style="border-top:0px;text-align:right">
 										<!-- nobr><a title="Please select a Threshold for your {!if(o.invoice!=null, 'Invoice', 'Input')}" alt="Please select a Threshold for your {!if(o.invoice!=null, 'Invoice', 'Input')}" href="javascript:openLookupAlert('{!if(o.invoice!=null, 'Invoice', 'Input')}', '{!if(o.invoice!=null, o.invoice.id, o.input.id)}');" src="#" type="button" class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">Rate Watch</a></nobr-->
-										<nobr><a src="javascript:void();" type="button" title="Coming Soon" alt="Coming Soon"  class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">Rate Watch - Coming Soon!</a></nobr>
+<!-- 										<nobr><a src="javascript:void();" type="button" title="Coming Soon" alt="Coming Soon"  class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">Rate Watch - Coming Soon!</a></nobr> -->
 									</td>
 								</tr>
 							</table>
@@ -315,7 +317,7 @@
 											isOnlyRead="{!!o.isOwner}" fieldToPopulateId="{!$Component.benef}" fieldSetName="Lookup_Fields"/>
 	                    		</td>
 	                    		<td style="border-bottom:0px;padding: 0px 0px 0px 0px;">
-		                        	<apex:commandButton title="Add Supliers" style="padding:5px 8px !important" value="Add" styleClass="wuBtn" rendered="{!o.isOwner}" 
+		                        	<apex:commandButton title="Add Suppliers" style="padding:5px 8px !important" value="Add" styleClass="wuBtn" rendered="{!o.isOwner}" 
 		                        			onClick="window.open('{!IF($Site.Prefix != null,URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/AddInputBeneficiary?aId={!$CurrentPage.parameters.aId}&customRefId={!$Component.benef}&customLkNameId='+lookupIdHolder['{!$Component.benef}_name'],'Ratting','width=850,height=400,left=150,top=200,toolbar=0,status=0,');return false;"/>
 	                        	</td>
 	                        	</tr>
@@ -329,7 +331,7 @@
 											isOnlyRead="{!!o.isOwner}"  fieldAPI="Name" fieldToPopulateId="{!$Component.benefInv}" fieldSetName="Lookup_Fields"/>
 	                    		</td>
 	                    		<td style="border-bottom:0px;padding: 0px 0px 0px 0px;">
-		                        	<apex:commandButton title="Add Supliers" style="padding:5px 8px !important" value="Add" styleClass="wuBtn" rendered="{!o.isOwner}"
+		                        	<apex:commandButton title="Add Suppliers" style="padding:5px 8px !important" value="Add" styleClass="wuBtn" rendered="{!o.isOwner}"
 		                        			onClick="window.open('{!IF($Site.Prefix != null,URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/AddInputBeneficiary?aId={!$CurrentPage.parameters.aId}&customRefId={!$Component.benefInv}&customLkNameId='+lookupIdHolder['{!$Component.benefInv}_name'],'Ratting','width=850,height=400,left=150,top=200,toolbar=0,status=0,');return false;"/>
 	                        	</td>
 	                        	</tr>
@@ -383,7 +385,7 @@
                 </apex:pageBlockTable>
             </apex:pageBlockSection>
 				<div class="text-center">
-					<apex:outputpanel >
+					<apex:outputpanel rendered="{!outgoingPgCtlCTM!=null && outgoingPgCtlCTM.paginater!=null && outgoingPgCtlCTM.paginater.totalResults>0}">
 						<apex:commandButton rendered="{!outgoingPgCtlCTM.paginater.showPrevious}"
 							value="First" styleClass="wuBtn" action="{!outgoingPgCtlCTM.firstPage}" status="status" rerender="theForm"/>
 						<apex:commandButton rendered="{!outgoingPgCtlCTM.paginater.showPrevious}"
@@ -428,13 +430,14 @@
                     
                     <apex:column >
                         <apex:facet name="header">
-                            <apex:commandLink value="{!$Label.Currency} {!IF(incomingPgCtl.sortField=='CurrencyIsoCode',IF(incomingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!toggleIncomingSort}" status="status" rerender="incoming"> <!-- was Payment Currency -->
-                                <apex:param name="sortField" value="CurrencyIsoCode" assignTo="{!incomingPgCtl.sortField}"/> <!-- CurrencyIsoCode -->
+                            <apex:commandLink value="{!$Label.Currency} {!IF(incomingPgCtl.sortField=='Custom_Currency__c',IF(incomingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!toggleIncomingSort}" status="status" rerender="incoming"> <!-- was Payment Currency -->
+                                <apex:param name="sortField" value="Custom_Currency__c" assignTo="{!incomingPgCtl.sortField}"/> <!-- CurrencyIsoCode -->
                             </apex:commandLink>
                         </apex:facet>
-                        	<apex:outputText value="{!o.input.CurrencyIsoCode}" rendered="{!!o.isOwner}" /> 
-							<apex:selectList value="{!o.input.CurrencyIsoCode}" multiselect="false" size="1" onchange="showSaveBtns();" rendered="{!o.isOwner}">
-				           		<apex:selectOptions value="{!accountTableCurrency}" />
+                        	<apex:outputText value="{!o.input.Custom_Currency__c}" rendered="{!!o.isOwner}" /> 
+							<apex:selectList value="{!o.input.Custom_Currency__c}" multiselect="false" size="1" onchange="showSaveBtns();" rendered="{!o.isOwner}">
+<!-- 				           		<apex:selectOptions value="{!accountTableCurrency}" /> -->
+								<apex:selectOptions value="{!buyAndSellCurrency}" />
 				       		</apex:selectList> 
                     </apex:column>
                     
@@ -461,7 +464,7 @@
 									</td>
 									<td style="border-top:0px;text-align:right">
 										<!-- nobr><a title="Please select a Threshold for your {!if(o.invoice!=null, 'Invoice', 'Input')}" alt="Please select a Threshold for your {!if(o.invoice!=null, 'Invoice', 'Input')}" href="javascript:openLookupAlert('{!if(o.invoice!=null, 'Invoice', 'Input')}', '{!if(o.invoice!=null, o.invoice.id, o.input.id)}');" src="#" type="button" class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">Rate Watch</a></nobr-->
-										<nobr><a src="javascript:void();" type="button" title="Coming Soon" alt="Coming Soon"  class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">Rate Watch - Coming Soon!</a></nobr>
+<!-- 										<nobr><a src="javascript:void();" type="button" title="Coming Soon" alt="Coming Soon"  class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">Rate Watch - Coming Soon!</a></nobr> -->
 																	
 									</td>
 								</tr>
@@ -570,11 +573,11 @@
                     
                     <!-- apex:column >
                         <apex:facet name="header">
-                            <apex:commandLink value="{!$Label.Currency} {!IF(hedgingPgCtl.sortField=='CurrencyIsoCode',IF(hedgingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!togglehedgingSort}" status="status" rerender="Hedge"> 
-                                <apex:param name="sortField" value="CurrencyIsoCode" assignTo="{!hedgingPgCtl.sortField}"/> 
+                            <apex:commandLink value="{!$Label.Currency} {!IF(hedgingPgCtl.sortField=='Custom_Currency__c',IF(hedgingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!togglehedgingSort}" status="status" rerender="Hedge"> 
+                                <apex:param name="sortField" value="Custom_Currency__c" assignTo="{!hedgingPgCtl.sortField}"/> 
                             </apex:commandLink>
                         </apex:facet>
-							<apex:selectList value="{!o.input.CurrencyIsoCode}" multiselect="false" size="1" onchange="showSaveBtns();">
+							<apex:selectList value="{!o.input.Custom_Currency__c}" multiselect="false" size="1" onchange="showSaveBtns();">
 				           		<apex:selectOptions value="{!accountTableCurrency}" />
 				       		</apex:selectList> 
                     </apex:column-->
@@ -629,7 +632,7 @@
 									</td>
 									<td style="border-top:0px;text-align:right">
 										<!-- nobr><a title="Please select a Threshold for your {!if(o.invoice!=null, 'Invoice', 'Input')}" alt="Please select a Threshold for your {!if(o.invoice!=null, 'Invoice', 'Input')}" href="javascript:openLookupAlert('{!if(o.invoice!=null, 'Invoice', 'Input')}', '{!if(o.invoice!=null, o.invoice.id, o.input.id)}');" src="#" type="button" class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">Rate Watch</a></nobr-->							
-										<nobr><a src="javascript:void();" type="button" title="Coming Soon" alt="Coming Soon"  class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">Rate Watch - Coming Soon!</a></nobr>
+<!-- 										<nobr><a src="javascript:void();" type="button" title="Coming Soon" alt="Coming Soon"  class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">Rate Watch - Coming Soon!</a></nobr> -->
 									</td>
 								</tr>
 							</table>

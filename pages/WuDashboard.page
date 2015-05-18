@@ -16,6 +16,8 @@
 				<iframe frameborder="no" height="475px" id="066S0000000DypP" marginheight="0" marginwidth="0" name="066S0000000DypP" scrolling="no" src="{!$Site.Prefix}/apex/TopPendingInvoices" title="TopPendingInvoices" width="100%">
 				</iframe>
 	        <!-- END page content -->
+	        <c:DisclamerComp />
 		</apex:define>
+			
 	</apex:composition>
 </apex:page>

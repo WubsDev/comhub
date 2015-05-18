@@ -56,26 +56,26 @@ Description  :   custom detail page for Input object
 				         <apex:pageBlockSection rendered="{!isFixed}">
 					        <apex:repeat value="{!fields}" var="f1">
                  			 <apex:OutputField value="{!inputRecord[f1.fieldPath]}"
-					        	label="{!if(f1 =='CurrencyIsoCode', 'Currency',LabelMaps[f1.fieldPath])}" styleclass="dataTable"/>
+					        	label="{!if(f1 =='Custom_Currency__c', 'Currency',LabelMaps[f1.fieldPath])}" styleclass="dataTable"/>
 					        </apex:repeat>
 				        </apex:pageBlockSection>
 				        <apex:pageBlockSection rendered="{!isOption}">
 					        <apex:repeat value="{!fields}" var="f2" >
 <!-- 					        IF(AND(f2 == 'Amount__c', OR( inputRecord.Input_Type__c == 'Option - Other', inputRecord.Input_Type__c == 'Option - WUBS')),IF(OR(inputRecord.Type__c == 'Option Obligation - Other',inputRecord.Type__c == 'Option Obligation - WUBS'), 'Obligation Amount', 'Protection Amount'),LabelMaps[f2.fieldPath]) -->
-					        	<apex:outputField value="{!inputRecord[f2]}" label="{!if(f2 =='CurrencyIsoCode', 'Currency',LabelMaps[f2.fieldPath])}" styleclass="dataTable"/>
+					        	<apex:outputField value="{!inputRecord[f2]}" label="{!if(f2 =='Custom_Currency__c', 'Currency',LabelMaps[f2.fieldPath])}" styleclass="dataTable"/>
 					        </apex:repeat>
 					        <apex:outputField value="{!inputOptionRecord.Amount__c}" label="Obligation Amount" styleclass="dataTable"/>
 				        </apex:pageBlockSection>
 				        
 				        <apex:pageBlockSection rendered="{!isForcast}">
 					        <apex:repeat value="{!fields}" var="f3" >
-					        	<apex:outputField value="{!inputRecord[f3]}" label="{!if(f3 =='CurrencyIsoCode', 'Currency',LabelMaps[f3.fieldPath])}" styleclass="dataTable"/>
+					        	<apex:outputField value="{!inputRecord[f3]}" label="{!if(f3 =='Custom_Currency__c', 'Currency',LabelMaps[f3.fieldPath])}" styleclass="dataTable"/>
 					        	
 					        </apex:repeat>
 				        </apex:pageBlockSection>
 				        <apex:pageBlockSection rendered="{!isWindow}">
 					        <apex:repeat value="{!fields}" var="f4">
-					        	<apex:outputField value="{!inputRecord[f4]}" label="{!if(f4 =='CurrencyIsoCode', 'Currency',LabelMaps[f4.fieldPath])}" styleclass="dataTable"/>
+					        	<apex:outputField value="{!inputRecord[f4]}" label="{!if(f4 =='Custom_Currency__c', 'Currency',LabelMaps[f4.fieldPath])}" styleclass="dataTable"/>
 					        </apex:repeat>
 				        </apex:pageBlockSection>
 				        <apex:pageBlockSection >
@@ -151,6 +151,7 @@ Description  :   custom detail page for Input object
 						p_showAsStandardRelatedList="true"/--> 
 				</apex:form>
 			</div>
+			<c:DisclamerComp />
 		</apex:define>
 	</apex:composition>
 </apex:page>

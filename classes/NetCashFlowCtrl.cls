@@ -47,6 +47,30 @@ global without sharing class NetCashFlowCtrl {
         lstCurrency.add(new Selectoption('Total','Total in ' + Utility.userCurrency));
     	lstCurrency.addAll(Utility.getaccountTradedCurrency());
     	system.debug('----------ashish---------'+lstCurrency);
+    	for(SelectOption sOpt : Utility.getCurrencyForFC()){
+    		Boolean isMatch = false;
+    		for(SelectOption sOpt2 : lstCurrency){
+    			if(sOpt.getValue() == sOpt2.getValue()){
+    				isMatch = true;
+    				break;
+    			}
+    		}
+    		if(!isMatch){
+    			lstCurrency.add(sOpt);
+    		}
+    	} 
+    	for(SelectOption sOpt : Utility.getCurrencyForHB()){
+    		Boolean isMatch = false;
+    		for(SelectOption sOpt2 : lstCurrency){
+    			if(sOpt.getValue() == sOpt2.getValue()){
+    				isMatch = true;
+    				break;
+    			}
+    		}
+    		if(!isMatch){
+    			lstCurrency.add(sOpt);
+    		}
+    	}
 		return lstCurrency;
     }
     

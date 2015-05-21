@@ -106,6 +106,37 @@ public without sharing class Utility {
 		return lstCurrency;
     }
 
+    
+    
+    /*
+    *
+    *
+    *
+    *
+    */
+    
+    public static List<SelectOption> getCurrencyForHB(){ 
+        list<Selectoption> lstCurrency = new list<Selectoption>();
+        Set<String> currencySet = new Set<String>();
+        for(AggregateResult invoiceRec: [SELECT count(Id), Custom_Currency__c 
+                                         FROM Holding_Balance__c
+                                         WHERE Account__c  =:currentAccount
+                                         group by  Custom_Currency__c]) {
+            String currencyCode = (String) invoiceRec.get('Custom_Currency__c');
+            if(!currencySet.contains(currencyCode)) {
+              currencySet.add(currencyCode);
+            }
+          }
+	    List<String> currencySorted = new List<String>(currencySet);
+	    currencySorted.sort();
+	    for(String currencySort: currencySorted){
+	            if(currencySort!=null){
+	        lstCurrency.add(new Selectoption(currencySort,currencySort));
+	            }
+	    }   
+	    return lstCurrency;
+    }
+
     public static List<SelectOption> picklistValues(String ObjectAPI , String fieldName){
         return picklistValues(ObjectAPI , fieldName, false);
     }

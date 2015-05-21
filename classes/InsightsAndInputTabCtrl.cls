@@ -239,9 +239,9 @@ global without sharing class InsightsAndInputTabCtrl {
         string strQuery = 'SELECT Transaction_Number__c, Start_Date__c, Maturity_Date__c, Settlement_Amount__c, Settlement_Balance__c, Settlement_currency__c';
         strQuery = strQuery + ' ,market_rate__r.Ratio_to_USD__c,Custom_Currency__c, FX_Currency__c, FX_Amount__c, FX_Balance__c FROM Forward_Contracts__c  ';
         if(String.isEmpty(selectedForwardCurrency)){
-            strQuery += 'WHERE Maturity_Date__c>=:todayDate AND Account_ID__c =: accId order by Custom_Currency__c';
+            strQuery += 'WHERE Account_ID__c =: accId order by Custom_Currency__c'; // removed Maturity_Date__c>=:todayDate AND condition as per ref : T-396635
         }else {
-            strQuery += 'WHERE Maturity_Date__c>=:todayDate AND Custom_Currency__c =: selectedForwardCurrency AND Account_ID__c =: accId';
+            strQuery += 'WHERE Custom_Currency__c =: selectedForwardCurrency AND Account_ID__c =: accId'; // removed Maturity_Date__c>=:todayDate AND condition as per ref : T-396635
         }        
         setCon = new ApexPages.StandardSetController(Database.query(strQuery));
         setCon.setpagesize(100);

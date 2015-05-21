@@ -262,8 +262,9 @@ public without sharing class InvoicesAndPayments {
     
 // To add the new Input Beneficiary     
     public Pagereference AddInputBeneficiary(){
+    	String SitePath = Site.getPathPrefix();
         //Pagereference pgRef = new Pagereference('/cashmanagement/apex/AddInputBeneficiary?sfdc.tabName=01rS000000095lA');
-        Pagereference pgRef = new Pagereference('/managecash/apex/AddInputBeneficiary');
+        Pagereference pgRef = new Pagereference(SitePath+'/apex/AddInputBeneficiary');
         pgRef.setRedirect(true);
         return pgRef;
     }

@@ -377,7 +377,11 @@ public without sharing class AccountHoldingPieChartCtl
         // commented from query
         // Start_Date__c<=: todayDate and
         
-        String sql = 'SELECT Custom_Currency__c, SUM(Converted_Amount__c)total, SUM(FX_Balance__c) MarketRate FROM Forward_Contracts__c where Converted_Amount__c>0 and Account_ID__c =: accId and Maturity_Date__c>=:todayDate group by Custom_Currency__c';
+        // Updated By : Ashish Goyal	20th May 2015
+        // removed and Maturity_Date__c>=:todayDate condition
+        // Ref : I-163726
+        //
+        String sql = 'SELECT Custom_Currency__c, SUM(Converted_Amount__c)total, SUM(FX_Balance__c) MarketRate FROM Forward_Contracts__c where Converted_Amount__c>0 and Account_ID__c =: accId group by Custom_Currency__c';
         
         holdbalance = Database.Query(sql);
         Decimal total=0;

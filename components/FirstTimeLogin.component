@@ -25,12 +25,15 @@
 		})
 		
 		function openIntroVideoModal() {			
+			debugger;			
 			var img1 = document.getElementById("item1");
 			if($(img1).hasClass("active")){
 			
 			}
 			else{
-				$('.active').removeClass("active");
+				//$('.active').removeClass("active");
+				$('div').filter('.item').filter('.active').removeClass("active");
+				$('li[data-target="#carousel-example-generic2"]').filter('.active').removeClass("active");
 				$('#img1').addClass("active");
 				$(img1).addClass("active");
 			}

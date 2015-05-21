@@ -8,11 +8,11 @@
 							<h2 class="mainTitle">Buyer/Supplier</h2></td>
 						<td class="pbButton" colspan="2" style="padding: 0px !important;">
 							<input value=" View " class="btn" name="view"
-								onclick="navigateToUrl('/managecash/apex/InputBeneficiaryDetailPage?Id={!inputRecord.Id}&retURL=%2Fmanagecash/apex/ManageCashInput',null,'view');"
+								onclick="navigateToUrl('/{!$Site.Prefix}/apex/InputBeneficiaryDetailPage?Id={!inputRecord.Id}&retURL=/{!$Site.Prefix}/apex/ManageCashInput',null,'view');"
 								title="View" type="button" />
 						</td><td style="padding: 0px !important;">
 							<input value=" Edit " class="btn" name="edit" style="display:{!IF(inputRecord.OwnerId == $User.Id, 'block', 'none')};"
-								onclick="navigateToUrl('/managecash/InputBeneficiaryEdit?Id={!inputRecord.Id}&retURL=%2Fmanagecash/apex/ManageCashInput',null,'edit');"
+								onclick="navigateToUrl('/{!$Site.Prefix}/InputBeneficiaryEdit?Id={!inputRecord.Id}&retURL=/{!$Site.Prefix}/apex/ManageCashInput',null,'edit');"
 								title="Edit" type="button" />
 						</td>
 						<td width="100%" style="width:100%">

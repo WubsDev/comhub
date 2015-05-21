@@ -8,7 +8,7 @@
 		    function newInvoiceWindow(id) {
 		        //T-361755: Commented out following code to link the invoice number with the new 
 		        // custom vf page for invoice details
-		        //var myWindow = window.open('/managecash/' + id, 'Invoice', 'height=550,width=1000');        
+		        //var myWindow = window.open('/{!$Site.Prefix}/' + id, 'Invoice', 'height=550,width=1000');        
 		        window.open('{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/InvoiceDetail?id=' + id + '&retURL=%2Fapex%2FInvoicesAndPayments', '_blank');
 		    }
 		    
@@ -61,7 +61,7 @@
 						<apex:PageBlockSection id="pbs"
 							 columns="2">
 							<apex:facet name="header">
-								<apex:outputtext value="{!if(sourcePage!='ManageCashInput', inputLink, 'Input Wizard')}" escape="false" />
+								<apex:outputtext value="{!if(sourcePage!='ManageCashInput', 'Input Wizard', 'Input Wizard')}" escape="false" />
 							</apex:facet>
 
 							<apex:pageBlock >
@@ -234,7 +234,6 @@
 
 						</apex:PageBlockSection>
 
-                             
 					</apex:pageBlock>
 				</apex:outputPanel>
 

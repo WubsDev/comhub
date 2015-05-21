@@ -224,7 +224,7 @@
                         <apex:inputCheckbox value="{!o.isSelected}" id="deleteInputOutgoingChk" onclick="showDeleteBtns('deleteInputOutgoingChk');" styleClass="deleteInputChk" rendered="{!o.isOwner}" />
                         <span style="padding:0px 12px 0px 0px;display:block;float:left;display:{!if(o.isOwner, 'none;', 'block;')}">&nbsp;</span>
                         </td><td><nobr>
-                        <u><a href="{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))+'/apex/'+IF(o.input != null, 'InputDetail?Id='+o.input.Id, 'InvoiceDetail?Id='+o.invoice.Id), '/'+IF(o.input != null, o.input.Id, o.invoice.Id))}{!IF($Site.Prefix != null,'&','?')}retURL=/managecash/apex/ManageCashInput">View Details</a></u>
+                        <u><a href="{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))+'/apex/'+IF(o.input != null, 'InputDetail?Id='+o.input.Id, 'InvoiceDetail?Id='+o.invoice.Id), '/'+IF(o.input != null, o.input.Id, o.invoice.Id))}{!IF($Site.Prefix != null,'&','?')}retURL=/{!$Site.Prefix}/apex/ManageCashInput">View Details</a></u>
                         </nobr></td></tr></table>
                     </apex:column>
 

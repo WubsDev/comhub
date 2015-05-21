@@ -61,7 +61,7 @@
 			        			<tr>
 				        			<td>
 						                <apex:outputpanel id="InvoiceNumber">  
-						                    <a href="javascript:newInvoiceWindow('{!c.invoice.id}&retURL=/managecash/apex/WuDashboard');" src="#" id="InvoiceNumber{!$Component.InvoiceNumber}" >{!c.invoice.Name}</a>
+						                    <a href="javascript:newInvoiceWindow('{!c.invoice.id}&retURL={!$Site.Prefix}/apex/WuDashboard');" src="#" id="InvoiceNumber{!$Component.InvoiceNumber}" >{!c.invoice.Name}</a>
 						                </apex:outputpanel>
 				        			</td>
 									<td>

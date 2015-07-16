@@ -7,8 +7,15 @@
  * Date Modified                Modified By                  Description of the update
  =====================================================================*/
 public virtual class GenericBaseCsvWrapper {
+	public String beneName{get;set;}
 	public sObject input {get;set;}
     public sObject inputOther{get;set;}
+    public Map<String, String> picklistLabelValMap {
+    	get{
+    		system.debug('------------------------------------------'+Utility.picklistLabelValueMap('Invoice__c','Status__c'));
+    		return Utility.picklistLabelValueMap('Invoice__c','Status__c');
+	    } 
+	    set;}
 	//public member
 	public String CurrencyVal{
 		get{
@@ -101,7 +108,12 @@ public virtual class GenericBaseCsvWrapper {
 			picklistMap.put(objName+fieldname, Utility.picklistValueSet(objName, fieldname));
 		}
 		if(picklistMap.containsKey(objName+fieldname)){
-			return picklistMap.get(objName+fieldname).contains(value.toUpperCase());
+			if(! picklistMap.get(objName+fieldname).contains(value.toUpperCase())){
+				//either label or value exist in picklist.
+				return picklistMap.get(objName+fieldname).contains('label-'+value.toUpperCase());
+			}else{
+				return true;
+			}
 		}
 		return false;
 	}
@@ -131,7 +143,6 @@ public virtual class GenericBaseCsvWrapper {
 			        	this.input.put(f.FieldPath, Utility.getBoolean(this.mapCSVvalues.get(f.FieldPath)));
 			        }else
 			        if(f.getType()==Schema.DisplayType.PICKLIST){
-			        	system.debug('******this.mapPicklistSelect:'+this.mapPicklistSelect);
 			        	// this.input.put(f.FieldPath, this.mapCSVvalues.get(f.FieldPath));
 			        	//Set default to blank
 			        	this.mapPicklistSelect.put(f.FieldPath, '');
@@ -173,16 +184,24 @@ public virtual class GenericBaseCsvWrapper {
         		if(f.dbrequired || f.required){
         			//custom Validate Custom_Currency__c.
 			        if(f.getType()==Schema.DisplayType.PICKLIST){
-			        	system.debug('**********mapPicklistSelect:>>'+this.mapPicklistSelect.get(f.FieldPath));
 				        if (!Utility.isValidText(this.mapPicklistSelect.get(f.FieldPath)) || !this.mapPicklistSelect.containsKey(f.FieldPath) ) {//invoice.Custom_Currency__c
 				             this.isValid = false;
 							 if(logPageMessage) ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,fieldLabels.get(f.FieldPath)+Utility.getValidationTextByFieldType(f)+errorMsgPart(this.mapCSVvalues.get(f.FieldPath))));
+							 
 							 if(this.mapPicklistSelect.containsKey(f.FieldPath)){
+							 	if(f.FieldPath == 'Status__c'){
+							 		this.input.put(f.FieldPath, picklistLabelValMap.get(this.mapPicklistSelect.get(f.FieldPath)));
+							 	}else{
 							 	this.input.put(f.FieldPath, this.mapPicklistSelect.get(f.FieldPath));
 							 }
+							 }
+					        }else{				        	
+					        	if(f.FieldPath == 'Status__c'){
+							 		this.input.put(f.FieldPath, picklistLabelValMap.get(this.mapPicklistSelect.get(f.FieldPath)));
 				        }else{
 				        	this.input.put(f.FieldPath, this.mapPicklistSelect.get(f.FieldPath));
 				        }
+					        }
 					}else{   
 						//Generic Validation.     			
 	        			if(this.input.get(f.fieldPath)==null || String.IsEmpty((this.input.get(f.fieldPath)+''))){

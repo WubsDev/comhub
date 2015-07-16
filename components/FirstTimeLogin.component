@@ -53,7 +53,7 @@
 	    <div class="modal-content" style="width:800px !important;">
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	        <h4 class="modal-title">Tutorials</h4>
+            <h4 class="modal-title">{!$Label.CM_Community_Link_Tutorials}</h4>
 	      </div>
 	      <div class="modal-body">
 	        <div id="carousel-example-generic2" class="carousel slide" data-ride="carousel">
@@ -74,43 +74,42 @@
 						 	<!-- Wrapper for upload CSV input slides -->
 						  <div class="carousel-inner" role="listbox">
 						    <div class="item active" id="item1">
-						      <img src="{!$Resource.IntroductionImages}/IntroImage9.jpg"/>
+                              <img src="{!$Resource.IntroductionImages}/IntroductionImages/IntroImage9{!userLanguage}.jpg"/>
 						    </div>
 						    <div class="item">
-						      <img src="{!$Resource.IntroductionImages}/IntroImage.jpg"/>
+                              <img src="{!$Resource.IntroductionImages}/IntroductionImages/IntroImage{!userLanguage}.jpg"/>
 						    </div>
 						    <div class="item">
-						      <img src="{!$Resource.IntroductionImages}/IntroImage2.jpg"/>
+                              <img src="{!$Resource.IntroductionImages}/IntroductionImages/IntroImage2{!userLanguage}.jpg"/>
 						    </div>
 						    <div class="item">
-						      <img src="{!$Resource.IntroductionImages}/IntroImage3.jpg"/>
+                              <img src="{!$Resource.IntroductionImages}/IntroductionImages/IntroImage3{!userLanguage}.jpg"/>
 						    </div>
 						    <div class="item">
-						      <img src="{!$Resource.IntroductionImages}/IntroImage4.jpg"/>
+                              <img src="{!$Resource.IntroductionImages}/IntroductionImages/IntroImage4{!userLanguage}.jpg"/>
 						    </div>
 						    <div class="item">
-						      <img src="{!$Resource.IntroductionImages}/IntroImage5.jpg"/>
+                              <img src="{!$Resource.IntroductionImages}/IntroductionImages/IntroImage5{!userLanguage}.jpg"/>
 						    </div>
 						    <div class="item">
-						      <img src="{!$Resource.IntroductionImages}/IntroImage6.jpg"/>
+                              <img src="{!$Resource.IntroductionImages}/IntroductionImages/IntroImage6{!userLanguage}.jpg"/>
 						    </div>
 						    <div class="item">
-						      <img src="{!$Resource.IntroductionImages}/IntroImage7.jpg"/>
+                              <img src="{!$Resource.IntroductionImages}/IntroductionImages/IntroImage7{!userLanguage}.jpg"/>
 						    </div>
 						    <div class="item">
-						      <img src="{!$Resource.IntroductionImages}/IntroImage8.jpg"/>
+                              <img src="{!$Resource.IntroductionImages}/IntroductionImages/IntroImage8{!userLanguage}.jpg"/>
 						    </div>
 <!-- 						    <div class="item"> -->
 <!-- 						      <img src="{!$Resource.IntroductionImages}/IntroImage11.jpg"/> -->
 <!-- 						    </div> -->
 						  </div>
-						
 						</div>
 	      </div>
 	      <div class="modal-footer">
-	      	<div style="width:87%"><b><apex:outputLabel value="{!$Label.Disclamer}" 
+            <div style="width:87%"><b><apex:outputLabel value="{!$Label.CM_Community_Text_FooterBestExperience}" 
 	      			style="padding-left: 123px;padding-right: 107px;float: left;text-transform: capitalize !important;font-size: 0.9em !important;color: inherit !important;white-space: pre-wrap !important;text-align: center !important;font-weight: bold !important;"/></b></div>        
-            <div style="width:13%; padding-right: 10px; float: right;"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div>
+            <div style="width:13%; padding-right: 10px; float: right;"><button type="button" class="btn btn-default" data-dismiss="modal">{!$Label.CM_Community_Button_Close}</button></div>
             
 	      </div>
 	    </div><!-- /.modal-content -->

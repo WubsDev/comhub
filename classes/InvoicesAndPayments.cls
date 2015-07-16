@@ -7,6 +7,7 @@
  * Date Modified                Modified By                  Description of the update
  * Updated T-358322, By Ranjeet Singh, Please make Default Invoice Status = Open in Type drop down in "My Invoices" table
  * Updates I-148135,I-148271, By Vivek Ojha , Currency__c --> CurrencyIsoCode
+* Updated T-415633 , By Megha Agarwal , searchInvoice
  =====================================================================*/
 
 public without sharing class InvoicesAndPayments {
@@ -31,6 +32,64 @@ public without sharing class InvoicesAndPayments {
     public String invoiceImageBody{get;set;}
     public String invoiceImageName{get;set;}
     public CustomPaginationController invoicePgCtl{get;set;}
+    public String currentUserLocale{
+        get{
+            String currentUserLocaleVal = UserInfo.getLocale();
+            if(currentUserLocaleVal.contains('_')){
+                currentUserLocaleVal = currentUserLocaleVal.substring(0, currentUserLocaleVal.indexOf('_'));
+            }
+            return currentUserLocaleVal;
+        }
+        set;
+    }
+    
+    public String aggregateTotalFormat{
+        get{
+            String aggregateTotalVal = aggregateTotal.format();
+            if(!aggregateTotalVal.contains(Utility.getDecimalChar)){
+                aggregateTotalVal = aggregateTotal.format() + Utility.getDecimalChar+'00';
+            }
+            return aggregateTotalVal;
+        }
+        set;
+    }
+    
+    public String hedgedTotalFormat{
+        get{
+            String hedgedTotalVal = hedgedTotal.format();
+            if(!hedgedTotalVal.contains(Utility.getDecimalChar)){
+                hedgedTotalVal = hedgedTotal.format() + Utility.getDecimalChar+'00';
+            }
+            return hedgedTotalVal;
+        }
+        set;
+    }
+    
+    public String unHedgedTotalFormat{
+        get{
+            String unHedgedTotalVal = unHedgedTotal.format();
+            if(!unHedgedTotalVal.contains(Utility.getDecimalChar)){
+                unHedgedTotalVal = unHedgedTotal.format() + Utility.getDecimalChar+'00';
+            }
+            return unHedgedTotalVal;
+        }
+        set;
+    }
+    
+    public String unHedgedTotalSettlementFormat{
+        get{
+            String unHedgedTotalSettlementVal = unHedgedTotalSettlement.format();
+            if(!unHedgedTotalSettlementVal.contains(Utility.getDecimalChar)){
+                unHedgedTotalSettlementVal = unHedgedTotalSettlement.format() + Utility.getDecimalChar+'00';
+            }
+            return unHedgedTotalSettlementVal;
+        }
+        set;
+    }
+    
+    //MAP
+    public String userLanguage{get;set;}
+    
     public List<inputWpr> invoicePgCtl_genericList{
     	get{
     		return (List<inputWpr>)invoicePgCtl.genericList;
@@ -41,6 +100,16 @@ public without sharing class InvoicesAndPayments {
         get{
             return Utility.getSettlementCurrencyAmount(aggregateTotal, selectedCurrency, Utility.userCurrency);
         }
+    }
+    public String aggregateTotalSettlementFormat{
+        get{
+            String aggregateTotalSettlementVal = aggregateTotalSettlement.format();
+            if(!aggregateTotalSettlementVal.contains(Utility.getDecimalChar)){
+                aggregateTotalSettlementVal = aggregateTotalSettlement.format() + Utility.getDecimalChar+'00';
+            }
+            return aggregateTotalSettlementVal;
+        }
+        set;
     }
     public Decimal hedgedTotalSettlement{
         get{
@@ -65,7 +134,17 @@ public without sharing class InvoicesAndPayments {
     
     public InvoicesAndPayments() { 
                 
+        //MAP
+        userLanguage = UserInfo.getLanguage();
+        if(userLanguage.trim() == 'fr'|| userLanguage.trim() == 'it'){
+            userLanguage = '_'+userLanguage;
+        }
+        else{
+            userLanguage = '';
+        }
+                
         invoice = new Invoice__c();
+    //    searchInvoice = new Invoice__c(Status__c = 'All');
         invoiceImageBody = '';
         invoiceImageName = '';
         conversionRate = 0.0;       
@@ -98,7 +177,7 @@ public without sharing class InvoicesAndPayments {
     public list<Selectoption> getCurrencyList() {
         
         list<Selectoption> lstCurrency = new list<Selectoption>();
-        lstCurrency.add(new Selectoption('ShowAll','-----Show All-----'));
+        lstCurrency.add(new Selectoption('ShowAll',Label.CM_Community_Text_FieldFilter_Currency_Item_ShowAll));
         Set<String> currencySet = new Set<String>();
         for(AggregateResult invoiceRec: [SELECT count(Id), Custom_Currency__c 
                                          FROM Invoice__c 
@@ -191,7 +270,7 @@ public without sharing class InvoicesAndPayments {
                                    WHERE Currency_Code__c =:selectedCurrency]) {
             conversionRate = rate.Currency_Value__c;
         }
-        for(AggregateResult aggregateResult : [SELECT sum(Settlement_Amount__c) settlementAmount,
+        for(AggregateResult aggregateResult : [SELECT sum(FX_Balance__c) settlementAmount,
                                                avg(Base_USD__c) marketRate
                                                FROM Forward_Contracts__c 
                                                WHERE Account_ID__c =: accId
@@ -252,7 +331,7 @@ public without sharing class InvoicesAndPayments {
                 //sortList();
             } catch(Exception Ex) {
                 approveMsgCount = 0;
-                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, 'Unable to update the invoice -'+ Ex));
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Alert_UnableToUpdateInvoice + ' ' + Ex));
             }
         }
         else{
@@ -276,11 +355,11 @@ public without sharing class InvoicesAndPayments {
             hasError = false;
             invoice.Custom_Currency__c = selectedForwardContractCurrency;
             if(invoice.Name == null || invoice.Name == '') {
-                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Invoice Number Should Not be Blank '));
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Validation_Input_InvoiceNumberShouldNotBeBlank));
                 hasError = true;                
             }   
             if(invoice.Status__c == null || invoice.Status__c == ''){
-                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Status Should Not be Blank '));
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Validation_Input_FieldStatusShouldNotBeBlank));
                 hasError = true;                
             }       
             /*if(invoice.Custom_Currency__c == null) {
@@ -288,15 +367,15 @@ public without sharing class InvoicesAndPayments {
                 hasError = true;
             }*/
             if(invoice.Due_Date__c == null) {
-                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Payment Date Should Not be Blank '));
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Validation_Input_FieldPaymentDateShouldNotBeBlank));
                 hasError = true;
             }
             if(invoice.Amount__c == null ) {
-                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, 'Amount Should Not be Blank '));
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Validation_Input_FieldAmountShouldNotBeBlank));
                 hasError = true;
             }           
             if(invoice.Input_Beneficiary__c== null ) {
-                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, 'Input Beneficiary Should Not be Blank '));
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Validation_Input_FieldSupplierShouldNotBeBlank));
                 hasError = true;
             }    
             if(!hasError) {
@@ -354,7 +433,7 @@ public without sharing class InvoicesAndPayments {
      public  list<Selectoption> getPicklistValues(String ObjectApi_name,String Field_name){ 
 
         list<Selectoption> lstStatus = new list<Selectoption>();
-        lstStatus.add(new Selectoption('All','-----All-----'));
+        lstStatus.add(new Selectoption('All', Label.CM_Community_Text_FieldFilter_Status_Item_All));
         
         List<String> lstPickvals=new List<String>();
         Schema.SObjectType targetType = Schema.getGlobalDescribe().get(ObjectApi_name);//From the Object Api name retrieving the SObject
@@ -365,7 +444,8 @@ public without sharing class InvoicesAndPayments {
         List<Schema.PicklistEntry> pick_list_values = field_map.get(Field_name).getDescribe().getPickListValues(); //grab the list of picklist values for the passed field on the sobject
         for (Schema.PicklistEntry a : pick_list_values) { //for all values in the picklist list
             lstPickvals.add(a.getValue());//add the value  to our final list
-            lstStatus.add(new Selectoption(a.getValue(),a.getValue()));
+             //  T-415633
+            lstStatus.add(new Selectoption(a.getValue(),a.getLabel()));
         }
         
           return lstStatus;
@@ -388,6 +468,7 @@ public without sharing class InvoicesAndPayments {
 	    Schema.DescribeSObjectResult sobject_describe = sobject_type.getDescribe();
 	    Map<String, Schema.SObjectField> field_map = sobject_describe.fields.getMap(); 
 	    List<Schema.PicklistEntry> pick_list_values = field_map.get(fieldName).getDescribe().getPickListValues(); 
+        
 	    for (Schema.PicklistEntry a : pick_list_values) {
 	        lstPickvals.add(new SelectOption(a.getValue(),a.getValue()));
 	    }

@@ -24,7 +24,7 @@
 				}
 			}
 			function uploadInvoiceImage() {
-				    progressbarBSMsg('Saving Invoice ...');
+                    progressbarBSMsg('{!$Label.CM_Community_Text_Status_SavingInvoice}');
 				    showProgressbarBS(true);
 				   var invImageFiles = document.getElementById('invoiceImage').files;
 				   
@@ -61,7 +61,7 @@
 						<apex:PageBlockSection id="pbs"
 							 columns="2">
 							<apex:facet name="header">
-								<apex:outputtext value="{!if(sourcePage!='ManageCashInput', 'Input Wizard', 'Input Wizard')}" escape="false" />
+                                <apex:outputtext value="{!if(sourcePage!='ManageCashInput', $Label.CM_SectionHeading_Input_InputWizard, $Label.CM_SectionHeading_Input_InputWizard)}" escape="false" />
 							</apex:facet>
 
 							<apex:pageBlock >
@@ -79,9 +79,9 @@
 										Descriptio : added img tag to output text value for help test							 
 										-->
 										<center>
-											<h3>Data Input Option: Enter Data Manually</h3>
+                                            <h3>{!$Label.CM_SectionHeading_Input_InputWizard_DataInputManual}</h3>
 											<img src='/s.gif' class='imgclass' data-toggle='tooltip'
-												data-placement='bottom' title='{!$Label.Help_Text_Manual_Invoice}'
+                                                data-placement='bottom' title='{!$Label.CM_HelpText_Section_Input_InputWizard_DataInputManual}'
 												style='height: 21px; width: 18px;' />
 										</center>
 										<script>
@@ -92,23 +92,30 @@
 									</apex:facet>
 										
 										<apex:PageBlockSectionItem >
-											<label><nobr> Transaction Type</nobr></label>
-											<apex:selectList value="{!InsightsAndInputTabCtl.selectedTranscation}"
+                                            <label><nobr>{!$Label.CM_FieldLabel_Input_TransactionType}</nobr></label>
+                                             <!-- Changed By: Megha Agarwal
+                                                T-415632
+                                                get picklist value directly from input object field
+                                            -->
+                                            <!--<apex:selectList value="{!InsightsAndInputTabCtl.selectedTranscation}"
 												multiselect="false" size="1">
 												<apex:selectOptions value="{!TransactionTypes}" />
+                                               
+                                            </apex:selectList>-->
+                                            <apex:inputField value="{!InsightsAndInputTabCtl.input.Input_Type__c}" >
 												<apex:actionSupport event="onchange" reRender="mainPanel" status="status1"
 													action="{!InsightsAndInputTabCtl.changeTransactionType}" />
-											</apex:selectList>
+                                            </apex:inputField>
 										</apex:PageBlockSectionItem>
 										<apex:PageBlockSectionItem />
 										<apex:PageBlockSectionItem >
-											<apex:outputLabel value="Invoice Number" />
+                                            <apex:outputLabel value="{!$Label.CM_FieldLabel_Input_InvoiceNumber}" />
 											<c:RequiredBlockComponent >
 												<apex:inputField value="{!invoice.Name}" id="acctName" />
 											</c:RequiredBlockComponent>
 										</apex:PageBlockSectionItem>
 										<apex:PageBlockSectionItem >
-											<apex:outputLabel value="Payment Due Date" />
+                                            <apex:outputLabel value="{!$Label.CM_FieldLabel_Input_PaymentDueDate}" />
 											<c:RequiredBlockComponent >
 												<apex:inputField value="{!invoice.Due_Date__c}" id="dueDate" />
 											</c:RequiredBlockComponent>
@@ -122,7 +129,7 @@
 										<apex:PageBlockSectionItem >
 											<!--                            <apex:outputLabel value="Currency" />-->
 											<!--                            <apex:inputField value="{!invoice.ForwardContractCurrency}" id="Currency"/>-->
-											<apex:outputLabel value="Currency" />
+                                            <apex:outputLabel value="{!$Label.CM_FieldLabel_Input_Currency}" />
 											<c:RequiredBlockComponent >
 												<apex:SelectList size="1" multiselect="false"
 													value="{!selectedForwardContractCurrency}">
@@ -131,19 +138,19 @@
 											</c:RequiredBlockComponent>
 										</apex:PageBlockSectionItem>
 										<apex:PageBlockSectionItem >
-											<apex:outputLabel value="Invoice Amount Due" />
+                                            <apex:outputLabel value="{!$Label.CM_FieldLabel_Input_InvoiceAmountDue}" />
 											<c:RequiredBlockComponent >
 												<apex:inputField value="{!invoice.Amount__c}" id="amount" />
 											</c:RequiredBlockComponent>
 										</apex:PageBlockSectionItem>
 										<apex:PageBlockSectionItem >
-											<apex:outputLabel value="Status" />
+                                            <apex:outputLabel value="{!$Label.CM_FieldLabel_Input_Status}" />
 											<c:RequiredBlockComponent >
 												<apex:inputField value="{!invoice.Status__c}" id="status" />
 											</c:RequiredBlockComponent>
 										</apex:PageBlockSectionItem>
 										<apex:PageBlockSectionItem >
-											<apex:outputLabel value="Supplier" />
+                                            <apex:outputLabel value="{!$Label.CM_FieldLabel_Input_Supplier}" />
 											<apex:outputpanel >
 												<c:RequiredBlockComponent >
 													<table border="0" style="border-bottom:0px;padding: 0px 0px 0px 0px;">
@@ -153,7 +160,7 @@
 																<c:CustomLookup objectName="Input_Beneficiary__c" selectedRefId="{!invoice.Input_Beneficiary__c}"  fieldAPI="Name" fieldToPopulateId="{!$Component.bene}" fieldSetName="Lookup_Fields"/>
 															</td>
 															<td>
-																<apex:commandButton value="New" styleClass="wuBtn" style="padding: 5px 15px 5px!important;" title="Add New Buyer/Supplier"
+                                                                <apex:commandButton value="{!$Label.CM_Community_Button_New}" styleClass="wuBtn" style="padding: 5px 15px 5px!important;" title="{!$Label.CM_Community_Button_AddNewBuyerSupplier}"
 																	onClick="window.open('{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/AddInputBeneficiary?aId={!$CurrentPage.parameters.aId}&sourcePage={!sourcePage}&customRefId={!$Component.bene}&customLkNameId='+lookupIdHolder['{!$Component.bene}_name'],'Ratting','width=850,height=400,left=150,top=200,toolbar=0,status=0,');return false;" />
 															</td>
 														</tr>
@@ -163,7 +170,7 @@
 										</apex:PageBlockSectionItem>
 
 										<apex:PageBlockSectionItem >
-											<apex:outputLabel value="Attach Reference Document" />
+                                            <apex:outputLabel value="{!$Label.CM_FieldLabel_Input_AttachReferenceDocument}" />
 											<apex:outputPanel >
 												<input type="file" id="invoiceImage" />
 												<apex:inputHidden value="{!invoiceImageBody}"
@@ -180,10 +187,10 @@
 											<apex:actionfunction rerender="pb,msg" name="saveInvoice"
 												action="{!saveInvoice}"
 												oncomplete="openPageInPopup({!hasError});" />
-											<input type="button" value="Save"
+                                            <input type="button" value="{!$Label.CM_Community_Button_Save}"
 												onclick="uploadInvoiceImage();" class="btn wuBtn" />
-											<!-- apex:commandButton value="Save" onclick="uploadInvoiceImage();" styleClass="wuBtn" / -->
-                                            <apex:commandButton action="{!cancel2}" value="Cancel"
+                                            <!-- apex:commandButton value="{!$Label.CM_Community_Button_Save}" onclick="uploadInvoiceImage();" styleClass="wuBtn" / -->
+                                            <apex:commandButton action="{!cancel2}" value="{!$Label.CM_Community_Button_Cancel}"
 												styleClass="wuBtn" />
 										</div>
 									</center>
@@ -206,20 +213,25 @@
 										Descriptio : added img tag to output text value for help test							 
 										-->
 										<center>
-											<h3>Data Input Option: Upload CSV</h3>
+                                            <h3>{!$Label.CM_SectionHeading_Input_InputWizard_DataInputUpload}</h3>
 											<img src='/s.gif' class='imgclass' data-toggle='tooltip'
-												data-placement='bottom' title='{!$Label.Help_Text_Csv_Upload}'
+                                                data-placement='bottom' title='{!$Label.CM_HelpText_Section_Input_InputWizard_DataInputUpload}'
 												style='height: 21px; width: 18px;' />
 										</center>
 									</apex:facet>
 								<apex:outputpanel >
 									<nobr>
-										<apex:outputLabel value="Transaction Type" />
+                                        <apex:outputLabel value="{!$Label.CM_FieldLabel_Input_TransactionType}" />
 			                                          &nbsp;&nbsp;&nbsp;&nbsp;
-			                                          <apex:selectList id="transTypeId" multiselect="false" size="1"
+                                                       <!-- Changed By: Megha Agarwal
+                                                T-415632
+                                                get picklist value directly from input object field
+                                            -->
+                                                    <!--  <apex:selectList id="transTypeId" multiselect="false" size="1"
 											styleClass="ctt" onchange="updateCSVSample(this.value)">
 											<apex:selectOptions value="{!lstTransactionType}" />
-										</apex:selectList>
+                                        </apex:selectList>-->
+                                        <apex:inputField value="{!InsightsAndInputTabCtl.inputUpload.Input_Type__c}" id="transTypeId"  onchange="updateCSVSample(this.value)"/>
 									</nobr>
 								</apex:outputpanel>
 		

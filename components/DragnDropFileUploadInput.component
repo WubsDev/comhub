@@ -20,12 +20,12 @@
 	<script type="text/javascript">
         var parentId = '{!parentId}'; //Will be used by FileUploadJS.js but must be declared here. Static resources dont support dynamic values.
         var multiple = '{!multiple}';
-        
+        var msg = '{!JSENCODE($Label.CM_Alert_PleaseSelectTransactionType)}';
         
         //$('input[id$="invoiceImageName"]')
         
         function updateCSVSample(val) {
-         
+            debugger;
         	//a.downloadLink1
           $('input[id*="typeInput"]').val(val);
             	//Download input template.
@@ -44,7 +44,7 @@
 	               && $('select[id$="transTypeId"]').val() != 'Select'){
 	                upload1();
 	            }else{
-	              alert('Please select a transaction type');   
+                  alert(msg);   
 	                $('input[id$="manualfile"][type="file"]')[0].value = null;
 	                //document.getElementById('pg:frm:pBlock1:pbSec1:j_id54:cmp:file:inputFile:file').value = null;
 	                return false;
@@ -60,7 +60,7 @@
 		    }else{
 			    if($('select[id$="transTypeId"]').val() != '' && $('select[id$="transTypeId"]').val() != 'Select' ){
 	            }else{
-	              alert('Please select a transaction type');   
+                  alert(msg);   
 	                $('input[id$="manualfile"][type="file"]')[0].value = null;
 	                //document.getElementById('pg:frm:pBlock1:pbSec1:j_id54:cmp:file:inputFile:file').value = null;
 	                return false;
@@ -82,7 +82,8 @@
 	               	window.location.href = $('a[id$="downloadLink1"]').attr('href');
 	            }else{
 	            	try{
-		              	alert('Please select a transaction type');
+                        <!-- Label.CM_Alert_PleaseSelectTransactionType -->
+                        alert(msg);
 	    	            $('input[id$="manualfile"][type="file"]')[0].value = null;
 	                }catch(e){}
 	                return false;
@@ -97,10 +98,10 @@
 			style="font-size: 1em !important;">
 			<font size="2px"> <apex:commandLink styleclass="downloadUrl" id="downloadLink1"
 					onclick="validateTransactionTypeLink();return false;"
-					value="Click To Download CSV Template" />
-			</font><br></br> <span id="drop_message_here">Drop your files here</span> or
+                    value="{!JSENCODE($Label.CM_Community_Link_ClickToDownloadCSVTemplate)}" />
+            </font><br></br> <span id="drop_message_here">{!JSENCODE($Label.CM_SectionText_Input_InputWizard_DataInputUpload_DropFiles)}</span>
 			<span><nobr>
-					Upload
+                    <!-- Upload -->
 					<apex:inputFile value="{!attachment.body}"
 						filename="{!attachment.name}" id="manualfile"
 						onchange="validateTransactionType();" onclick="return validateTransactionTypeOnly();" />
@@ -113,8 +114,8 @@
 				<div id="dropped-files">
 
 					<div id="upload-button">
-						<a href="#" class="upload">Upload!</a> <a href="#" class="delete">delete</a>
-						<span>0 Files</span>
+                        <a href="#" class="upload">{!JSENCODE($Label.CM_FieldLabel_AccountDocument_UploadADocument)}</a> <a href="#" class="delete">{!JSENCODE($Label.CM_Community_Button_Delete)}</a>
+                        <span>0 {!JSENCODE($Label.CM_SectionText_Input_InputWizard_DragNDrop_Files)}</span>
 					</div>
 				</div>
 
@@ -132,13 +133,13 @@
 
 	<div id="ie-fallback" style="display: none;">
 		<!--      <apex:form id="theFrm">  -->
-		<apex:pageBlock title="Upload Attachment">
+        <apex:pageBlock title="{!JSENCODE($Label.CM_SectionHeading_UploadAttachment_UploadAttachment)}">
 			<apex:pageBlockButtons >
-				<apex:commandButton value="Upload Attachment" action="{!uploadFile}"/ >
+                <apex:commandButton value="{!JSENCODE($Label.CM_SectionHeading_UploadAttachment_UploadAttachment)}" action="{!uploadFile}"/ >
 			</apex:pageBlockButtons>
 			<apex:pageBlockSection showHeader="false" columns="2" id="block1">
 				<apex:pageBlockSectionItem >
-					<apex:outputLabel value="File" for="file" />
+                    <apex:outputLabel value="{!JSENCODE($Label.CM_SectionText_Input_InputWizard_DragNDrop_File)}" for="file" />
 					<apex:inputFile value="{!attachment.body}"
 						filename="{!attachment.name}" id="file" />
 				</apex:pageBlockSectionItem>
@@ -250,6 +251,7 @@ function uploadFiles(){
 }//end of the function file uploads
 var retAttachmentId;
 function refreshThePage(){
+    debugger;
      var url_split = window.location.href.replace('https://','').split('\.');
       //var retAttachmentId = '{!attachment.Id}';
       var instance ='';
@@ -261,27 +263,27 @@ function refreshThePage(){
       //alert(instance);
       //alert(retUrl);
       //window.open ('https://'+instance+'.salesforce.com'+retUrl, "_top"); 
-	var selectedTransType = $("select.ctt").val();
+    var selectedTransType = $('select[id$="transTypeId"]').val();
 	/*
-	if(selectedTransType == 'Purchase Order' || selectedTransType == 'Forecast Outflow' || selectedTransType == 'Outflow - Other' ){
-  		window.open ('{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/ParseandDisplayCSVInput?attid='+retAttachmentId + '&aId={!$CurrentPage.parameters.aId}&sourcePage={!sourcePage}&type='+$("select.ctt").val() , "_top");
+    if(selectedTransType == 'Purchase Order' || selectedTransType == 'Forecast Outflow'){
+        window.open ('{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/ParseandDisplayCSVInput?attid='+retAttachmentId + '&aId={!$CurrentPage.parameters.aId}&sourcePage={!sourcePage}&type='+$('select[id$="transTypeId"]').val() , "_top");
 	}
   	else {
-       if (selectedTransType == 'Forecast Inflow' || selectedTransType == 'Inflow - Other' ) {
-			window.open ('{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/ParseAndDisplayCSVInputIncoming?attid='+retAttachmentId + '&aId={!$CurrentPage.parameters.aId}&sourcePage={!sourcePage}&type='+$("select.ctt").val(), "_top");
+       if (selectedTransType == 'Forecast Inflow') {
+            window.open ('{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/ParseAndDisplayCSVInputIncoming?attid='+retAttachmentId + '&aId={!$CurrentPage.parameters.aId}&sourcePage={!sourcePage}&type='+$('select[id$="transTypeId"]').val(), "_top");
        }else if(selectedTransType == 'Fixed Forward Contract - Other' || selectedTransType == 'Window Forward Contract - Other'|| selectedTransType == 'Option - Other' || selectedTransType == 'Option - WUBS') {
-			window.open ('{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/ParseandDisplayCSVGeneric?attid='+retAttachmentId + '&aId={!$CurrentPage.parameters.aId}&sourcePage={!sourcePage}&type='+$("select.ctt").val(), "_top");
+            window.open ('{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/ParseandDisplayCSVGeneric?attid='+retAttachmentId + '&aId={!$CurrentPage.parameters.aId}&sourcePage={!sourcePage}&type='+$('select[id$="transTypeId"]').val(), "_top");
        }else if(selectedTransType == 'Invoice') {
-			window.open ('{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/ParseAndDisplayCSVInvoicePage?attid='+retAttachmentId + '&aId={!$CurrentPage.parameters.aId}&sourcePage={!sourcePage}&type='+$("select.ctt").val(), "_top");
+            window.open ('{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/ParseAndDisplayCSVInvoicePage?attid='+retAttachmentId + '&aId={!$CurrentPage.parameters.aId}&sourcePage={!sourcePage}&type='+$('select[id$="transTypeId"]').val(), "_top");
        }
        //InvoiceUploadCSVTemplate
   	}
   	*/
 		
 	if(selectedTransType == 'Invoice'){
-		window.open ('{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))+'/apex/ParseAndDisplayCSVInvoicePage', '/apex/ParseAndDisplayCSVInvoicePageFD')}?attid='+retAttachmentId + '&aId={!$CurrentPage.parameters.aId}&sourcePage={!sourcePage}&type='+$("select.ctt").val(), "_top");
+        window.open ('{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))+'/apex/ParseAndDisplayCSVInvoicePage', '/apex/ParseAndDisplayCSVInvoicePageFD')}?attid='+retAttachmentId + '&aId={!$CurrentPage.parameters.aId}&sourcePage={!sourcePage}&type='+$('select[id$="transTypeId"]').val(), "_top");
 	}else {
-		window.open ('{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))+'/apex/ParseandDisplayCSVGeneric', '/apex/ParseandDisplayCSVGenericFD')}?aId={!$CurrentPage.parameters.aId}&attid='+retAttachmentId +'&sourcePage={!sourcePage}&type='+$("select.ctt").val(), "_top");		
+        window.open ('{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))+'/apex/ParseandDisplayCSVGeneric', '/apex/ParseandDisplayCSVGenericFD')}?aId={!$CurrentPage.parameters.aId}&attid='+retAttachmentId +'&sourcePage={!sourcePage}&type='+$('select[id$="transTypeId"]').val(), "_top");       
 	}  	
     //window.location.href = 'https://cs1.salesforce.com'+retUrl+'?attid='+retAttachmentId;
 }
@@ -340,7 +342,7 @@ function uploadFileAsAttachmentToRecord(attachmentId){
                     DragnDropFileUploadController.uploadFile(parentId,attachmentId,currentFile.name,currentFile.type,base64value,function(result,event){
             			
                         if(result == null || result == 'null'){ 
-                        	alert('Attachment already exists with '+currentFile.name+ ' name, please upload with different name.');
+                            alert('{!JSENCODE($Label.CM_Alert_AttachmentAlreadyExistsWithSameName1)}' + ' ' + currentFile.name + ' ' + '{!JSENCODE($Label.CM_Alert_AttachmentAlreadyExistsWithSameName2)}');
                             $('#drop-files').fadeIn();
         
         					//Add markup to the upload box
@@ -378,7 +380,7 @@ function uploadFileAsAttachmentToRecord(attachmentId){
                     }); 
                 }else{
                     //Error handling for bad read
-                    alert('Could not read file');
+                    alert('{!JSENCODE($Label.CM_Alert_File_CouldNotReadFile)}');
                 }
             };
             
@@ -470,9 +472,9 @@ $(document).ready(function() {
             
             // Just some grammatical adjustments
             if(dataArray.length == 1) {
-                $('#upload-button span').html("1 file to be uploaded");
+                $('#upload-button span').html("1 "+"{!JSENCODE($Label.CM_SectionText_Input_InputWizard_DragNDrop_FileToBeUploaded)}");
             } else {
-                $('#upload-button span').html(dataArray.length+" files to be uploaded");
+                $('#upload-button span').html(dataArray.length+" "+"{!JSENCODE($Label.CM_SectionText_Input_InputWizard_DragNDrop_FilesToBeUploaded)}");
             }
             // Place extra files in a list
             if($('#dropped-files > .image').length < maxFiles) { 
@@ -525,7 +527,7 @@ $(document).ready(function() {
 	    if($('input[id$="typeInput"]').val() != '' && $('input[id$="typeInput"]').val() != 'Select'){
                 startTheUpload();
             }else{
-              alert('Please select a transaction type');
+              //alert('MP');
                 //$('input[id$="manualfile"][type="file"]')[0].value = null;
                 //restartFiles();
                 return false;

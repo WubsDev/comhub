@@ -1,12 +1,20 @@
 public with sharing class WuDashboardCtrl {		 
 	
-	public DateTime getlastUpdated() {
-    	return Utility.lastUpdateMarketDatetime;
+	public String getlastUpdated() {
+    	if(Utility.lastUpdateMarketDatetime != null){
+  			return Utility.lastUpdateMarketDatetime.format();
+  		}else{
+  			return '';
+  		}
     }
 
-public  DateTime lastupdate{
+	public  String lastupdate{
   	get{
-  		return Utility.lastUpdateMarketDatetime;
+	  		if(Utility.lastUpdateMarketDatetime != null){
+	  			return Utility.lastUpdateMarketDatetime.format();
+	  		}else{
+	  			return '';
+	  		}
   	}
   } 
 

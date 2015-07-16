@@ -6,7 +6,7 @@
  * 
  * Date Modified                Modified By                  Description of the update
  =====================================================================*/
-public with sharing class AddAnotherInputCtrl {
+public without sharing class AddAnotherInputCtrl {
 	public string sourcePage{get;set;}
 	public AddAnotherInputCtrl(){
 		if(system.currentPageReference().getParameters().get('sourcePage') != null) {

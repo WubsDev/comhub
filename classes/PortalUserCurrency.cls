@@ -3,14 +3,16 @@ public class PortalUserCurrency {
 	public String selectedValue {get; set;}
 	public User locUser{get;set;}
 	public String closeUserPopup{get;set;}
+    public Boolean isRecordShare {get; set;}
 	public PortalUserCurrency() {
         initialize();
   }
   
   public void initialize(){
   	closeUserPopup = '';
-  	locUser = [SELECT Id,Name,DefaultCurrencyIsoCode from User where id =: UserInfo.getUserId()];
+    locUser = [SELECT Id,Name,Share_Records__c, DefaultCurrencyIsoCode from User where id =: UserInfo.getUserId()];
   	selectedValue = locUser.DefaultCurrencyIsoCode;
+    // isRecordShare = locUser.Share_Records__c;
   	 	
   }  
   
@@ -36,17 +38,30 @@ public class PortalUserCurrency {
       homePg.setRedirect(true);
   		return homePg;
   }
+  
+  
+  public void updateSharingPemissionOnRecord(){
+    try{
+        update locUser;
+         ApexPages.addMessage(new ApexPages.message(ApexPages.severity.INFO, System.Label.CM_Alert_SharingPermission_UpdatedSuccessfully));
+         closeUserPopup = 'self.close();';
+    }catch(Exception ex){
+        ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Alert_SharingPermission_UpdatedError + ' ' + ex.getMessage()));
+    }
+  }
+  
+  
   public void updateRecord(){
   	try{
   		 closeUserPopup='';
  		 locUser.DefaultCurrencyIsoCode = selectedValue;
  		 update locUser;
- 		 ApexPages.addMessage(new ApexPages.message(ApexPages.severity.INFO, 'Successfully Updated the currency to "'+selectedValue+'".'));
+         ApexPages.addMessage(new ApexPages.message(ApexPages.severity.INFO, System.Label.CM_Alert_Currency_UpdatedSuccessfully + ' "' + selectedValue + '".'));
  		 closeUserPopup = 'self.close();';
  		 
   	}
   	catch(Exception ex){
-  		ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, 'Unable to save currency. Error Detail : '+ex.getMessage()));
+        ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Alert_UnableToSaveErrorDetail + ' '  + ex.getMessage()));
   	}
   }
 

@@ -70,11 +70,11 @@ global without sharing class ManageCashInvoiceCtl {
             hasError = false;
             invoice.Custom_Currency__c = selectedForwardContractCurrency;
             if(invoice.Name == null || invoice.Name == '') {
-                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Invoice Number Should Not be Blank '));
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Validation_Input_InvoiceNumberShouldNotBeBlank));
                 hasError = true;                
             }   
             if(invoice.Status__c == null || invoice.Status__c == ''){
-                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Status Should Not be Blank '));
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Validation_Input_FieldStatusShouldNotBeBlank));
                 hasError = true;                
             }       
             /*if(invoice.Custom_Currency__c == null) {
@@ -82,19 +82,19 @@ global without sharing class ManageCashInvoiceCtl {
                 hasError = true;
             }*/
             if(invoice.Due_Date__c == null) {
-                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Payment Date Should Not be Blank '));
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Validation_Input_FieldPaymentDateShouldNotBeBlank));
                 hasError = true;
             }
             if(invoice.Amount__c == null ) {
-                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, 'Amount Should Not be Blank '));
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Validation_Input_FieldAmountShouldNotBeBlank));
                 hasError = true;
             }   
             if(!Utility.isValidSfdcId(invoice.Input_Beneficiary__c)) {
-                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, 'Supplier Should Not be Blank '));
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Validation_Input_FieldSupplierShouldNotBeBlank));
                 hasError = true;
             }   
             if(invoice.Custom_Currency__c == '' || invoice.Custom_Currency__c == 'Select' || invoice.Custom_Currency__c == null) {
-                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, 'Selected currency is not valid currency. Choose other than Select for Currency.'));
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Validation_Input_FieldSelectedCurrencyIsNotValid));
                 hasError = true;
             }   
             if(!hasError) {
@@ -127,7 +127,7 @@ global without sharing class ManageCashInvoiceCtl {
                 if(ex.getMessage().contains('FIELD_CUSTOM_VALIDATION_EXCEPTION')){
                     //ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,ex.getMessage()));
                 }else{
-                    ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Unable to save Invoice. Error Detail :'+ex.getMessage()));
+                    ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Alert_UnableToSaveInvoice + ex.getMessage()));
                 }
             }
             return null;

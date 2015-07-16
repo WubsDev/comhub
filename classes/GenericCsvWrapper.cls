@@ -43,7 +43,7 @@ public class GenericCsvWrapper extends GenericBaseCsvWrapper {
 			Date Window_End_Date = Date.valueOf(this.input.get('Window_End_Date__c'));
 			Date Window_Start_Date = Date.valueOf(this.input.get('Window_Start_Date__c'));
 			if(this.input.get('Window_Start_Date__c')!=null && Window_End_Date<Window_Start_Date){
-				ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,fieldLabels.get(f.FieldPath)+' should be equal or greater than "Window Start Date"'));
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Validation_Input_DateShouldBeGreaterOrEqual));
 				isValid = false;
 			}
 		}
@@ -52,7 +52,7 @@ public class GenericCsvWrapper extends GenericBaseCsvWrapper {
 		if(f.FieldPath.equalsIgnoreCase('Amount__c')){
 		    if(fieldSetName=='Option_Other'){
 		    	if (this.inputOther!=null && this.inputOther.get('Amount__c')==null) {						    	 
-		    	 	if(logPageMessage) ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Obligation Amount should be a valid number '+errorMsgPart(this.mapCSVvalues.get('Option_'+f.FieldPath))));
+                    if(logPageMessage) ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, System.Label.CM_FieldLabel_Input_ObligationAmount + ' ' + System.Label.CM_Validation_Input_FieldShouldBeAValidNumber + ' '+errorMsgPart(this.mapCSVvalues.get('Option_'+f.FieldPath))));
 		    	 	isValid = false;
 		    	 }
 			}
@@ -62,7 +62,7 @@ public class GenericCsvWrapper extends GenericBaseCsvWrapper {
    
     public override String errorMsgPart(String srcText){
 		if(Utility.isValidText(srcText)){
-			return ' : (for Input-'+Utility.getValidText(String.valueOf(this.input.get('Reference_Number__c')))+', CSV value :\''+srcText+'\' )';
+            return ' : ' + System.Label.CM_Validation_Input_FieldForInput + ' ' + Utility.getValidText(String.valueOf(this.input.get('Reference_Number__c'))) + ', ' + System.Label.CM_Validation_Input_FieldCsvValue + ' ' + srcText+'\' )';
 		}
 		return '';
 	}

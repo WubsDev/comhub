@@ -1,13 +1,11 @@
 <apex:component controller="Utility" >
 	<apex:attribute name="menuName" type="String" description="" default="summaryDashboard" />
 	<ul class="nav nav-tabs" >
-		<li class="{!if(menuName=='NetExposureReport', 'active', '')}"><a href="{!$Site.Prefix}/apex/InsightsAndInputTab" >Net Exposure</a></li>
-		<li class="{!if(menuName=='InvoicesReport', 'active', '')}"><a href="{!$Site.Prefix}/apex/InvoicesAndPayments" >Invoice Management</a></li>
+        <li class="{!if(menuName=='NetExposureReport', 'active', '')}"><a href="{!$Site.Prefix}/apex/InsightsAndInputTab" >{!$Label.CM_Community_Tab_NetExposure}</a></li>
+        <li class="{!if(menuName=='InvoicesReport', 'active', '')}"><a href="{!$Site.Prefix}/apex/InvoicesAndPayments" >{!$Label.CM_Community_Tab_InvoiceManagement}</a></li>
 		<!-- #invoices-report -->
-		<li class="{!if(menuName=='HoldingBalancesReport', 'active', '')}" style="display:{!if(isNonCCTuser, 'none', 'block')}"><a href="#holding-balance" data-toggle="tab">Holding
-				Balances Roll-up Summary</a></li>
-		<li class="{!if(menuName=='ForwardContractsReport', 'active', '')}"><a href="#forward-contract" data-toggle="tab" >Forward
-				Contracts Roll-up Summary</a></li>
+        <li class="{!if(menuName=='HoldingBalancesReport', 'active', '')}" style="display:{!if(isNonCCTuser, 'none', 'block')}"><a href="#holding-balance" data-toggle="tab">{!$Label.CM_Community_Tab_HoldingBalancesRollupSummary}</a></li>
+        <li class="{!if(menuName=='ForwardContractsReport', 'active', '')}"><a href="#forward-contract" data-toggle="tab" >{!$Label.CM_Community_Tab_ForwardContractsRollupSummary}</a></li>
 		<!-- <li class="{!if(menuName=='HistoricalPaymentsReport', 'active', '')}"><a href="#historical-payments" data-toggle="tab">Historical
 				Payments Report</a></li> --> 
 	</ul>

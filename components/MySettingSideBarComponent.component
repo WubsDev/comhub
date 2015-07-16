@@ -34,14 +34,33 @@
 	<div class="collapsible sidebar" id="sidebarDiv" style="height:115px;">
         <div class="sidebarModulePortalWelcomeContainer sidebarModule">
             <div class="sidebarModuleHeader" style="background:#222;">
-                <h2 class="brandPrimaryFgr">Welcome, {!$User.FirstName} {!$User.LastName}</h2></div>
+                <h2 class="brandPrimaryFgr">{!$Label.CM_Community_Text_Welcome} {!$User.FirstName} {!$User.LastName}</h2></div>
             <div class="sidebarModuleBody" style="background:#eee;">
-	        		<a href="{!$Site.Prefix}/_ui/core/portal/PortalUserMyProfilePage/d" class="sidebarModulePortalWelcome" target="_top">My Profile</a>&nbsp;|&nbsp;<a href="{!$Site.Prefix}/secur/logout.jsp" class="sidebarModulePortalWelcome" target="_top">Logout</a>
+                    <a href="{!$Site.Prefix}/_ui/core/portal/PortalUserMyProfilePage/d" class="sidebarModulePortalWelcome" title="{!$Label.CM_Community_Link_MyProfile}" target="_top">{!$Label.CM_Community_Link_MyProfile}</a>&nbsp;|&nbsp;<a href="{!$Site.Prefix}/secur/logout.jsp" class="sidebarModulePortalWelcome" title="{!$Label.CM_Community_Link_Logout}" target="_top">{!$Label.CM_Community_Link_Logout}</a>
 	            <br/>
-	            <a href="javascript:topPersonalSetup();" class="menuButtonMenuLink" title="My Settings">My Settings</a>&nbsp;|&nbsp;<a href="javascript:void((function(){ window.open('{!URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))}/apex/portalUserCurrency?sfdc.tabName=User Currency','Ratting','width=850,height=400,left=150,top=200,toolbar=0,status=0,');})());" target="_top" class="menuButtonMenuLink" title="My Currency">My Currency</a>
+                <a href="javascript:topPersonalSetup();" class="menuButtonMenuLink" title="{!$Label.CM_Community_Link_MySettings}">{!$Label.CM_Community_Link_MySettings}</a>&nbsp;|&nbsp;<a href="javascript:void((function(){ window.open('{!URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))}/apex/portalUserCurrency?sfdc.tabName=User Currency','Ratting','width=850,height=400,left=150,top=200,toolbar=0,status=0,');})());" target="_top" class="menuButtonMenuLink" title="{!$Label.CM_Community_Link_MyCurrency}">{!$Label.CM_Community_Link_MyCurrency}</a>
 	            <br/>
-	            <a href="javascript:openIntroVideoModal();" class="menuButtonMenuLink" title="Tutorials">Tutorials</a>&nbsp;
+                <a href="javascript:openIntroVideoModal();" class="menuButtonMenuLink" title="{!$Label.CM_Community_Link_Tutorials}">{!$Label.CM_Community_Link_Tutorials}</a>
+                &nbsp;|&nbsp;<a href="javascript:void((function(){ window.open('{!URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))}/apex/SharingRecordPage?sfdc.tabName=My Sharing Rules','Ratting','width=1050,height=400,left=150,top=200,toolbar=0,status=0,');})());" target="_top" class="menuButtonMenuLink" title="{!$Label.CM_Sharing_Record_Page}">{!$Label.CM_Sharing_Record_Page}</a>
+<!--                 <a href="{!URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))}/apex/AccountDocumentComm" target="_top" class="menuButtonMenuLink" title="My Currency">{!$Label.CM_Community_Link_AccountDocument}</a> -->
             </div>
         </div>
   </div>
+
+<!--            <button type="button" class="btn btn-default" aria-label="Menu"> -->
+<!--                <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span> -->
+<!--            </button> -->
+<!--                <header id="top" role="banner"> -->
+<!--                </header> -->
+<!--                <nav id="nav" role="navigation"> -->
+<!--                    <h2>Chapters</h2> -->
+<!--                    <ul> -->
+<!--                        <li><a href="#">Chapter 1</a></li> -->
+<!--                        <li><a href="#">Chapter 2</a></li> -->
+<!--                        <li><a href="#">Chapter 3</a></li> -->
+<!--                        <li><a href="#">Chapter 4</a></li> -->
+<!--                        <li><a href="#">Chapter 5</a></li> -->
+<!--                    </ul> -->
+<!--                    <a href="#top">Return to content</a> -->
+<!--                </nav> -->
 </apex:component>

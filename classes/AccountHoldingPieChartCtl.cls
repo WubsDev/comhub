@@ -11,8 +11,21 @@
 public without sharing class AccountHoldingPieChartCtl
 {  
     public static String accId;
+    public String userLanguage{get;set;}
+    public String currentUserLocale {get; set;}
     public AccountHoldingPieChartCtl(){
+        userLanguage = UserInfo.getLanguage();
+        if(userLanguage.trim() == 'fr'|| userLanguage.trim() == 'it'){
+            userLanguage = '_'+userLanguage;
+        }
+        else{
+            userLanguage = '';
+        }
         User userLoggedIn = Utility.loggedInUser;
+        currentUserLocale = UserInfo.getLocale();
+        if(currentUserLocale.contains('_')){
+        	currentUserLocale = currentUserLocale.substring(0, currentUserLocale.indexOf('_'));
+        }
         accId = Utility.currentAccount; 
         dataMap =  getChartData();
         colorOrder = new list<String>();
@@ -116,7 +129,7 @@ public without sharing class AccountHoldingPieChartCtl
         }
         List<sObject> holdbalance= new List<sObject>();  
         //Amount__c = Converted_Amount__c * Market_rate
-        String sql = 'select Custom_Currency__c, SUM(Converted_Amount__c)total, SUM(Amount__c) MarketRate FROM Holding_Balance__c where Converted_Amount__c>0 and Account__c =: accId group by Custom_Currency__c ';
+        String sql = 'select toLabel(Custom_Currency__c), SUM(Converted_Amount__c)total, SUM(Amount__c) MarketRate FROM Holding_Balance__c where Converted_Amount__c>0 and Account__c =: accId group by Custom_Currency__c ';
         //String sql = 'SELECT CurrencyIsoCode, Converted_Amount__c FROM Holding_Balance__c where Account__c =: accId ';
         holdbalance = Database.Query(sql);
         Decimal total=0;
@@ -381,7 +394,7 @@ public without sharing class AccountHoldingPieChartCtl
         // removed and Maturity_Date__c>=:todayDate condition
         // Ref : I-163726
         //
-        String sql = 'SELECT Custom_Currency__c, SUM(Converted_Amount__c)total, SUM(FX_Balance__c) MarketRate FROM Forward_Contracts__c where Converted_Amount__c>0 and Account_ID__c =: accId group by Custom_Currency__c';
+        String sql = 'SELECT toLabel(Custom_Currency__c), SUM(Converted_Amount__c)total, SUM(FX_Balance__c) MarketRate FROM Forward_Contracts__c where Converted_Amount__c>0 and Account_ID__c =: accId group by Custom_Currency__c';
         
         holdbalance = Database.Query(sql);
         Decimal total=0;

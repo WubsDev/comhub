@@ -2,7 +2,7 @@
 
 			 <apex:form id="theForm" >
 
-    <apex:actionstatus id="status" onstart="progressbarBSMsg('{!$Label.Loading_Wait_Text}');showProgressbarBS(true);" onstop="showProgressbarBS(false);">
+    <apex:actionstatus id="status" onstart="progressbarBSMsg('{!$Label.CM_Community_Text_PleaseWait}');showProgressbarBS(true);" onstop="showProgressbarBS(false);">
     </apex:actionstatus>
         <!-- was <apex:messages />. Has better display settings. -->
 
@@ -28,7 +28,7 @@
         	}
         </style>
 		<apex:pageBlock id="theTable" mode="inlineEdit">
-			 <apex:pageBlockSection columns="1" title="My Inputs" collapsible="false" >
+             <apex:pageBlockSection columns="1" title="{!$Label.CM_SectionHeading_Input_MyInputs}" collapsible="false" >
 			 </apex:pageBlockSection>
 			 <div style="width:10px;height:4px;"></div>
 				<apex:pageMessage severity="error" rendered="{!message!=''}" detail="{!message}"  summary="Error" strength="2"/> 
@@ -127,29 +127,46 @@
 				            -->  
 				       }*/
 						
+                        function twistSectionCustom(twisty, sectionId) {
+                           var parentDiv = twisty;
+                           while ((parentDiv.tagName != 'tr'&& parentDiv.tagName != 'TR')) { parentDiv = parentDiv.parentNode; }
+                           var div = parentDiv.nextSibling; 
+                           var elemWasOn = false; 
+                           if (div.style.display != 'none') { 
+                               div.style.display = 'none'; 
+                               twisty.className ='showListButton';
+                               twisty.alt = twisty.title = 'Show Section - '+twisty.name;
+                               elemWasOn = true; 
+                           } else {
+                               div.style.display = 'block'; 
+                               twisty.className = 'hideListButton';
+                               twisty.alt = twisty.title = 'Hide Section - '+twisty.name;
+                           } 
+                          return !elemWasOn;
+                        }                        
 		        	</script>
             <apex:outputpanel >
             	<center>
             	<table class="list" style="border:0px!important; width:50px;" width="50px">
             		<tr>
             			<td class="labelCol" style="border:0px!important;">&nbsp;</td>
-						<th class="labelCol" style="border:0px!important;"><apex:outputLabel value="Currency" /></th>
+                        <th class="labelCol" style="border:0px!important;"><apex:outputLabel value="{!$Label.CM_FieldLabel_Input_Currency}" /></th>
 				  		<td class="dataCol" style="padding-left:0px;padding-right:13px!important;border:0px!important;">
 							<apex:selectList value="{!selectedCurrency}" multiselect="false" size="1">
 				           		<apex:selectOptions value="{!accountTradedCurrency}" /> 
 				       		</apex:selectList>            		
 				  		</td>
-				  		<th class="labelCol" style="padding-left:0px;border:0px!important;"><apex:outputLabel value="Start Date" /></th>
+                        <th class="labelCol" style="padding-left:0px;border:0px!important;"><apex:outputLabel value="{!$Label.CM_FieldLabel_Input_StartDate}" /></th>
 				  		<td class="dataCol" style="padding-left:0px;padding-right:13px!important;border:0px!important;">
 				       	<apex:inputField value="{!input.Window_Start_Date__c}" />
 				       </td>
-				  		<th class="labelCol" style="padding-left:0px;border:0px!important;"><apex:outputLabel value="End Date" /></th>
+                        <th class="labelCol" style="padding-left:0px;border:0px!important;"><apex:outputLabel value="{!$Label.CM_FieldLabel_Input_EndDate}" /></th>
 				  		<td class="dataCol" style="padding-left:0px;padding-right:13px!important;border:0px!important;">
 				       	<apex:inputField value="{!input.Window_End_Date__c}" />
 				       </td>
 				       <td style="padding-left:0px;padding-right:13px!important;border:0px!important;">
 				       <nobr>
-	                        <apex:commandButton value="Search" action="{!PopulateLists}" status="status" rerender="theForm"/>
+                            <apex:commandButton value="{!$Label.CM_Community_Button_Search}" action="{!PopulateLists}" status="status" rerender="theForm"/>
 				       </nobr>
 				       <script type="text/javascript">
 				       
@@ -188,7 +205,7 @@
 								showDeleteBtns();
 							}
 							function deleteInputs(){
-								if(confirm('Are you sure you want to delete this record?')){
+                                if(confirm('{!$Label.CM_Alert_AreYouSureYouWantToDeleteThisRecord}')){
 									deleteInputConfirm();
 								}
 								return false;
@@ -208,29 +225,39 @@
             		<!--  styleclass="noUpdateButton" -->
 						<apex:actionfunction name="deleteInputConfirm" 
 						       action="{!deleteInputs}" status="status" rerender="theForm"/>
-						<apex:commandButton id="saveButtonT" value="{!$Label.Save}" action="{!quickSave}" status="status" rerender="theForm"/>
-						<apex:commandButton id="cancelButtonT" value="Reset"  action="{!cancelInputs}" status="status" rerender="theForm" immediate="true"/>
-						<apex:commandButton id="deleteButtonT" value="Delete" styleclass="noUpdateButton" onclick="return deleteInputs();"  />
+                        <apex:commandButton id="saveButtonT" value="{!$Label.CM_Community_Button_Save}" action="{!quickSave}" status="status" rerender="theForm"/>
+                        <apex:commandButton id="cancelButtonT" value="{!$Label.CM_Community_Button_Reset}"  action="{!cancelInputs}" status="status" rerender="theForm" immediate="true"/>
+                        <apex:commandButton id="deleteButtonT" value="{!$Label.CM_Community_Button_Delete}" styleclass="noUpdateButton" onclick="return deleteInputs();"  />
 				    </nobr>
 				</div>
 			</center>
-            <apex:pageBlockSection columns="1" title="Outgoing" id="Outgoing" >
+            <apex:pageBlockSection columns="1"  id="Outgoing" >
+                <apex:outputpanel >
+                    <div class="pbSubheader brandTertiaryBgr tertiaryPalette">
+                        <img src="/s.gif" alt="Show Section - Outgoing" class="showListButton" id="{!$Component.Outgoing}1" name="Outgoing1" onclick="twistSectionCustom(this);" onkeypress="if (event.keyCode=='13')twistSectionCustom(this);" style="cursor:pointer;" tabindex="0" title="Show Section - Outgoing"/>
+                        <h3>{!$Label.CM_SectionHeading_Input_Outgoing}&nbsp;<font color="red">&nbsp;{!$Label.CM_Community_SystemAlert_OutflowOtherReplaced}</font></h3>
+                    </div>            
+                </apex:outputpanel>
                 <apex:pageBlockTable value="{!outgoingPgCtlCTM_genericList}" var="o" styleClass="table">
                     <apex:column > 
                         <apex:facet name="header">
-                            <apex:outputtext value="{!checkBoxOutgoingHtml}" escape="false" />                            
+                            <!-- Marc Powell 7/3/15 
+                            <apex:outputtext value="{!checkBoxOutgoingHtml}" escape="false" />   -->
+                            <div><input type="checkbox" id="outputChk" onclick="doToggleDelete(this,'deleteInputOutgoingChk');"/>{!$Label.CM_FieldLabel_Attachments_Action}</div>
                         </apex:facet>
+                        <apex:outputpanel rendered="{!o.isDealerAccess}">
                         <table><tr><td>
                         <apex:inputCheckbox value="{!o.isSelected}" id="deleteInputOutgoingChk" onclick="showDeleteBtns('deleteInputOutgoingChk');" styleClass="deleteInputChk" rendered="{!o.isOwner}" />
                         <span style="padding:0px 12px 0px 0px;display:block;float:left;display:{!if(o.isOwner, 'none;', 'block;')}">&nbsp;</span>
                         </td><td><nobr>
-                        <u><a href="{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))+'/apex/'+IF(o.input != null, 'InputDetail?Id='+o.input.Id, 'InvoiceDetail?Id='+o.invoice.Id), '/'+IF(o.input != null, o.input.Id, o.invoice.Id))}{!IF($Site.Prefix != null,'&','?')}retURL=/{!$Site.Prefix}/apex/ManageCashInput">View Details</a></u>
+                        <u><a href="{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))+'/apex/'+IF(o.input != null, 'InputDetail?Id='+o.input.Id, 'InvoiceDetail?Id='+o.invoice.Id), '/'+IF(o.input != null, o.input.Id, o.invoice.Id))}{!IF($Site.Prefix != null,'&','?')}retURL=/{!$Site.Prefix}/apex/ManageCashInput">{!$Label.CM_Community_Link_ViewDetails}</a></u>
                         </nobr></td></tr></table>
+                        </apex:outputpanel>
                     </apex:column>
 
                     <apex:column >
                         <apex:facet name="header">
-                            <apex:commandLink value="{!$Label.Payment_Date} {!IF(outgoingPgCtlCTM.sortField=='Transaction_Date__c',IF(outgoingPgCtlCTM.sortDir='asc','▲','▼'),'')}" action="{!toggleoutgoingSort}" status="status" rerender="Outgoing">
+                            <apex:commandLink value="{!$Label.CM_FieldLabel_Input_PaymentDate} {!IF(outgoingPgCtlCTM.sortField=='Transaction_Date__c',IF(outgoingPgCtlCTM.sortDir='asc','▲','▼'),'')}" action="{!toggleoutgoingSort}" status="status" rerender="Outgoing">
                                 <apex:param name="sortField" value="Transaction_Date__c" assignTo="{!outgoingPgCtlCTM.sortField}"/>
                             </apex:commandLink>
                         </apex:facet>
@@ -248,7 +275,7 @@
                    
                     <apex:column >
                         <apex:facet name="header">
-                            <apex:commandLink value="{!$Label.Payment_Currency} {!IF(outgoingPgCtlCTM.sortField=='Custom_Currency__c',IF(outgoingPgCtlCTM.sortDir='asc','▲','▼'),'')}" action="{!toggleoutgoingSort}" status="status" rerender="Outgoing">
+                            <apex:commandLink value="{!$Label.CM_FieldLabel_Input_PaymentCurrency} {!IF(outgoingPgCtlCTM.sortField=='Custom_Currency__c',IF(outgoingPgCtlCTM.sortDir='asc','▲','▼'),'')}" action="{!toggleoutgoingSort}" status="status" rerender="Outgoing">
                                 <apex:param name="sortField" value="Custom_Currency__c" assignTo="{!outgoingPgCtlCTM.sortField}"/> <!-- CurrencyIsoCode -->
                             </apex:commandLink>
                         </apex:facet>
@@ -267,7 +294,7 @@
                     
                     <apex:column >
                         <apex:facet name="header">
-                            <apex:commandLink value="{!$Label.Amount} {!IF(outgoingPgCtlCTM.sortField=='Amount__c',IF(outgoingPgCtlCTM.sortDir='asc','▲','▼'),'')}" action="{!toggleoutgoingSort}" status="status" rerender="Outgoing">
+                            <apex:commandLink value="{!$Label.CM_FieldLabel_Input_Amount} {!IF(outgoingPgCtlCTM.sortField=='Amount__c',IF(outgoingPgCtlCTM.sortDir='asc','▲','▼'),'')}" action="{!toggleoutgoingSort}" status="status" rerender="Outgoing">
                                 <apex:param name="sortField" value="Amount__c" assignTo="{!outgoingPgCtlCTM.sortField}"/>
                             </apex:commandLink>
                         </apex:facet>
@@ -285,17 +312,16 @@
 		                        	<apex:commandButton style="padding:5px 8px !important" value="Add" styleClass="wuBtn" onClick="window.open('{!IF($Site.Prefix != null,URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/AddInputBeneficiary?aId={!$CurrentPage.parameters.aId}&customRefId={!$Component.benef}&customLkNameId='+lookupIdHolder['{!$Component.benef}_name'],'Ratting','width=850,height=400,left=150,top=200,toolbar=0,status=0,');return false;"/>
 	                        	</td-->                     
                     </apex:column>
-                    <apex:column headerValue="Settlement Amount" >
+                    <apex:column headerValue="{!$Label.CM_FieldLabel_Input_SettlementAmount}" >
 						<apex:outputpanel >
 							<table class="table" border="0" cellpadding="0" cellspacing="0" style="margin-top:0px!important;margin-bottom:0px!important;">
 								<tr style="border-top:0px;">
 									<td style="border-top:0px;">
-										<apex:outputText value="{!userCurrency}{0, number, ###,##0.00}">
-											<apex:param value="{!o.settlementCurrency}" />
-										</apex:outputText>
+                                        {!userCurrency}&nbsp;{!o.settlementCurrencyFormatted}
+
 									</td>
 									<td style="border-top:0px;text-align:right">
-										<!-- nobr><a title="Please select a Threshold for your {!if(o.invoice!=null, 'Invoice', 'Input')}" alt="Please select a Threshold for your {!if(o.invoice!=null, 'Invoice', 'Input')}" href="javascript:openLookupAlert('{!if(o.invoice!=null, 'Invoice', 'Input')}', '{!if(o.invoice!=null, o.invoice.id, o.input.id)}');" src="#" type="button" class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">Rate Watch</a></nobr-->
+                                        <!-- nobr><a title="{!$Label.CM_Community_Text_PleaseSelectAThresholdForYourInvoice} + {!if(o.invoice!=null, 'Invoice', 'Input')}" alt="{!$Label.CM_Community_Text_PleaseSelectAThresholdForYourInvoice} + {!if(o.invoice!=null, 'Invoice', 'Input')}" href="javascript:openLookupAlert('{!if(o.invoice!=null, 'Invoice', 'Input')}', '{!if(o.invoice!=null, o.invoice.id, o.input.id)}');" src="#" type="button" class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">Rate Watch</a></nobr-->
 <!-- 										<nobr><a src="javascript:void();" type="button" title="Coming Soon" alt="Coming Soon"  class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">Rate Watch - Coming Soon!</a></nobr> -->
 									</td>
 								</tr>
@@ -305,7 +331,7 @@
 					</apex:column>
                     <apex:column >
                         <apex:facet name="header">
-                            <apex:commandLink value="Supplier {!IF(outgoingPgCtlCTM.sortField=='Input_Beneficiary__r.Name',IF(outgoingPgCtlCTM.sortDir='asc','▲','▼'),'')}"  action="{!toggleoutgoingSort}" status="status" rerender="Outgoing">
+                            <apex:commandLink value="{!$Label.CM_FieldLabel_Input_Supplier_lowercase} {!IF(outgoingPgCtlCTM.sortField=='Input_Beneficiary__r.Name',IF(outgoingPgCtlCTM.sortDir='asc','▲','▼'),'')}"  action="{!toggleoutgoingSort}" status="status" rerender="Outgoing">
                                 <apex:param name="sortField" value="Input_Beneficiary__r.Name" assignTo="{!outgoingPgCtlCTM.sortField}"/>
                             </apex:commandLink>
                         </apex:facet>
@@ -317,7 +343,7 @@
 											isOnlyRead="{!!o.isOwner}" fieldToPopulateId="{!$Component.benef}" fieldSetName="Lookup_Fields"/>
 	                    		</td>
 	                    		<td style="border-bottom:0px;padding: 0px 0px 0px 0px;">
-		                        	<apex:commandButton title="Add Suppliers" style="padding:5px 8px !important" value="Add" styleClass="wuBtn" rendered="{!o.isOwner}" 
+                                    <apex:commandButton title="{!$Label.CM_Community_Button_AddSuppliers}" style="padding:5px 8px !important" value="{!$Label.CM_Community_Button_AddSuppliers}" styleClass="wuBtn" rendered="{!o.isOwner}" 
 		                        			onClick="window.open('{!IF($Site.Prefix != null,URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/AddInputBeneficiary?aId={!$CurrentPage.parameters.aId}&customRefId={!$Component.benef}&customLkNameId='+lookupIdHolder['{!$Component.benef}_name'],'Ratting','width=850,height=400,left=150,top=200,toolbar=0,status=0,');return false;"/>
 	                        	</td>
 	                        	</tr>
@@ -331,7 +357,7 @@
 											isOnlyRead="{!!o.isOwner}"  fieldAPI="Name" fieldToPopulateId="{!$Component.benefInv}" fieldSetName="Lookup_Fields"/>
 	                    		</td>
 	                    		<td style="border-bottom:0px;padding: 0px 0px 0px 0px;">
-		                        	<apex:commandButton title="Add Suppliers" style="padding:5px 8px !important" value="Add" styleClass="wuBtn" rendered="{!o.isOwner}"
+                                    <apex:commandButton title="{!$Label.CM_Community_Button_AddSuppliers}" style="padding:5px 8px !important" value="{!$Label.CM_Community_Button_AddSuppliers}" styleClass="wuBtn" rendered="{!o.isOwner}"
 		                        			onClick="window.open('{!IF($Site.Prefix != null,URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/AddInputBeneficiary?aId={!$CurrentPage.parameters.aId}&customRefId={!$Component.benefInv}&customLkNameId='+lookupIdHolder['{!$Component.benefInv}_name'],'Ratting','width=850,height=400,left=150,top=200,toolbar=0,status=0,');return false;"/>
 	                        	</td>
 	                        	</tr>
@@ -341,7 +367,7 @@
                     
                     <apex:column >
                         <apex:facet name="header">
-                            <apex:commandLink value="{!$Label.Reference} {!IF(outgoingPgCtlCTM.sortField=='Reference_Number__c',IF(outgoingPgCtlCTM.sortDir='asc','▲','▼'),'')}" action="{!toggleoutgoingSort}" status="status" rerender="Outgoing">
+                            <apex:commandLink value="{!$Label.CM_FieldLabel_Input_ReferenceNumber} {!IF(outgoingPgCtlCTM.sortField=='Reference_Number__c',IF(outgoingPgCtlCTM.sortDir='asc','▲','▼'),'')}" action="{!toggleoutgoingSort}" status="status" rerender="Outgoing">
                                 <apex:param name="sortField" value="Reference_Number__c" assignTo="{!outgoingPgCtlCTM.sortField}"/>
                             </apex:commandLink>
                         </apex:facet>
@@ -359,17 +385,22 @@
                     
                     <apex:column >
                         <apex:facet name="header">
-                            <apex:commandLink value="{!$Label.Category} {!IF(outgoingPgCtlCTM.sortField=='Type__c',IF(outgoingPgCtlCTM.sortDir='asc','▲','▼'),'')}" action="{!toggleoutgoingSort}" status="status" rerender="Outgoing">
+                            <apex:commandLink value="{!$Label.CM_FieldLabel_Input_Category} {!IF(outgoingPgCtlCTM.sortField=='Type__c',IF(outgoingPgCtlCTM.sortDir='asc','▲','▼'),'')}" action="{!toggleoutgoingSort}" status="status" rerender="Outgoing">
                                 <apex:param name="sortField" value="Type__c" assignTo="{!outgoingPgCtlCTM.sortField}"/>
                             </apex:commandLink>
                         </apex:facet>
-                        <apex:outputtext value="{!o.input.Type__c}" rendered="{!o.input!=null}"/>
-                        <apex:outputtext value="Invoice" rendered="{!o.invoice!=null}"/>
+                        <apex:outputfield value="{!o.input.Input_Type__c}" rendered="{!o.input!=null}">
+                            <apex:inlineEditSupport showOnEdit="saveButtonTB,cancelButtonTB,saveButtonT,cancelButtonT"
+                                event="ondblclick" rendered="false"
+                                changedStyleClass="updateButton" resetFunction="resetInlineEdit"/>
+                        </apex:outputfield>
+                        <apex:outputtext value="{!$Label.CM_SectionHeading_InvoiceDetail_Invoice}" rendered="{!o.invoice!=null}"/>
                     </apex:column>
                     
                     <apex:column >
                     	<apex:facet name="header">
-                            <apex:outputtext value="{!checkBoxOutgoingPaidHtml}" escape="false" />                            
+                       <!-- Marc Powell 7/3/15 <apex:outputtext value="{!checkBoxOutgoingPaidHtml}" escape="false" />     -->
+                       <div>{!$Label.CM_FieldLabel_Invoice_Status}&#47;<input type="checkbox" id="outputChk"/>{!$Label.CM_Community_Text_FieldFilter_InvoiceStatus_Item_Paid}</div>
                         </apex:facet>                    
                         <apex:outputField value="{!o.input.Paid__c}" rendered="{!o.input!=null}">
                         	<apex:inlineEditSupport showOnEdit="saveButtonTB,cancelButtonTB,saveButtonT,cancelButtonT"
@@ -382,42 +413,54 @@
                     			changedStyleClass="updateButton" resetFunction="resetInlineEdit"/>
                         </apex:outputField>                        
                     </apex:column> 
+                     
                 </apex:pageBlockTable>
             </apex:pageBlockSection>
 				<div class="text-center">
 					<apex:outputpanel rendered="{!outgoingPgCtlCTM!=null && outgoingPgCtlCTM.paginater!=null && outgoingPgCtlCTM.paginater.totalResults>0}">
 						<apex:commandButton rendered="{!outgoingPgCtlCTM.paginater.showPrevious}"
-							value="First" styleClass="wuBtn" action="{!outgoingPgCtlCTM.firstPage}" status="status" rerender="theForm"/>
+                            value="{!$Label.CM_Community_Button_First}" styleClass="wuBtn" action="{!outgoingPgCtlCTM.firstPage}" status="status" rerender="theForm"/>
 						<apex:commandButton rendered="{!outgoingPgCtlCTM.paginater.showPrevious}"
-							value="Previous" action="{!outgoingPgCtlCTM.previousPage}" status="status" rerender="theForm"/>
-						<apex:outputText rendered="{!(outgoingPgCtlCTM.paginater.pageNum * outgoingPgCtlCTM.pageSize) < outgoingPgCtlCTM.paginater.totalResults}"
-							value="{!outgoingPgCtlCTM.paginater.pageNum * outgoingPgCtlCTM.pageSize} Of {!outgoingPgCtlCTM.paginater.totalResults}"></apex:outputText>
-						<apex:outputText rendered="{!(outgoingPgCtlCTM.paginater.pageNum * outgoingPgCtlCTM.pageSize) >= outgoingPgCtlCTM.paginater.totalResults}"
-							value="{!outgoingPgCtlCTM.paginater.totalResults} Of {!outgoingPgCtlCTM.paginater.totalResults}"></apex:outputText>
-						<apex:commandButton rendered="{!(outgoingPgCtlCTM.paginater.showNext)}" value="Next"
+                            value="{!$Label.CM_Community_Button_Previous}" action="{!outgoingPgCtlCTM.previousPage}" status="status" rerender="theForm"/>
+                        <apex:outputText rendered="{!(outgoingPgCtlCTM.paginater.totalResults!=null)&&(outgoingPgCtlCTM.paginater.pageNum * outgoingPgCtlCTM.pageSize) < outgoingPgCtlCTM.paginater.totalResults}"
+                            value="{!outgoingPgCtlCTM.paginater.pageNum * outgoingPgCtlCTM.pageSize} {!$Label.CM_Community_Text_Of} {!outgoingPgCtlCTM.paginater.totalResults}"></apex:outputText>
+                        <apex:outputText rendered="{!(outgoingPgCtlCTM.paginater.totalResults!=null)&&(outgoingPgCtlCTM.paginater.pageNum * outgoingPgCtlCTM.pageSize) >= outgoingPgCtlCTM.paginater.totalResults}"
+                            value="{!outgoingPgCtlCTM.paginater.totalResults} {!$Label.CM_Community_Text_Of} {!outgoingPgCtlCTM.paginater.totalResults}"></apex:outputText>
+                        <apex:commandButton rendered="{!(outgoingPgCtlCTM.paginater.showNext)}" value="{!$Label.CM_Community_Button_Next}"
 							styleClass="wuBtn" action="{!outgoingPgCtlCTM.nextPage}" status="status" rerender="theForm"/>
-						<apex:commandButton rendered="{!outgoingPgCtlCTM.paginater.showNext}" value="Last"
+                        <apex:commandButton rendered="{!outgoingPgCtlCTM.paginater.showNext}" value="{!$Label.CM_Community_Button_Last}"
 							styleClass="wuBtn" action="{!outgoingPgCtlCTM.lastPage}" status="status" rerender="theForm"/>
 					</apex:outputpanel>
 				</div>            
 
-            <apex:pageBlockSection columns="1" title="Incoming" id="incoming">
+            <apex:pageBlockSection columns="1" id="incoming">
+                <apex:outputpanel >
+                    <div class="pbSubheader brandTertiaryBgr tertiaryPalette">
+                        <img src="/s.gif" alt="Show Section - Incoming" class="showListButton" id="{!$Component.incoming}1" name="incoming1" onclick="twistSectionCustom(this);" onkeypress="if (event.keyCode=='13')twistSectionCustom(this);" style="cursor:pointer;" tabindex="0" title="Show Section - Incoming"/>
+                        <h3>{!$Label.CM_SectionHeading_Input_Incoming}&nbsp;<font color="red">&nbsp;{!$Label.CM_Community_SystemAlert_InflowOtherReplaced}</font></h3>
+                    </div>            
+                </apex:outputpanel>
+
                 <apex:pageBlockTable value="{!incomingPgCtl_genericList}" var="o" styleClass="table">
                     <apex:column >
                         <apex:facet name="header">
-                            <apex:outputtext value="{!checkBoxIncomingHtml}" escape="false" />
+                            <!-- Marc Powell 7/3/15 
+                            <apex:outputtext value="{!checkBoxIncomingHtml}" escape="false" /> -->
+                            <div><input type="checkbox" id="incomingChk" onclick="doToggleDelete(this,'deleteInputIncomingChk');"/>{!$Label.CM_FieldLabel_Attachments_Action}</div>
                         </apex:facet>
+                        <apex:outputpanel rendered="{!o.isDealerAccess}">
                         <table><tr><td>
                         <apex:inputCheckbox value="{!o.isSelected}" id="deleteInputIncomingChk" onclick="showDeleteBtns('deleteInputIncomingChk');" styleClass="deleteInputChk" rendered="{!o.isOwner}"/>
                         <span style="padding:0px 12px 0px 0px;display:block;float:left;display:{!if(o.isOwner, 'none;', 'block;')}">&nbsp;</span>
                         </td><td><nobr>
-                        <u><a href="{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))+'/apex/'+IF(o.input != null, 'InputDetail?Id='+o.input.Id, 'InvoiceDetail?Id='+o.invoice.Id), '/'+IF(o.input != null, o.input.Id, o.invoice.Id))}">View Details</a></u>
+                        <u><a href="{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))+'/apex/'+IF(o.input != null, 'InputDetail?Id='+o.input.Id, 'InvoiceDetail?Id='+o.invoice.Id), '/'+IF(o.input != null, o.input.Id, o.invoice.Id))}">{!$Label.CM_Community_Link_ViewDetails}</a></u>
                         </nobr></td></tr></table>
+                        </apex:outputpanel>
                     </apex:column>
 
                     <apex:column >
                         <apex:facet name="header">
-                            <apex:commandLink value="{!$Label.Receipt_Date} {!IF(incomingPgCtl.sortField=='Transaction_Date__c',IF(incomingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!toggleIncomingSort}" status="status" rerender="incoming"> <!-- was Payment Date -->
+                            <apex:commandLink value="{!$Label.CM_FieldLabel_Input_ReceiptDate} {!IF(incomingPgCtl.sortField=='Transaction_Date__c',IF(incomingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!toggleIncomingSort}" status="status" rerender="incoming"> <!-- was Payment Date -->
                                 <apex:param name="sortField" value="Transaction_Date__c" assignTo="{!incomingPgCtl.sortField}"/>
                             </apex:commandLink>
                         </apex:facet>
@@ -430,7 +473,7 @@
                     
                     <apex:column >
                         <apex:facet name="header">
-                            <apex:commandLink value="{!$Label.Currency} {!IF(incomingPgCtl.sortField=='Custom_Currency__c',IF(incomingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!toggleIncomingSort}" status="status" rerender="incoming"> <!-- was Payment Currency -->
+                            <apex:commandLink value="{!$Label.CM_FieldLabel_Input_Currency} {!IF(incomingPgCtl.sortField=='Custom_Currency__c',IF(incomingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!toggleIncomingSort}" status="status" rerender="incoming"> <!-- was Payment Currency -->
                                 <apex:param name="sortField" value="Custom_Currency__c" assignTo="{!incomingPgCtl.sortField}"/> <!-- CurrencyIsoCode -->
                             </apex:commandLink>
                         </apex:facet>
@@ -443,7 +486,7 @@
                     
                     <apex:column >
                         <apex:facet name="header">
-                            <apex:commandLink value="{!$Label.Amount} {!IF(incomingPgCtl.sortField=='Amount__c',IF(incomingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!toggleIncomingSort}" status="status" rerender="incoming">
+                            <apex:commandLink value="{!$Label.CM_FieldLabel_Input_Amount} {!IF(incomingPgCtl.sortField=='Amount__c',IF(incomingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!toggleIncomingSort}" status="status" rerender="incoming">
                                 <apex:param name="sortField" value="Amount__c" assignTo="{!incomingPgCtl.sortField}"/>
                             </apex:commandLink>
                         </apex:facet>
@@ -453,14 +496,12 @@
                     			changedStyleClass="updateButton" resetFunction="resetInlineEdit"/>
                         </apex:outputField>                        
                     </apex:column>
-                    <apex:column headerValue="Settlement Amount" >
+                    <apex:column headerValue="{!$Label.CM_FieldLabel_Input_SettlementAmount}" >
 						<apex:outputpanel >
 							<table class="table" border="0" cellpadding="0" cellspacing="0" style="margin-top:0px!important;margin-bottom:0px!important;">
 								<tr style="border-top:0px;">
 									<td style="border-top:0px;">
-										<apex:outputText value="{!userCurrency}{0, number, ###,##0.00}">
-											<apex:param value="{!o.settlementCurrency}" />
-										</apex:outputText>
+                                        {!userCurrency}&nbsp;{!o.settlementCurrencyFormatted}
 									</td>
 									<td style="border-top:0px;text-align:right">
 										<!-- nobr><a title="Please select a Threshold for your {!if(o.invoice!=null, 'Invoice', 'Input')}" alt="Please select a Threshold for your {!if(o.invoice!=null, 'Invoice', 'Input')}" href="javascript:openLookupAlert('{!if(o.invoice!=null, 'Invoice', 'Input')}', '{!if(o.invoice!=null, o.invoice.id, o.input.id)}');" src="#" type="button" class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">Rate Watch</a></nobr-->
@@ -474,7 +515,7 @@
 					</apex:column>                    
                     <apex:column >
                         <apex:facet name="header">
-                            <apex:commandLink value="Buyer {!IF(incomingPgCtl.sortField=='Input_Beneficiary__r.Name',IF(incomingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!toggleIncomingSort}" status="status" rerender="incoming"> <!-- was Beneficiary/Customer -->
+                            <apex:commandLink value="{!$Label.CM_Community_Link_Buyer} {!IF(incomingPgCtl.sortField=='Input_Beneficiary__r.Name',IF(incomingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!toggleIncomingSort}" status="status" rerender="incoming"> <!-- was Beneficiary/Customer -->
                                 <apex:param name="sortField" value="Input_Beneficiary__r.Name" assignTo="{!incomingPgCtl.sortField}"/>
                             </apex:commandLink>
                         </apex:facet>
@@ -486,7 +527,7 @@
 											isOnlyRead="{!!o.isOwner}" fieldAPI="Name" fieldToPopulateId="{!$Component.benef}" fieldSetName="Lookup_Fields"/>
 	                    		</td>
 	                    		<td style="border-bottom:0px;padding: 0px 0px 0px 0px;">
-		                        	<apex:commandButton title="Add Buyers" style="padding:5px 8px !important" value="Add" styleClass="wuBtn" rendered="{!o.isOwner}"
+                                    <apex:commandButton title="{!$Label.CM_Community_Button_AddNewBuyerSupplier}" style="padding:5px 8px !important" value="{!$Label.CM_Community_Button_AddNew}" styleClass="wuBtn" rendered="{!o.isOwner}"
 		                        			onClick="window.open('{!IF($Site.Prefix != null,URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/AddInputBeneficiary?aId={!$CurrentPage.parameters.aId}&customRefId={!$Component.benef}&customLkNameId='+lookupIdHolder['{!$Component.benef}_name'],'Ratting','width=850,height=400,left=150,top=200,toolbar=0,status=0,');return false;"/>
 	                        	</td>
 	                        	</tr>
@@ -496,7 +537,7 @@
                     
                     <apex:column >
                         <apex:facet name="header">
-                            <apex:commandLink value="{!$Label.Reference} {!IF(incomingPgCtl.sortField=='Reference_Number__c',IF(incomingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!toggleIncomingSort}" status="status" rerender="incoming">
+                            <apex:commandLink value="{!$Label.CM_FieldLabel_Input_ReferenceNumber} {!IF(incomingPgCtl.sortField=='Reference_Number__c',IF(incomingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!toggleIncomingSort}" status="status" rerender="incoming">
                                 <apex:param name="sortField" value="Reference_Number__c" assignTo="{!incomingPgCtl.sortField}"/>
                             </apex:commandLink>
                         </apex:facet>
@@ -513,11 +554,15 @@
                                 <apex:param name="sortField" value="Type__c" assignTo="{!incomingPgCtl.sortField}"/>
                             </apex:commandLink>
                         </apex:facet>
-                        <apex:outputtext value="{!o.input.Type__c}"/>
+                        <apex:outputField value="{!o.input.Input_Type__c}">
+                            <apex:inlineEditSupport showOnEdit="saveButtonTB,cancelButtonTB,saveButtonT,cancelButtonT"
+                                event="ondblclick" rendered="false"
+                                changedStyleClass="updateButton" resetFunction="resetInlineEdit"/>
+                        </apex:outputfield>
  
                     </apex:column>
                     
-                    <apex:column headerValue="{!$Label.Received}" >
+                    <apex:column headerValue="{!$Label.CM_FieldInput_Input_Received}" >
                         <apex:outputField value="{!o.input.Paid__c}" >
                         	<apex:inlineEditSupport showOnEdit="saveButtonTB,cancelButtonTB,saveButtonT,cancelButtonT"
                  				event="ondblclick" rendered="{!o.isOwner}"
@@ -529,38 +574,42 @@
 				<div class="text-center">
 									<apex:outputpanel >
 						<apex:commandButton rendered="{!incomingPgCtl.paginater.showPrevious}"
-							value="First" styleClass="wuBtn" action="{!incomingPgCtl.firstPage}" status="status" rerender="theForm"/>
+                            value="{!$Label.CM_Community_Button_First}" styleClass="wuBtn" action="{!incomingPgCtl.firstPage}" status="status" rerender="theForm"/>
 						<apex:commandButton rendered="{!incomingPgCtl.paginater.showPrevious}"
-							value="Previous" action="{!incomingPgCtl.previousPage}" status="status" rerender="theForm"/>
-						<apex:outputText rendered="{!(incomingPgCtl.paginater.pageNum * incomingPgCtl.pageSize) < incomingPgCtl.paginater.totalResults}"
-							value="{!incomingPgCtl.paginater.pageNum * incomingPgCtl.pageSize} Of {!incomingPgCtl.paginater.totalResults}"></apex:outputText>
-						<apex:outputText rendered="{!(incomingPgCtl.paginater.pageNum * incomingPgCtl.pageSize) >= incomingPgCtl.paginater.totalResults}"
-							value="{!incomingPgCtl.paginater.totalResults} Of {!incomingPgCtl.paginater.totalResults}"></apex:outputText>
-						<apex:commandButton rendered="{!incomingPgCtl.paginater.showNext}" value="Next"
+                            value="{!$Label.CM_Community_Button_Previous}" action="{!incomingPgCtl.previousPage}" status="status" rerender="theForm"/>
+                        <apex:outputText rendered="{!(incomingPgCtl.paginater.totalResults!=null)&&(incomingPgCtl.paginater.pageNum * incomingPgCtl.pageSize) < incomingPgCtl.paginater.totalResults}"
+                            value="{!incomingPgCtl.paginater.pageNum * incomingPgCtl.pageSize} {!$Label.CM_Community_Text_Of} {!incomingPgCtl.paginater.totalResults}"></apex:outputText>
+                        <apex:outputText rendered="{!(incomingPgCtl.paginater.totalResults!=null)&&(incomingPgCtl.paginater.pageNum * incomingPgCtl.pageSize) >= incomingPgCtl.paginater.totalResults}"
+                            value="{!incomingPgCtl.paginater.totalResults} {!$Label.CM_Community_Text_Of} {!incomingPgCtl.paginater.totalResults}"></apex:outputText>
+                        <apex:commandButton rendered="{!incomingPgCtl.paginater.showNext}" value="{!$Label.CM_Community_Button_Next}"
 							styleClass="wuBtn" action="{!incomingPgCtl.nextPage}" status="status" rerender="theForm"/>
-						<apex:commandButton rendered="{!incomingPgCtl.paginater.showNext}" value="Last"
+                        <apex:commandButton rendered="{!incomingPgCtl.paginater.showNext}" value="{!$Label.CM_Community_Button_Last}"
 							styleClass="wuBtn" action="{!incomingPgCtl.lastPage}" status="status" rerender="theForm"/>
 					</apex:outputpanel>
  			</div>      
 				            
 				            
-            <apex:pageBlockSection columns="1" title="Hedging Instruments" id="Hedge">
+            <apex:pageBlockSection columns="1" title="{!$Label.CM_SectionHeading_Input_HedgingInstruments}" id="Hedge">
 
                 <apex:pageBlockTable value="{!hedgingPgCtl_genericList}" var="o" styleClass="table">
                     <apex:column >
                         <apex:facet name="header">
-                            <apex:outputtext value="{!checkBoxHedgingHtml}" escape="false" />
+                            <!-- Marc Powell 7/3/15
+                            <apex:outputtext value="{!checkBoxHedgingHtml}" escape="false" /> -->
+                            <div><input type="checkbox" id="hedgingChk" onclick="doToggleDelete(this,'deleteInputHedgingChk');"/>{!$Label.CM_FieldLabel_Attachments_Action}</div>                            
                         </apex:facet>
+                        <apex:outputpanel rendered="{!o.isDealerAccess}">
                         <table><tr><td>
                         <apex:inputCheckbox value="{!o.isSelected}" id="deleteInputHedgingChk" onclick="showDeleteBtns('deleteInputHedgingChk');" styleClass="deleteInputChk" rendered="{!o.isOwner}"/>
                         <span style="padding:0px 12px 0px 0px;display:block;float:left;display:{!if(o.isOwner, 'none;', 'block;')}">&nbsp;</span>
                         </td><td><nobr>
-                        <u><a href="{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))+'/apex/'+IF(o.input != null, 'InputDetail?Id='+o.input.Id, 'InvoiceDetail?Id='+o.invoice.Id), '/'+IF(o.input != null, o.input.Id, o.invoice.Id))}">View Details</a></u>
+                        <u><a href="{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))+'/apex/'+IF(o.input != null, 'InputDetail?Id='+o.input.Id, 'InvoiceDetail?Id='+o.invoice.Id), '/'+IF(o.input != null, o.input.Id, o.invoice.Id))}">{!$Label.CM_Community_Link_ViewDetails}</a></u>
                         </nobr></td></tr></table>
+                        </apex:outputpanel>
                     </apex:column>
                     <apex:column >
                         <apex:facet name="header">
-                            <apex:commandLink value="{!$Label.Settlement_Date}  {!IF(hedgingPgCtl.sortField=='Transaction_Date__c',IF(hedgingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!togglehedgingSort}" status="status" rerender="Hedge"> <!-- was Payment Date -->
+                            <apex:commandLink value="{!$Label.CM_FieldInput_Input_SettlementDate}  {!IF(hedgingPgCtl.sortField=='Transaction_Date__c',IF(hedgingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!togglehedgingSort}" status="status" rerender="Hedge"> <!-- was Payment Date -->
                                 <apex:param name="sortField" value="Transaction_Date__c" assignTo="{!hedgingPgCtl.sortField}"/>
                             </apex:commandLink>
                         </apex:facet>
@@ -568,6 +617,19 @@
                         	<apex:inlineEditSupport showOnEdit="saveButtonTB,cancelButtonTB,saveButtonT,cancelButtonT"
                  				event="ondblclick" rendered="{!o.isOwner}"
                     			changedStyleClass="updateButton" resetFunction="resetInlineEdit"/>
+                        </apex:outputField>                        
+                    </apex:column>
+                    
+                    <apex:column >
+                        <apex:facet name="header">
+                            <apex:commandLink value="{!$Label.Amount} {!IF(hedgingPgCtl.sortField=='Amount__c',IF(hedgingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!togglehedgingSort}" status="status" rerender="Hedge">
+                                <apex:param name="sortField" value="Amount__c" assignTo="{!hedgingPgCtl.sortField}"/>
+                            </apex:commandLink>
+                        </apex:facet>
+                        <apex:outputField value="{!o.input.Amount__c}">
+                            <apex:inlineEditSupport showOnEdit="saveButtonTB,cancelButtonTB,saveButtonT,cancelButtonT"
+                                event="ondblclick" rendered="{!o.isOwner}"
+                                changedStyleClass="updateButton" resetFunction="resetInlineEdit"/>
                         </apex:outputField>                        
                     </apex:column>
                     
@@ -584,7 +646,7 @@
                     
                     <apex:column >
 						  <apex:facet name="header"> 
-                            <apex:commandLink value="Buy Currency {!IF(hedgingPgCtl.sortField=='Buy_Currency__c',IF(hedgingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!togglehedgingSort}" status="status" rerender="Hedge"> 
+                            <apex:commandLink value="{!$Label.CM_FieldLabel_Input_BuyCurrency} {!IF(hedgingPgCtl.sortField=='Buy_Currency__c',IF(hedgingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!togglehedgingSort}" status="status" rerender="Hedge"> 
                                 <apex:param name="sortField" value="Buy_Currency__c" assignTo="{!hedgingPgCtl.sortField}"/> 
                             </apex:commandLink>
                             </apex:facet>
@@ -597,7 +659,7 @@
                                         
                     <apex:column >
 						  <apex:facet name="header">
-                            <apex:commandLink value="Sell Currency {!IF(hedgingPgCtl.sortField=='Sell_Currency__c',IF(hedgingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!togglehedgingSort}" status="status" rerender="Hedge"> 
+                            <apex:commandLink value="{!$Label.CM_FieldLabel_Input_SellCurrency} {!IF(hedgingPgCtl.sortField=='Sell_Currency__c',IF(hedgingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!togglehedgingSort}" status="status" rerender="Hedge"> 
                                 <apex:param name="sortField" value="Sell_Currency__c" assignTo="{!hedgingPgCtl.sortField}"/> 
                             </apex:commandLink>
                             </apex:facet>
@@ -608,39 +670,26 @@
                         <apex:outputText value="" rendered="{!!OR(o.input.Input_Type__c == $Label.FFCO, o.input.Input_Type__c == $Label.WFCO, o.input.Input_Type__c == $Label.Option_Other, o.input.Input_Type__c == $Label.Option_WUBS)}" />
                     </apex:column>
                     
-                    <apex:column >
-                        <apex:facet name="header">
-                            <apex:commandLink value="{!$Label.Amount} {!IF(hedgingPgCtl.sortField=='Amount__c',IF(hedgingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!togglehedgingSort}" status="status" rerender="Hedge">
-                                <apex:param name="sortField" value="Amount__c" assignTo="{!hedgingPgCtl.sortField}"/>
-                            </apex:commandLink>
-                        </apex:facet>
-                        <apex:outputField value="{!o.input.Amount__c}">
-                        	<apex:inlineEditSupport showOnEdit="saveButtonTB,cancelButtonTB,saveButtonT,cancelButtonT"
-                 				event="ondblclick" rendered="{!o.isOwner}"
-                    			changedStyleClass="updateButton" resetFunction="resetInlineEdit"/>
-                        </apex:outputField>                        
-                    </apex:column>
-
-                    <apex:column headerValue="Settlement Amount" >
-						<apex:outputpanel >
-							<table class="table" border="0" cellpadding="0" cellspacing="0" style="margin-top:0px!important;margin-bottom:0px!important;">
-								<tr style="border-top:0px;">
-									<td style="border-top:0px;">
-										<apex:outputText value="{!userCurrency}{0, number, ###,##0.00}">
-											<apex:param value="{!o.settlementCurrency}" />
-										</apex:outputText>
-									</td>
-									<td style="border-top:0px;text-align:right">
+<!--                     <apex:column headerValue="Settlement Amount" > -->
+<!--                        <apex:outputpanel > -->
+<!--                            <table class="table" border="0" cellpadding="0" cellspacing="0" style="margin-top:0px!important;margin-bottom:0px!important;"> -->
+<!--                                <tr style="border-top:0px;"> -->
+<!--                                    <td style="border-top:0px;"> -->
+<!--                                        <apex:outputText value="{!userCurrency}{0, number, ###,##0.00}"> -->
+<!--                                            <apex:param value="{!o.settlementCurrency}" /> -->
+<!--                                        </apex:outputText> -->
+<!--                                    </td> -->
+<!--                                    <td style="border-top:0px;text-align:right"> -->
 										<!-- nobr><a title="Please select a Threshold for your {!if(o.invoice!=null, 'Invoice', 'Input')}" alt="Please select a Threshold for your {!if(o.invoice!=null, 'Invoice', 'Input')}" href="javascript:openLookupAlert('{!if(o.invoice!=null, 'Invoice', 'Input')}', '{!if(o.invoice!=null, o.invoice.id, o.input.id)}');" src="#" type="button" class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">Rate Watch</a></nobr-->							
 <!-- 										<nobr><a src="javascript:void();" type="button" title="Coming Soon" alt="Coming Soon"  class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">Rate Watch - Coming Soon!</a></nobr> -->
-									</td>
-								</tr>
-							</table>
-						</apex:outputpanel>
-					</apex:column>                    
+<!--                                    </td> -->
+<!--                                </tr> -->
+<!--                            </table> -->
+<!--                        </apex:outputpanel> -->
+<!--                    </apex:column>                     -->
                     <apex:column >
                         <apex:facet name="header">
-                            <apex:commandLink value="Rate {!IF(hedgingPgCtl.sortField=='Rate__c',IF(hedgingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!togglehedgingSort}" status="status" rerender="Hedge">
+                            <apex:commandLink value="{!$Label.CM_FieldInput_Input_Rate} {!IF(hedgingPgCtl.sortField=='Rate__c',IF(hedgingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!togglehedgingSort}" status="status" rerender="Hedge">
                                 <apex:param name="sortField" value="Rate__c" assignTo="{!hedgingPgCtl.sortField}"/>
                             </apex:commandLink>
                         </apex:facet>
@@ -667,7 +716,7 @@
                     
                     <apex:column >
                         <apex:facet name="header">
-                            <apex:commandLink value="{!$Label.Counter_Party} {!IF(hedgingPgCtl.sortField=='Counter_Party__c',IF(hedgingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!togglehedgingSort}" status="status" rerender="Hedge">
+                            <apex:commandLink value="{!$Label.CM_FieldInput_Input_CounterRate} {!IF(hedgingPgCtl.sortField=='Counter_Party__c',IF(hedgingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!togglehedgingSort}" status="status" rerender="Hedge">
                                 <apex:param name="sortField" value="Counter_Party__c" assignTo="{!hedgingPgCtl.sortField}"/>
                             </apex:commandLink>
                         </apex:facet>
@@ -680,7 +729,7 @@
                     
                     <apex:column >
                         <apex:facet name="header">
-                            <apex:commandLink value="{!$Label.Reference} {!IF(hedgingPgCtl.sortField=='Reference_Number__c',IF(hedgingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!togglehedgingSort}" status="status" rerender="Hedge">
+                            <apex:commandLink value="{!$Label.CM_FieldLabel_Input_ReferenceNumber} {!IF(hedgingPgCtl.sortField=='Reference_Number__c',IF(hedgingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!togglehedgingSort}" status="status" rerender="Hedge">
                                 <apex:param name="sortField" value="Reference_Number__c" assignTo="{!hedgingPgCtl.sortField}"/>
                             </apex:commandLink>
                         </apex:facet>
@@ -693,14 +742,18 @@
                     
                     <apex:column >
                         <apex:facet name="header">
-                            <apex:commandLink value="{!$Label.Category} {!IF(hedgingPgCtl.sortField=='Type__c',IF(hedgingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!togglehedgingSort}" status="status" rerender="Hedge">
+                            <apex:commandLink value="{!$Label.CM_FieldLabel_Input_Category} {!IF(hedgingPgCtl.sortField=='Type__c',IF(hedgingPgCtl.sortDir='asc','▲','▼'),'')}" action="{!togglehedgingSort}" status="status" rerender="Hedge">
                                 <apex:param name="sortField" value="Type__c" assignTo="{!hedgingPgCtl.sortField}"/>
                             </apex:commandLink>
                         </apex:facet>
-                        <apex:outputtext value="{!o.input.Type__c}"/>
+                        <apex:outputField value="{!o.input.Input_Type__c}">
+                            <apex:inlineEditSupport showOnEdit="saveButtonTB,cancelButtonTB,saveButtonT,cancelButtonT"
+                                event="ondblclick" rendered="false"
+                                changedStyleClass="updateButton" resetFunction="resetInlineEdit"/>
+                        </apex:outputfield>
                     </apex:column>
                     
-                    <apex:column headerValue="{!$Label.Settled}" > <!-- was Processed -->
+                    <apex:column headerValue="{!$Label.CM_FieldInput_Input_Settled}" > <!-- was Processed -->
                         <apex:outputField value="{!o.input.Paid__c}" >
                         	<apex:inlineEditSupport showOnEdit="saveButtonTB,cancelButtonTB,saveButtonT,cancelButtonT"
                  				event="ondblclick" rendered="{!o.isOwner}"
@@ -713,16 +766,16 @@
             				<div class="text-center">
 										<apex:outputpanel >
 						<apex:commandButton rendered="{!hedgingPgCtl.paginater.showPrevious}"
-							value="First" styleClass="wuBtn" action="{!hedgingPgCtl.firstPage}" status="status" rerender="theForm"/>
+                            value="{!$Label.CM_Community_Button_First}" styleClass="wuBtn" action="{!hedgingPgCtl.firstPage}" status="status" rerender="theForm"/>
 						<apex:commandButton rendered="{!hedgingPgCtl.paginater.showPrevious}"
-							value="Previous" action="{!hedgingPgCtl.previousPage}" status="status" rerender="theForm"/>
-						<apex:outputText rendered="{!(hedgingPgCtl.paginater.pageNum * hedgingPgCtl.pageSize) < hedgingPgCtl.paginater.totalResults}"
-							value="{!hedgingPgCtl.paginater.pageNum * hedgingPgCtl.pageSize} Of {!hedgingPgCtl.paginater.totalResults}"></apex:outputText>
-						<apex:outputText rendered="{!(hedgingPgCtl.paginater.pageNum * hedgingPgCtl.pageSize) >= hedgingPgCtl.paginater.totalResults}"
-							value="{!hedgingPgCtl.paginater.totalResults} Of {!hedgingPgCtl.paginater.totalResults}"></apex:outputText>
-						<apex:commandButton rendered="{!hedgingPgCtl.paginater.showNext}" value="Next"
+                            value="{!$Label.CM_Community_Button_Previous}" action="{!hedgingPgCtl.previousPage}" status="status" rerender="theForm"/>
+                        <apex:outputText rendered="{!(hedgingPgCtl.paginater.totalResults!=null)&&(hedgingPgCtl.paginater.pageNum * hedgingPgCtl.pageSize) < hedgingPgCtl.paginater.totalResults}"
+                            value="{!hedgingPgCtl.paginater.pageNum * hedgingPgCtl.pageSize} {!$Label.CM_Community_Text_Of} {!hedgingPgCtl.paginater.totalResults}"></apex:outputText>
+                        <apex:outputText rendered="{!(hedgingPgCtl.paginater.totalResults!=null)&&(hedgingPgCtl.paginater.pageNum * hedgingPgCtl.pageSize) >= hedgingPgCtl.paginater.totalResults}"
+                            value="{!hedgingPgCtl.paginater.totalResults} {!$Label.CM_Community_Text_Of} {!hedgingPgCtl.paginater.totalResults}"></apex:outputText>
+                        <apex:commandButton rendered="{!hedgingPgCtl.paginater.showNext}" value="{!$Label.CM_Community_Button_Next}"
 							styleClass="wuBtn" action="{!hedgingPgCtl.nextPage}" status="status" rerender="theForm"/>
-						<apex:commandButton rendered="{!hedgingPgCtl.paginater.showNext}" value="Last"
+                        <apex:commandButton rendered="{!hedgingPgCtl.paginater.showNext}" value="{!$Label.CM_Community_Button_Last}"
 							styleClass="wuBtn" action="{!hedgingPgCtl.lastPage}" status="status" rerender="theForm"/>
 					</apex:outputpanel>
 				</div>    
@@ -733,9 +786,9 @@
                 <div style="left:0px;width:100%">
 					<center class="pbButton " style="width:100%">
                 		<!-- action="{!Save}" status="status" rerender="theForm" styleclass="noUpdateButton"  -->
-                        <apex:commandButton id="saveButtonTB" value="{!$Label.Save}" action="{!quickSave}" status="status" rerender="theForm"/>
-                        <apex:commandButton id="cancelButtonTB" value="Reset" action="{!cancelInputs}" status="status" rerender="theForm"/>
-                        <apex:commandButton id="deleteButtonTB" value="Delete" styleclass="noUpdateButton" onclick="return deleteInputs();"  />
+                        <apex:commandButton id="saveButtonTB" value="{!$Label.CM_Community_Button_Save}" action="{!quickSave}" status="status" rerender="theForm"/>
+                        <apex:commandButton id="cancelButtonTB" value="{!$Label.CM_Community_Button_Reset}" action="{!cancelInputs}" status="status" rerender="theForm"/>
+                        <apex:commandButton id="deleteButtonTB" value="{!$Label.CM_Community_Button_Delete}" styleclass="noUpdateButton" onclick="return deleteInputs();"  />
                 	</center>
                 </div> 
                 <p>
@@ -760,14 +813,14 @@
                 var strUser = e.options[e.selectedIndex].text;
                 if(strUser == '[{!$Label.Add_New}]')
                     newBene();
-                    //if(strUser.indexOf('[{!$Label.Add_New}]')>-1)
+                    //if(strUser.indexOf('[{!$Label.CM_FieldLabel_Input_AddNew}]')>-1)
                 
             }
             function checkBene2()
             {
                 var e = document.getElementById("thePage:theForm:inputPanel:inputSection:inv2_id");
                 var strUser = e.options[e.selectedIndex].text;
-                if(strUser == '[{!$Label.Add_New}]')
+                if(strUser == '[{!$Label.CM_FieldLabel_Input_AddNew}]')
                     newBene(); 
                     //if(strUser.indexOf('[Add New]')>-1)
                 
@@ -777,7 +830,7 @@
                 var e = document.getElementById("thePage:theForm:inputPanel:inputSection:inv3_id");
                 var strUser = e.options[e.selectedIndex].text;
                 //if(strUser == '[Add New]')
-                if(strUser.indexOf('[{!$Label.Add_New}]')>-1)
+                if(strUser.indexOf('[{!$Label.CM_FieldLabel_Input_AddNew}]')>-1)
                     newBene();
                 
             }
@@ -786,7 +839,7 @@
                 var e = document.getElementById("thePage:theForm:inputPanel:inputSection:inv4_id");
                 var strUser = e.options[e.selectedIndex].text;
                 //if(strUser == '[Add New]')
-                if(strUser.indexOf('[{!$Label.Add_New}]')>-1)
+                if(strUser.indexOf('[{!$Label.CM_FieldLabel_Input_AddNew}]')>-1)
                     newBene();
                 
             }
@@ -795,7 +848,7 @@
                 var e = document.getElementById("thePage:theForm:inputPanel:inputSection:inv5_id");
                 var strUser = e.options[e.selectedIndex].text;
                 //if(strUser == '[{!$Label.Add_New}]')
-                if(strUser.indexOf('[{!$Label.Add_New}]')>-1)
+                if(strUser.indexOf('[{!$Label.CM_FieldLabel_Input_AddNew}]')>-1)
                     newBene();
             }
             

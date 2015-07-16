@@ -11,11 +11,24 @@ public virtual without sharing class ParseAndDisplayBaseCSVGenericCtl {
     public String sourcePage{get;set;}
     public String fieldSetName{get;set;}
     public String defaultSourcePage {get;set;}
+    public Boolean isNext {get; set;}
+    public Integer isStartLocation {get; set;}
+    public List<SelectOption> CurrencyOptions{get; set;}
+    // public List<SelectOption> StatusOptions{get; set;}
     public ParseAndDisplayBaseCSVGenericCtl self{
     	get{
     		return this;
     	}
     	set;
+    }
+    public List<SelectOption> StatusOptions{
+        get{
+            if(StatusOptions==null || StatusOptions.size()==0){
+                StatusOptions= Utility.picklistValues(getsObjectName(),'Status__c', true);
+            }
+            return StatusOptions;
+        }
+        set;
     }
     public virtual GenericBaseCsvWrapper getGenericCsvWrapper(String[] tempFields, String transtype){ return null;}
     public map<String, String> fieldLabels{
@@ -25,12 +38,22 @@ public virtual without sharing class ParseAndDisplayBaseCSVGenericCtl {
     }
     public virtual void OnSaveUpdate(GenericBaseCsvWrapper inv) {}
     public ParseAndDisplayBaseCSVGenericCtl(){
+        if(CurrencyOptions==null || CurrencyOptions.size()==0){
+            CurrencyOptions= Utility.picklistValues(getsObjectName(),'Custom_Currency__c', true);
+        }/*
+        if(StatusOptions==null || StatusOptions.size()==0){
+            //StatusOptions= Utility.picklistValues(getsObjectName(),'Status__c', true);
+        }*/
     }
 	public virtual PageReference Init(){
         try{
+            
+            isNext = false;
+            isStartLocation = -1;
         	isValidCsv = true;
         	hasError = false;
         	doSave = false;
+            
             // GET THE ATTACHMENT ID FOR PARSING
 			if(system.currentPageReference().getParameters().get('sourcePage') != null) {
 	    		sourcePage = System.currentPageReference().getParameters().get('sourcePage');
@@ -43,21 +66,42 @@ public virtual without sharing class ParseAndDisplayBaseCSVGenericCtl {
             fieldSetName = Utility.changeTransactionType(transtype);
             system.debug('*****>> transtype::'+transtype);
             if(!String.isEmpty(attachmentid)&& attachmentid.length()>14){
-                attach = [Select id,Body,Name From Attachment Where id =:attachmentid ];
+                attach = [Select id,Body,Name,Description From Attachment Where id =:attachmentid ];
+                if(!String.isEmpty(attach.Description)){    
+                    isStartLocation = Integer.valueOf(attach.Description);
+                }
+                system.debug('----------'+attach);
                 parseAttachment(attach.Body,attach.Name);
+                system.debug('----------parsedInput------inputList---'+inputList.size());
+               /* if(inputList.size() > 100){
+                    list<GenericBaseCsvWrapper> inputList2 = inputList;
+                    inputList.clear();
+                    for(Integer iCount = 0; iCount < 100; iCount++){
+                        inputList.add(inputList2.get(iCount));
+                    }
+                }*/
             }
             else{
-                ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Attachment not found, please reload file and try again.'));
+                //***** Custom Label for Error Message: CM_Alert_AttachmentNotFoundPleaseReloadFile
+                ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, System.Label.CM_Alert_AttachmentNotFoundPleaseReloadFile));
                 hasError = true;
                 isValidCsv = false;
             }
             if(String.isEmpty(transtype)){
-            	ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Transaction Type not found, please reload file and try again.'));
+                //***** Custom Label for Error Message: CM_Alert_TransactionTypeNotFoundPleaseReloadFile
+                ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, System.Label.CM_Alert_TransactionTypeNotFoundPleaseReloadFile));
             	hasError = true;
             	isValidCsv = false;            	
             }
         }catch(Exception Ex){
-            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Unable to load page. Error Detail :'+Ex.getMessage()));
+            //***** Custom Label for Error Message: CM_Alert_UnableToLoadPageErrorDetail
+            if(isValidCsv){
+                if((Ex.getMessage()).contains('BLOB is not a valid')){
+                    ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, System.Label.CM_Alert_PleaseUploadAValidFormOfData));
+                }else{
+                    ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, System.Label.CM_Alert_System_UnableToLoadPage + ' ' + Ex.getMessage()));
+                }
+            }
             hasError = true;
             isValidCsv = false;
         }    
@@ -73,10 +117,14 @@ public virtual without sharing class ParseAndDisplayBaseCSVGenericCtl {
 // TO Check that the File is CSV and to convert the file from BLOB to String for parsing   
     public virtual void parseAttachment(Blob body, String name){        
         if(name.endsWith('.csv')) {
+        	system.debug('********Blob z:'+body);
             csvString = body.toString();
+            system.debug('********Blob zing:'+csvString);
             inputList = parseCsv(csvString);
         }else {
-            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR,'Invalid file format'));
+            //***** Custom Label for Error Message: CM_Alert_InvalidFileFormat
+            ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, System.Label.CM_Alert_File_InvalidFileFormat));
+            isValidCsv = false;
         }
     }   
 
@@ -111,7 +159,7 @@ public virtual without sharing class ParseAndDisplayBaseCSVGenericCtl {
 			}
         }
         system.debug('********updateBeneficiaries:'+newInput_Beneficiary);
-        //INsert new Bene
+        //Insert new Bene
         if(newInput_Beneficiary.size()>0){
         	insert newInput_Beneficiary;
         	for(Input_Beneficiary__c newBene : newInput_Beneficiary){
@@ -123,6 +171,7 @@ public virtual without sharing class ParseAndDisplayBaseCSVGenericCtl {
 			String beneName = incWpr.mapCSVvalues.get('Input_Beneficiary__c');
 			if(!String.isEmpty(beneName)){
 				beneName = beneName.toUpperCase();
+                incWpr.beneName = beneName;
 				if(inputBeneficiaryId.containsKey(beneName)){
 			        incWpr.input.put('Input_Beneficiary__c', inputBeneficiaryId.get(beneName));		        
 				}
@@ -135,17 +184,25 @@ public virtual without sharing class ParseAndDisplayBaseCSVGenericCtl {
     public virtual list<GenericBaseCsvWrapper> parseCsv(String content){
     	List<ApexPages.Message> invalidInCsvMsgs = new List<ApexPages.Message>();
     	this.isValidCsv = true;
+        
+        system.debug('----------isStartLocation-----'+isStartLocation);
         List<String>inputbenNames = new List<String>();
         if(content != null) {
-        	Integer invalidRowCount =0;
-            for(String str : content.split('\n')) {
+            Integer invalidRowCount = isStartLocation;
+            invalidRowCount = 0 ;
+            List<String> contentString = content.split('\n'); 
+            for(Integer indexCSV = isStartLocation+1; indexCSV < contentString.size() && indexCSV <= isStartLocation+52; indexCSV++){
+                String str =  contentString.get(indexCSV);
+                system.debug('-------------------str-------------'+str);
             	if(Utility.isValidText(str)){
 	                for(String str1 : str.split('\r')) {
+                    	system.debug('-------------------str1-------------'+str1);
 	                	if(Utility.isValidCsvRow(str1)){
 	                		invalidRowCount++;
 	                		//Skip Header
 	                		if(invalidRowCount>1){
-			                    List<String> tempFields = str1.split(',');
+                            	List<String> tempFields;
+                           		tempFields = str1.split(Utility.CSVRowDeliminator);
 			                    //Verify the Length of array, check for trim/empty line.
 			                    GenericBaseCsvWrapper inv = getGenericCsvWrapper(tempFields, transtype);
 			                    inv.isValidData(true);
@@ -154,20 +211,34 @@ public virtual without sharing class ParseAndDisplayBaseCSVGenericCtl {
 	                	}
 	                }
 	            }
+                if(parsedInput.size() > 50){
+                    isNext = true;
+                    parsedInput.remove(50);
+                     break;
+                }
+
             }
         }
-        if(parsedInput.size()==0){
+        // parsedInput.remove(101);
+        system.debug('----------parsedInput---------'+parsedInput.size());
+        if(parsedInput.size()==0 ){             // || parsedInput.size()>100){
         	this.isValidCsv = false;
         }
         if(this.isValidCsv){
+            //T-411078 : CMP Upload Fix.
+            updateBeneficiaries();
         	for(GenericBaseCsvWrapper incWpr : parsedInput){
-        		updateBeneficiaries();
         		incWpr.isValidData(true, true);        		
         	}
         }else{
         	system.debug('********this.isValidCsv >> '+this.isValidCsv);
+            //***** Custom Label for Error Message: CM_Alert_InvalidEmptyCSVPleaseFixAndTryAgain         
+           /* if(parsedInput.size()>100){
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Community_Max_CSV_ErrorMsg));
+            }else{*/            
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Alert_InvalidEmptyCSVPleaseFixAndTryAgain));
+           // }
         	parsedInput = new list<GenericBaseCsvWrapper>();        	
-        	ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Invalid/Empty CSV, please fix CSV and try again.'));
         }
         system.debug('********parsedInput >> '+parsedInput);
         return parsedInput;
@@ -180,27 +251,33 @@ public virtual without sharing class ParseAndDisplayBaseCSVGenericCtl {
         return page;
     }
     
-    public List<SelectOption> CurrencyOptions{
-    	get{
-    		if(CurrencyOptions==null || CurrencyOptions.size()==0){
-        		CurrencyOptions= Utility.picklistValues(getsObjectName(),'Custom_Currency__c', true);
-    		}
-    		return CurrencyOptions;
-    	}
-    	set;
-    }
-    public List<SelectOption> StatusOptions{
-    	get{
-    		if(StatusOptions==null || StatusOptions.size()==0){
-        		StatusOptions= Utility.picklistValues(getsObjectName(),'Status__c', true);
-    		}
-    		return StatusOptions;
-    	}
-    	set;
-    }
+   
 	// Save the CSV file records
     public virtual PageReference save() {
     	system.debug('********this.isValidCsv >-0-> ');
+        saveAndSubmit();
+        return null;
+    }
+    
+    
+    
+    public virtual PageReference showNextRecordToInsert(){
+        saveAndSubmit();
+        hasError = false;
+        doSave = false;
+        isNext = false;
+        isStartLocation += 50;
+        attach.Description = isStartLocation+'';
+        update attach;
+        system.debug('---------------------------attach---------------------------------------'+attach);
+        parsedInput.clear();
+        inputList.clear();
+        parseAttachment(attach.Body,attach.Name);
+        return null;
+    }
+    
+    
+    public virtual void saveAndSubmit(){
         doSave = true;
         hasError= false;
         try{
@@ -214,7 +291,7 @@ public virtual without sharing class ParseAndDisplayBaseCSVGenericCtl {
 	        system.debug('********this.isValidCsv >-1-> '+hasError);
 	        if(hasError){
 	        	doSave = false;
-	        	return null;
+                return;
 	        }
 	        system.debug('********this.isValidCsv >-2-> ');
             //Added by Vivek
@@ -269,12 +346,11 @@ public virtual without sharing class ParseAndDisplayBaseCSVGenericCtl {
             doSave=false;
             //FIELD_CUSTOM_VALIDATION_EXCEPTION
             if(ex.getMessage().contains('FIELD_CUSTOM_VALIDATION_EXCEPTION')){
-                //ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Unable to save Invoice. Duplicate Invoice Number and Beneficiary Found'));
+                //ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Alert_UnableToSaveInvoice));
             } else{
-                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Unable to save. Error Detail :'+ex.getMessage()));
+                //***** Custom Label for Error Message: CM_Alert_UnableToSaveErrorDetail
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Alert_UnableToSaveErrorDetail + ' ' + ex.getMessage()));
             }           
         }
-        return null;
     }
-    
 }

@@ -16,12 +16,11 @@ global without sharing class NetCashFlowCtrl {
     //public static String colorSet{get;set;}
     public String PickListValues { get; set; }
     public Id accId{get;set;}
+    public String userLanguage{get;set;}
     
     private static String TRADING_RECEIPTS = 'Forecast Inflow';
-    private static String INFLOW_OTHER ='Inflow - Other';
     private static String PURCHASE_ORDER = 'Purchase Order';
-    private static String FORECAST_ORDER = 'Forecast Order';
-    private static String OUTFLOW_OTHER = 'Outflow - Other';
+    private static String FORECAST_ORDER = 'Forecast Outflow';
     
     
     public NetCashFlowCtrl(){
@@ -30,12 +29,13 @@ global without sharing class NetCashFlowCtrl {
         wrapperList = loadOpps(selectedCurrency, selectedMonth );
         User userLoggedIn = Utility.loggedInUser;
         accId = Utility.currentAccount;    
+        userLanguage = UserInfo.getLanguage();
     }
 
     //Getting data from exising record only for netcashFlow.
     public List<SelectOption> getaccountNetcashCurrency(){ 
     	list<Selectoption> lstCurrency = new list<Selectoption>();
-        lstCurrency.add(new Selectoption('Total','Total in ' + Utility.userCurrency));
+        lstCurrency.add(new Selectoption('Total',System.Label.CM_Community_Text_FieldFilter_CurrencyFilter_Item_TotalIn+' ' + Utility.userCurrency));
     	lstCurrency.addAll(Utility.getaccountNetcashCurrency());
 		return lstCurrency;
     }
@@ -44,7 +44,7 @@ global without sharing class NetCashFlowCtrl {
     //Getting data from exising record I-149395, This select netcashFlow+Summary Report currency.
     public List<SelectOption> getaccountTradedCurrency(){ 
     	list<Selectoption> lstCurrency = new list<Selectoption>();
-        lstCurrency.add(new Selectoption('Total','Total in ' + Utility.userCurrency));
+        lstCurrency.add(new Selectoption('Total',System.Label.CM_Community_Text_FieldFilter_CurrencyFilter_Item_TotalIn+' ' + Utility.userCurrency));
     	lstCurrency.addAll(Utility.getaccountTradedCurrency());
     	system.debug('----------ashish---------'+lstCurrency);
     	for(SelectOption sOpt : Utility.getCurrencyForFC()){
@@ -106,24 +106,28 @@ global without sharing class NetCashFlowCtrl {
 	        }
 	        queryStr = queryStr + ' GROUP BY {6} '
 	                    + 'ORDER BY {7}';
+            //incomming
 	        aggResult = Database.query(String.format(queryStr , new List<String>{
 											'Transaction_Date__c',
 											'Transaction_Date__c',
 											'Input__c',
-											'Parent_account__c=\''+accId+'\' ',
-											'AND (Type__c in (\'Forecast Inflow\', \'Inflow - Other\') or Input_Type__c in (\'Forecast Inflow\', \'Inflow - Other\'))',
-											'AND (Transaction_Date__c >= :startdt AND Transaction_Date__c <= :lastdt)',
+                                            'paid__c =false And Parent_account__c=\''+accId+'\' ',
+                                            ' AND ( Input_Type__c IN '+Utility.getCriteriaFromValues(Utility.inputIncoming)+' '+
+                                            ' OR Type__c IN '+Utility.getCriteriaFromValues(Utility.inputIncoming)+') ',
+                                            'AND (Transaction_Date__c >= :startdt AND Transaction_Date__c <= :lastdt) AND Input_Type__c != \'Invoice\'',
 											'CALENDAR_MONTH(Transaction_Date__c),CALENDAR_YEAR(Transaction_Date__c), Custom_Currency__c',
 											'CALENDAR_YEAR(Transaction_Date__c),CALENDAR_MONTH(Transaction_Date__c)'
 										})); 
 	        getUpdateAmount(mapWpr, true);
+            //outgoing
 	        aggResult = Database.query(String.format(queryStr , new List<String>{
 											'Transaction_Date__c',
 											'Transaction_Date__c',
 											'Input__c',
-											'Parent_account__c=\''+accId+'\' ',
-											'AND (Type__c in (\'Purchase Order\',\'Forecast Order\',\'Outflow - Other\', \'Forecast Outflow\') or Input_Type__c in (\'Purchase Order\',\'Forecast Order\',\'Outflow - Other\', \'Forecast Outflow\'))',
-											'AND (Transaction_Date__c >= :startdt AND Transaction_Date__c <= :lastdt)',
+                                            'paid__c =false And Parent_account__c=\''+accId+'\' ',
+                                            ' AND ( Input_Type__c IN '+Utility.getCriteriaFromValues(Utility.input_Outgoing)+' '+
+                                            ' OR Type__c IN '+Utility.getCriteriaFromValues(Utility.input_Outgoing)+') ',
+                                            'AND (Transaction_Date__c >= :startdt AND Transaction_Date__c <= :lastdt) AND Input_Type__c != \'Invoice\'',
 											'CALENDAR_MONTH(Transaction_Date__c),CALENDAR_YEAR(Transaction_Date__c), Custom_Currency__c',
 											'CALENDAR_YEAR(Transaction_Date__c),CALENDAR_MONTH(Transaction_Date__c)'
 										})); 	        
@@ -177,26 +181,58 @@ global without sharing class NetCashFlowCtrl {
     	return loadOpps(selectedCurrency1, selectedMonth1, null );
     }
     
+    //Update data for forward looking
     @RemoteAction  
     global static List<InvoicByCurrencyWrap> loadAllTimeData() {
         Id accId = Utility.currentAccount;
         User userLoggedIn = Utility.loggedInUser;
+        List<InvoicByCurrencyWrap> newWrapperList = new List<InvoicByCurrencyWrap>();
+        List<InvoicByCurrencyWrap> newWrapperListTemp1 = new List<InvoicByCurrencyWrap>();
+        List<InvoicByCurrencyWrap> newWrapperListTemp2 = new List<InvoicByCurrencyWrap>();
         Map<String, InvoicByCurrencyWrap> invoiceMap = new map<String, InvoicByCurrencyWrap>();
         try{
-        	for(AggregateResult agResult : [SELECT SUM(Amount__c) s, Custom_Currency__c c FROM Input__c WHERE Parent_Account__c =: accId and (Type__c in (:TRADING_RECEIPTS, :INFLOW_OTHER) or Input_Type__c in (:TRADING_RECEIPTS, :INFLOW_OTHER)) GROUP BY Custom_Currency__c]) {
+        	date td = date.Today().toStartOfMonth();
+        	//Inflow
+            for(AggregateResult agResult : [SELECT SUM(Amount__c) s, Custom_Currency__c c FROM Input__c WHERE Parent_Account__c =: accId AND Input_Type__c != 'Invoice' and ( Type__c in :Utility.inputIncoming.split(',') or Input_Type__c in :Utility.inputIncoming.split(',')) and Paid__c = false and Transaction_Date__c >= :td GROUP BY Custom_Currency__c]) {
 	        	addRecordToInvoiceCurrencyMap(agResult, invoiceMap, true);
 	        }
-        	for(AggregateResult agResult : [SELECT SUM(Amount__c) s, Custom_Currency__c c FROM Input__c WHERE Parent_Account__c =: accId and (Type__c in (:PURCHASE_ORDER, :FORECAST_ORDER, :OUTFLOW_OTHER) or Input_Type__c in (:PURCHASE_ORDER, :FORECAST_ORDER, :OUTFLOW_OTHER)) GROUP BY Custom_Currency__c]) {
+            //outgoing, 
+            for(AggregateResult agResult : [SELECT SUM(Amount__c) s, Custom_Currency__c c FROM Input__c WHERE paid__c =false And Parent_Account__c =: accId AND Input_Type__c != 'Invoice' and (Type__c in :Utility.input_Outgoing.split(',') or Input_Type__c in :Utility.input_Outgoing.split(',')) and Transaction_Date__c >= :td GROUP BY Custom_Currency__c]) {
 	        	addRecordToInvoiceCurrencyMap(agResult, invoiceMap, false);
   			    
 	        }
-        	for(AggregateResult agResult : [SELECT SUM(Amount__c) s, Custom_Currency__c c From Invoice__c WHERE Account__c =: accId GROUP BY Custom_Currency__c]) {
+            //Outgoing
+            for(AggregateResult agResult : [SELECT SUM(Amount__c) s, Custom_Currency__c c From Invoice__c WHERE Status__c not in ('Void', 'Paid') And Account__c =: accId and Due_Date__c >= :td GROUP BY Custom_Currency__c]) {
 				addRecordToInvoiceCurrencyMap(agResult, invoiceMap, false);
 	        }	
         }catch(Exception Ex){
            system.debug('******Ex::'+Ex.getMessage());
         }
-        return invoiceMap.values();
+        
+        newWrapperList = invoiceMap.values();
+        newWrapperList.sort();
+        /*Integer countRec = newWrapperList.size();
+        if(countRec < 5){
+            countRec = 0;
+        }else{
+            countRec = newWrapperList.size() - 5;
+        }
+        for(; countRec < newWrapperList.size(); countRec++){
+            InvoicByCurrencyWrap invWrap = newWrapperList.get(countRec);
+            if(invWrap.amount >= 0){
+                newWrapperListTemp1.add(invWrap);
+            }else{
+                newWrapperListTemp2.add(invWrap);
+            }
+        }
+        newWrapperList.clear();
+        if(newWrapperListTemp1.size() > 0){
+            newWrapperList.addAll(newWrapperListTemp1);
+        }
+        if(newWrapperListTemp2.size() > 0){
+            newWrapperList.addAll(newWrapperListTemp2);
+        }*/
+        return newWrapperList;
     }
     
     // Add record to map based on ifFlow or outflow type
@@ -290,7 +326,6 @@ global without sharing class NetCashFlowCtrl {
             }
 			List<String> args = new String[]{'0','number','###,###,##0.00'};
 			toolTipAmount = String.format( amount.divide(1000, 0, System.RoundingMode.HALF_UP).format(), args);  
-			          
             string inputMonth ='';
             if(invMonth == 1) 
                 inputMonth = 'Jan ';
@@ -321,7 +356,7 @@ global without sharing class NetCashFlowCtrl {
 
     }
     
-    global class InvoicByCurrencyWrap{
+    global class InvoicByCurrencyWrap implements Comparable{
     	public Decimal amount{get;set;} 
     	public String toolTipAmount{get;set;}
     	public String currencyCode{get;set;}
@@ -338,6 +373,16 @@ global without sharing class NetCashFlowCtrl {
 			List<String> args = new String[]{'0','number','###,###,##0.00'};
 			toolTipAmount = String.format( amount.divide(1000, 0, System.RoundingMode.HALF_UP).format(), args);  
          }   	
+         
+         public Integer compareTo(Object ObjToCompare) {            
+            InvoicByCurrencyWrap ObjToCompareObj = (InvoicByCurrencyWrap)ObjToCompare;
+            if(Math.abs(amount) > Math.abs(ObjToCompareObj.amount)){
+                return -1;
+            }
+            else{
+                return 1;
+            }
+        }
     }
     
 }

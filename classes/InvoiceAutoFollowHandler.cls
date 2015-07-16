@@ -44,6 +44,7 @@ public class InvoiceAutoFollowHandler{
 // Validation to find duplicate before insert    
     public void triggerHandler_BeforeInsert(list<Invoice__c> listInvoice){
     	validateUniqueInvoiceAndBenificiary(listInvoice, true);
+    	updateOwnerSharing(listInvoice);
     }
     
     
@@ -95,8 +96,47 @@ public class InvoiceAutoFollowHandler{
     }
     public void addInvoiceDupsError(List<Invoice__c> invoices){
     	for(Invoice__c invoice: invoices){
+    		if(Label.IsDupsValidationBene!='false'){
     		invoice.addError('Duplicate Invoice Number And Beneficiary Found. Invoice Number : '+invoice.Name);
+    		}
     		//mapInvoice.get(invoice.Name)
+    	}
+    }
+      
+    
+    
+    public static void updateOwnerSharing(List<Invoice__c> listInvoice){
+    	Map<Id, List<Invoice__c>> ownerIdInvoiceListMap = new Map<Id, List<Invoice__c>>();
+    	Map<Id, Id> accountIdInvoiceListMap = new Map<Id, Id>();
+    	Set<Id> accountIdSet = new Set<Id>();
+    	
+    	for(Invoice__c invoice : listInvoice){
+    		if(!ownerIdInvoiceListMap.containsKey(invoice.OwnerId)){
+    			ownerIdInvoiceListMap.put(invoice.OwnerId, new List<Invoice__c>());
+    		}
+    		ownerIdInvoiceListMap.get(invoice.OwnerId).add(invoice);
+    		
+    		if(!accountIdInvoiceListMap.containsKey(invoice.OwnerId)){
+    			accountIdInvoiceListMap.put(invoice.OwnerId, invoice.Account__c);
+    		}
+    	}
+    	if(ownerIdInvoiceListMap.size() > 0){
+    		for(User tUser : [SELECT Id, Share_Records__c from User Where Id IN :ownerIdInvoiceListMap.keySet()]){
+    			if(tUser.Share_Records__c){
+    				accountIdSet.add(accountIdInvoiceListMap.get(tUser.Id));
+    			}
+    		}
+    		if(accountIdSet.size() > 0){
+    			Map<Id, Account> accountIdObjMap = new Map<Id, Account>([Select Id, OwnerId from Account Where Id IN: accountIdSet]);
+    			for(Id ownerId : accountIdInvoiceListMap.keySet()){
+    				if(accountIdObjMap.containsKey(accountIdInvoiceListMap.get(ownerId))){
+    					for(Invoice__c testInvoice : ownerIdInvoiceListMap.get(ownerId)){
+    						testInvoice.Original_Owner__c = testInvoice.OwnerId;
+    						testInvoice.OwnerId = accountIdObjMap.get(accountIdInvoiceListMap.get(ownerId)).OwnerId;
+    					}
+    				}
+    			}
+    		}
     	}
     }
       

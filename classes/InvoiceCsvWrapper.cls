@@ -21,7 +21,7 @@ public with sharing class InvoiceCsvWrapper extends GenericBaseCsvWrapper {
     }
     public override String errorMsgPart(String srcText){
 		if(Utility.isValidText(srcText)){
-			return ' : (for Input-'+Utility.getValidText(String.valueOf(this.input.get('Name')))+', CSV value :\''+srcText+'\' )';
+            return ' : ' + System.Label.CM_Validation_Input_FieldForInput + Utility.getValidText(String.valueOf(this.input.get('Name'))) + ', ' + System.Label.CM_Validation_Input_FieldCsvValue + ' '+srcText+'\' )';
 		}
 		return '';
 	}    

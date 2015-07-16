@@ -4,7 +4,7 @@
 			<!-- TO DISPLAY THE PARSED INVOICE RECORD LIST   -->
 			<apex:form id="fm">
 			<apex:PageMessages id="pageMessage"></apex:PageMessages>
-				<apex:actionstatus id="status" onstart="progressbarBSMsg('{!$Label.Loading_Wait_Text}');showProgressbarBS(true);"/>
+                <apex:actionstatus id="status" onstart="progressbarBSMsg('{!$Label.CM_Community_Text_PleaseWait}');showProgressbarBS(true);"/>
 			    <apex:pageBlock mode="inlineEdit" id="pageCtl" >
 					<apex:variable var="schIndex" value="{!0}" />
                 	<apex:pageBlockTable value="{!csvCTL.parsedInput}" var="c" id="pbt">
@@ -34,9 +34,9 @@
 					                    		<tr><td style="border-bottom:0px;padding: 0px 0px 0px 0px;">
 <!-- 						                    		<apex:inputfield value="{!c.input[FieldLable.FieldPath]}" id="benef"/> -->
 													<apex:inputHidden value="{!c.input[FieldLable.FieldPath]}" id="benef"/> 
-													<c:CustomLookup selectedRefId="{!c.input[FieldLable.FieldPath]}" objectName="Input_Beneficiary__c" fieldAPI="Name" fieldToPopulateId="{!$Component.benef}" fieldSetName="Lookup_Fields"/>
+                                                    <c:CustomLookup selectedRefId="{!c.input[FieldLable.FieldPath]}" selectedRefName="{!c.beneName}" objectName="Input_Beneficiary__c" fieldAPI="Name" fieldToPopulateId="{!$Component.benef}" fieldSetName="Lookup_Fields"/>
 					                    		</td><td style="border-bottom:0px;padding: 0px 0px 0px 0px;">
-						                        	<apex:commandButton value="Add" title="Add New Buyer/Supplier" styleClass="wuBtn" onClick="window.open('{!IF($Site.Prefix != null,URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/AddInputBeneficiary?aId={!$CurrentPage.parameters.aId}&customRefId={!$Component.benef}&customLkNameId='+lookupIdHolder['{!$Component.benef}_name'],'Ratting','width=850,height=400,left=150,top=200,toolbar=0,status=0,');return false;"/>
+                                                    <apex:commandButton value="{!$Label.CM_Community_Button_Add}" title="{!$Label.CM_Community_Button_AddNewBuyerSupplier}" styleClass="wuBtn" onClick="window.open('{!IF($Site.Prefix != null,URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/AddInputBeneficiary?aId={!$CurrentPage.parameters.aId}&customRefId={!$Component.benef}&customLkNameId='+lookupIdHolder['{!$Component.benef}_name'],'Ratting','width=850,height=400,left=150,top=200,toolbar=0,status=0,');return false;"/>
 					                        	</td>
 					                        	</tr>
 				                    		</table>
@@ -51,8 +51,9 @@
                           	</apex:column>
 						 </apex:repeat>
     		            </apex:pageBlockTable> 
-            		   <apex:commandButton value="Save and Submit" action="{!csvCTL.save}" rerender="panelID, pageMessage,pageCtl" rendered="{!csvCTL.isValidCsv}" status="status"/>
-               			<apex:commandButton value="Cancel" action="{!csvCTL.cancel}" />
+                       <apex:commandButton value="{!$Label.CM_Community_Button_SaveAndSubmit}" action="{!csvCTL.save}" rerender="panelID, pageMessage,pageCtl" rendered="{!AND(csvCTL.isValidCsv, NOT(csvCTL.isNext))}" status="status"/>
+	                   <apex:commandButton value="Save And Next" action="{!csvCTL.showNextRecordToInsert}" rerender="fm" rendered="{!csvCTL.isNext}" status="status"/>
+	                   <apex:commandButton value="{!$Label.CM_Community_Button_Cancel}" action="{!csvCTL.cancel}" />
 				<!--                <apex:commandButton value="Cancel" action="{!cancel}"/>-->
 								<apex:outputpanel id="panelID">
 								    <script>

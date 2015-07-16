@@ -3,6 +3,7 @@
     <apex:attribute name="con" description="con" type="String" required="false" assignTo="{!currentContact}"></apex:attribute>
     <apex:attribute name="acc" description="acc" type="String" required="false" assignTo="{!currentAccount}"></apex:attribute>
     <apex:attribute name="selectedMonth" description="selected Month" type="Integer" required="false" assignTo="{!selMonth}"></apex:attribute>
+    <apex:pageMessages escape="false"></apex:pageMessages>    
         <div class="CSSTableGenerator" >
         <style>
             .total 
@@ -36,41 +37,47 @@
             <apex:outputPanel layout="none" id="advTradingReceipts" rendered="{!NOT(noTradingReceipts)}">
                 <tr>
                     <td class="leftTd">
-                        {!$Label.Forecast_Inflow} 
+                        {!$Label.CM_Community_Text_FieldFilter_TransactionTypeFilter_Item_ForecastInflow} 
                     </td>
-                    <apex:repeat value="{!TradingReceipts}" var="tr">
+                    <apex:variable value="{!0}" var="v1"/>
+                    <apex:repeat value="{!ztTradingReceipts}" var="zttr">
                         <td>
-                            <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(tr<0,'red','black')}">
+                            <apex:outputText value="{!zttr}" style="color:{!IF(TradingReceipts[v1]<0,'red','black')}"/>
+                            <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(tr<0,'red','black')}">
                                 <apex:param value="{!tr}"/>
-                            </apex:outputText>
+                            </apex:outputText>-->
                         </td>
+                        <apex:variable value="{!v1+1}" var="v1"/>
                     </apex:repeat>
                 </tr>
             </apex:outputPanel>
-            <apex:outputPanel layout="none" id="advInflowOther"><!--  rendered="{!NOT(noInflowOther)}" -->
-                <tr>
-                    <td class="leftTd">
-                        {!$Label.Inflow_Other} 
-                    </td>
-                    <apex:repeat value="{!InflowOther}" var="io">
-                        <td>
-                            <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(io<0,'red','black')}">
-                                <apex:param value="{!io}"/>
-                            </apex:outputText>
-                        </td>
-                    </apex:repeat>
-                </tr>
-            </apex:outputPanel>
+<!--             <apex:outputPanel layout="none" id="advInflowOther"> -->
+<!--                 <tr> -->
+<!--                     <td class="leftTd"> -->
+<!--                         {!$Label.Inflow_Other}  -->
+<!--                     </td> -->
+<!--                     <apex:repeat value="{!InflowOther}" var="io"> -->
+<!--                         <td> -->
+<!--                             <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(io<0,'red','black')}"> -->
+<!--                                 <apex:param value="{!io}"/> -->
+<!--                             </apex:outputText> -->
+<!--                         </td> -->
+<!--                     </apex:repeat> -->
+<!--                 </tr> -->
+<!--             </apex:outputPanel> -->
             <tr>
                 <td class="leftTd">
                     {!$Label.Total_Cash_Inflows} 
                 </td>
-                <apex:repeat value="{!inflowTotal}" var="t">
+                <apex:variable value="{!0}" var="v2"/>
+                <apex:repeat value="{!ztinflowTotal}" var="ztt">                    
                     <td class="total">
-                        <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(t<0,'red','black')}">
+                        <apex:outputText value="{!ztt}" style="color:{!IF(inflowTotal[v2]<0,'red','black')}"/>
+                        <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(inflowTotal[v]<0,'red','black')}">
                             <apex:param value="{!t}"/>
-                        </apex:outputText>
+                        </apex:outputText>-->
                     </td>
+                    <apex:variable value="{!v2+1}" var="v"/>
                 </apex:repeat>
             </tr>
             <tr>
@@ -92,12 +99,15 @@
                     <td class="leftTd">
                         {!$Label.Invoices}
                     </td>
-                    <apex:repeat value="{!Invoices}" var="inv">
+                    <apex:variable value="{!0}" var="v3"/>
+                    <apex:repeat value="{!ztInvoices}" var="ztinv">
                         <td>
-                            <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(inv<0,'red','black')}">
+                            <apex:outputText value="{!ztinv}" style="color:{!IF(Invoices[v3]<0,'red','black')}"/>
+                            <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(inv<0,'red','black')}">
                                 <apex:param value="{!inv}"/>
-                            </apex:outputText>
+                            </apex:outputText>-->
                         </td>
+                        <apex:variable value="{!v3+1}" var="v3"/>
                     </apex:repeat>
                 </tr>
             </apex:outputPanel>
@@ -107,53 +117,63 @@
                     <td class="leftTd">
                         {!$Label.Purchase_Orders}
                     </td>
-                    <apex:repeat value="{!purchaseOrders}" var="po">
+                    <apex:variable value="{!0}" var="v4"/>
+                    <apex:repeat value="{!ztpurchaseOrders}" var="ztpo">
                         <td>
+                            <apex:outputText value="{!ztpo}" style="color:{!IF(purchaseOrders[v4]<0,'red','black')}"/>
+                            <!--
                             <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(po<0,'red','black')}">
                                 <apex:param value="{!po}"/>
-                            </apex:outputText>
+                            </apex:outputText>-->
                         </td>
+                        <apex:variable value="{!v4+1}" var="v4"/>
                     </apex:repeat>
                 </tr>
             </apex:outputPanel>
             <apex:outputPanel layout="none" id="advForecastOrders" > <!-- rendered="{!NOT(noForecastOrders)}" -->
                 <tr>
                     <td class="leftTd">
-                        {!$Label.Forecast_Outflow}
+                        {!$Label.CM_Community_Text_FieldFilter_TransactionTypeFilter_Item_ForecastOutflow}
                     </td>
-                    <apex:repeat value="{!forecastOrders}" var="fo">
+                    <apex:variable value="{!0}" var="v5"/>
+                    <apex:repeat value="{!ztforecastOrders}" var="ztfo">
                         <td>
-                            <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(fo<0,'red','black')}">
+                            <apex:outputText value="{!ztfo}" style="color:{!IF(forecastOrders[v5]<0,'red','black')}"/>
+                            <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(fo<0,'red','black')}">
                                 <apex:param value="{!fo}"/>
-                            </apex:outputText>
+                            </apex:outputText>-->
                         </td>
+                        <apex:variable value="{!v5+1}" var="v5"/>
                     </apex:repeat>
                 </tr>
             </apex:outputPanel>
-            <apex:outputPanel layout="none" id="advOutflowOther"><!--  rendered="{!NOT(noOutflowOther)}" -->
-                <tr>
-                    <td class="leftTd">
-                        {!$Label.Outflow_Other}
-                    </td>
-                    <apex:repeat value="{!OutflowOther}" var="oo">
-                        <td>
-                            <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(oo<0,'red','black')}">
-                                <apex:param value="{!oo}"/>
-                            </apex:outputText>
-                        </td>
-                    </apex:repeat>
-                </tr>
-            </apex:outputPanel>
+<!--             <apex:outputPanel layout="none" id="advOutflowOther"> -->
+<!--                 <tr> -->
+<!--                     <td class="leftTd"> -->
+<!--                         {!$Label.Outflow_Other} -->
+<!--                     </td> -->
+<!--                     <apex:repeat value="{!OutflowOther}" var="oo"> -->
+<!--                         <td> -->
+<!--                             <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(oo<0,'red','black')}"> -->
+<!--                                 <apex:param value="{!oo}"/> -->
+<!--                             </apex:outputText> -->
+<!--                         </td> -->
+<!--                     </apex:repeat> -->
+<!--                 </tr> -->
+<!--             </apex:outputPanel> -->
             <tr>
                 <td class="leftTd">
                     {!$Label.Total_Cash_Outflows}
                 </td>
-                <apex:repeat value="{!outflowTotal}" var="t">
+                <apex:variable value="{!0}" var="v6"/>
+                <apex:repeat value="{!ztoutflowTotal}" var="ztt">
                     <td>
-                        <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(t<0,'red','black')}">
+                        <apex:outputText value="{!ztt}" style="color:{!IF(outflowTotal[v6]<0,'red','black')}"/>
+                        <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(t<0,'red','black')}">
                             <apex:param value="{!t}"/>
-                        </apex:outputText>
+                        </apex:outputText>-->
                     </td>
+                    <apex:variable value="{!v6+1}" var="v6"/>
                 </apex:repeat>
             </tr>
             <tr>
@@ -167,14 +187,17 @@
                 <td class="leftTd">
                     <b>{!$Label.Net_Cashflow}</b>
                 </td>
-                <apex:repeat value="{!netOperatingFXCashFlow}" var="t">
+                <apex:variable value="{!0}" var="v7"/>
+                <apex:repeat value="{!ztnetOperatingFXCashFlow}" var="ztt">
                     <td>
                     <b>
-                        <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(t<0,'red','black')}">
+                        <apex:outputText value="{!ztt}" style="color:{!IF(netOperatingFXCashFlow[v7]<0,'red','black')}"/>
+                        <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(t<0,'red','black')}">
                             <apex:param value="{!t}"/>
-                        </apex:outputText>
+                        </apex:outputText>-->
                     </b>
                     </td>
+                    <apex:variable value="{!v7+1}" var="v7"/>
                 </apex:repeat>
             </tr>
             
@@ -184,7 +207,22 @@
                     <td>&nbsp;</td>
                 </apex:repeat>
             </tr>
-            
+            <apex:outputpanel rendered="{!if(isNonCCTuser =true, false, true)}">
+                <tr>
+                    <td class="leftTd">
+                        <b>{!$Label.Holding_Balance}</b>
+                    </td>
+    <!--                 <apex:repeat value="{!netOperatingFXCashFlow}" var="t"> -->
+                        <td colspan="{!months.size}">{!ztHoldingBalance} 
+    <!--                     <b> -->
+    <!--                         <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(holdingBalance<0,'red','black')}"> -->
+    <!--                             <apex:param value="{!holdingBalance}"/> -->
+    <!--                         </apex:outputText> -->
+    <!--                     </b> -->
+                        </td>
+    <!--                 </apex:repeat> -->
+                </tr>
+            </apex:outputpanel>            
             <apex:outputPanel layout="none" id="advForwardContracts" > <!-- rendered="{!NOT(noForwardContractsWUBS && noForwardContractsOther)}" -->
             <tr>
                 <td>&nbsp;</td>
@@ -206,12 +244,15 @@
                     <td class="leftTd">
                         &nbsp;-WUBS
                     </td>
-                    <apex:repeat value="{!ForwardContractsWUBS}" var="forwardsWubs">
+                    <apex:variable value="{!0}" var="v8"/>
+                    <apex:repeat value="{!ztForwardContractsWUBS}" var="ztforwardsWubs">
                         <td>
-                            <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(forwardsWubs<0,'red','black')}">
+                            <apex:outputText value="{!ztforwardsWubs}" style="color:{!IF(ForwardContractsWUBS[v8]<0,'red','black')}"/>
+                            <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(forwardsWubs<0,'red','black')}">
                                 <apex:param value="{!forwardsWubs}"/>
-                            </apex:outputText>
+                            </apex:outputText>-->
                         </td>
+                        <apex:variable value="{!v8+1}" var="v8"/>
                     </apex:repeat>
                 </tr>
             </apex:outputPanel>
@@ -220,12 +261,15 @@
                     <td class="leftTd">
                         &nbsp;-{!$Label.Others}
                     </td>
-                    <apex:repeat value="{!ForwardContractsOther}" var="forwardsOthers">
+                    <apex:variable value="{!0}" var="v9"/>
+                    <apex:repeat value="{!ztForwardContractsOther}" var="ztforwardsOthers">
                         <td>
-                            <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(forwardsOthers<0,'red','black')}">
+                            <apex:outputText value="{!ztforwardsOthers}" style="color:{!IF(ForwardContractsOther[v9]<0,'red','black')}"/>
+                            <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(forwardsOthers<0,'red','black')}">
                                 <apex:param value="{!forwardsOthers}"/>
-                            </apex:outputText>
+                            </apex:outputText>-->
                         </td>
+                        <apex:variable value="{!v9+1}" var="v9"/>
                     </apex:repeat>
                 </tr>
             </apex:outputPanel>
@@ -252,12 +296,15 @@
                     <td class="leftTd">
                         &nbsp;-WUBS ({!$Label.Protection})
                     </td>
-                    <apex:repeat value="{!OptionsWUBSProtection}" var="optWUBSP">
+                    <apex:variable value="{!0}" var="v10"/>
+                    <apex:repeat value="{!ztOptionsWUBSProtection}" var="ztoptWUBSP">
                         <td>
-                            <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(optWUBSP<0,'red','black')}">
+                            <apex:outputText value="{!ztoptWUBSP}" style="color:{!IF(OptionsWUBSProtection[v10]<0,'red','black')}"/>
+                            <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(optWUBSP<0,'red','black')}">
                                 <apex:param value="{!optWUBSP}"/>
-                            </apex:outputText>
+                            </apex:outputText>-->
                         </td>
+                        <apex:variable value="{!v10+1}" var="v10"/>
                     </apex:repeat>
                 </tr>
             </apex:outputPanel>
@@ -266,12 +313,15 @@
                     <td class="leftTd">
                         &nbsp;-WUBS ({!$Label.Obligation})
                     </td>
-                    <apex:repeat value="{!OptionsWUBSObligation}" var="optWUBSO">
+                    <apex:variable value="{!0}" var="v11"/>
+                    <apex:repeat value="{!ztOptionsWUBSObligation}" var="ztoptWUBSO">
                         <td>
-                            <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(optWUBSO<0,'red','black')}">
+                            <apex:outputText value="{!ztoptWUBSO}" style="color:{!IF(OptionsWUBSObligation[v11]<0,'red','black')}"/>
+                            <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(optWUBSO<0,'red','black')}">
                                 <apex:param value="{!optWUBSO}"/>
-                            </apex:outputText>
+                            </apex:outputText>-->
                         </td>
+                        <apex:variable value="{!v11+1}" var="v11"/>
                     </apex:repeat>
                 </tr>
             </apex:outputPanel>
@@ -280,12 +330,15 @@
                     <td class="leftTd">
                         &nbsp;-{!$Label.Others} ({!$Label.Protection})
                     </td>
-                    <apex:repeat value="{!OptionsOtherProtection}" var="t">
+                    <apex:variable value="{!0}" var="v12"/>
+                    <apex:repeat value="{!ztOptionsOtherProtection}" var="ztt">
                         <td>
-                            <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(t<0,'red','black')}">
+                            <apex:outputText value="{!ztt}" style="color:{!IF(OptionsOtherProtection[v12]<0,'red','black')}"/>
+                            <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(t<0,'red','black')}">
                                 <apex:param value="{!t}"/>
-                            </apex:outputText>
+                            </apex:outputText>-->
                         </td>
+                        <apex:variable value="{!v12+1}" var="v12"/>
                     </apex:repeat>
                 </tr>
             </apex:outputPanel>
@@ -294,12 +347,15 @@
                     <td class="leftTd">
                         &nbsp;-{!$Label.Others} ({!$Label.Obligation})
                     </td>
-                    <apex:repeat value="{!OptionsOtherObligation}" var="t">
+                    <apex:variable value="{!0}" var="v13"/>
+                    <apex:repeat value="{!ztOptionsOtherObligation}" var="ztt">
                         <td>
-                            <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(t<0,'red','black')}">
+                            <apex:outputText value="{!ztt}" style="color:{!IF(OptionsOtherObligation[v13]<0,'red','black')}"/>
+                            <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(t<0,'red','black')}">
                                 <apex:param value="{!t}"/>
-                            </apex:outputText>
+                            </apex:outputText>-->
                         </td>
+                        <apex:variable value="{!v13+1}" var="v13"/>
                     </apex:repeat>
                 </tr>
             </apex:outputPanel>
@@ -309,14 +365,17 @@
                     <td class="leftTd">
                         <b>{!$Label.Total_Hedging_Instruments}</b>
                     </td>
-                    <apex:repeat value="{!hedgeTotal}" var="hedgeTot">
+                    <apex:variable value="{!0}" var="v14"/>
+                    <apex:repeat value="{!zthedgeTotal}" var="zthedgeTot">
                         <td>
                             <b>
-                                <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(hedgeTot<0,'red','black')}">
+                                <apex:outputText value="{!zthedgeTot}" style="color:{!IF(hedgeTotal[v14]<0,'red','black')}"/> 
+                                <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(hedgeTot<0,'red','black')}">
                                     <apex:param value="{!hedgeTot}"/>
-                                </apex:outputText>
+                                </apex:outputText>-->
                             </b>
                         </td>
+                        <apex:variable value="{!v14+1}" var="v14"/>
                     </apex:repeat>
                 </tr>
                 <tr>
@@ -333,12 +392,18 @@
                         <td class="leftTd">
                             {!$Label.Total_Hedging_Instruments} ({!$Label.Protection})
                         </td>
-                        <apex:repeat value="{!hedgeTotalProtection}" var="t">
+                        <apex:variable value="{!0}" var="v15"/>
+                        <apex:repeat value="{!zthedgeTotalProtection}" var="ztt">
                             <td>
+                                
+                                <apex:outputText value="{!ztt}" style="color:{!IF(hedgeTotalProtection[v15]<0,'red','black')}"/> 
+                                
+                                <!--
                                 <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(t<0,'red','black')}">
                                     <apex:param value="{!t}"/>
-                                </apex:outputText>
+                                </apex:outputText>-->
                             </td>
+                            <apex:variable value="{!v15+1}" var="v15"/>
                         </apex:repeat>
                     </tr>
                 </apex:outputPanel>
@@ -347,12 +412,15 @@
                         <td class="leftTd">
                             {!$Label.Total_Hedging_Instruments} ({!$Label.Obligation})
                         </td>
-                        <apex:repeat value="{!hedgeTotalObligation}" var="t">
+                        <apex:variable value="{!0}" var="v16"/>
+                        <apex:repeat value="{!zthedgeTotalObligation}" var="ztt">
                             <td>
-                                <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(t<0,'red','black')}">
+                                <apex:outputText value="{!ztt}" style="color:{!IF(hedgeTotalObligation[v16]<0,'red','black')}"/>
+                                <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(t<0,'red','black')}">
                                     <apex:param value="{!t}"/>
-                                </apex:outputText>
+                                </apex:outputText>-->
                             </td>
+                            <apex:variable value="{!v16+1}" var="v16"/>
                         </apex:repeat>
                     </tr>
                 </apex:outputPanel>
@@ -363,14 +431,17 @@
                     <td class="leftTd">
                         <b>{!$Label.Net_Cash_Position_After_Hedging_Instruments}</b>
                     </td>
-                    <apex:repeat value="{!netHedgeTotal}" var="netHedgeTot">
+                    <apex:variable value="{!0}" var="v17"/>
+                    <apex:repeat value="{!ztnetHedgeTotal}" var="ztnetHedgeTot">
                         <td>
                         <b>
-                            <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(netHedgeTot<0,'red','black')}">
+                            <apex:outputText value="{!ztnetHedgeTot}" style="color:{!IF(netHedgeTotal[v17]<0,'red','black')}"/>
+                            <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(netHedgeTot<0,'red','black')}">
                                 <apex:param value="{!netHedgeTot}"/>
-                            </apex:outputText>
+                            </apex:outputText>-->
                         </b>
                         </td>
+                        <apex:variable value="{!v17+1}" var="v17"/>
                     </apex:repeat>
                 </tr>
             </apex:outputPanel>
@@ -389,14 +460,17 @@
                         <td class="leftTd">
                             <b>{!$Label.Net_Cash_Position} ({!$Label.Protection})</b><!-- Net Foreign Currency Cash Position (protection) -->
                         </td>
-                        <apex:repeat value="{!netFXPositionProtection}" var="t">
+                        <apex:variable value="{!0}" var="v"/>
+                        <apex:repeat value="{!ztnetFXPositionProtection}" var="ztt">
                             <td>
                             <b>
-                                <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(t<0,'red','black')}">
+                                <apex:outputText value="{!ztt}" style="color:{!IF(netFXPositionProtection[v]<0,'red','black')}"></apex:outputText>
+                                <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(t<0,'red','black')}">
                                     <apex:param value="{!t}"/>
-                                </apex:outputText>
+                                </apex:outputText>-->
                             </b>
                             </td>
+                            <apex:variable value="{!v+1}" var="v"/>
                         </apex:repeat>
                     </tr>
                 </apex:outputPanel>
@@ -405,14 +479,17 @@
                         <td class="leftTd">
                             <b>{!$Label.Net_Cash_Position} ({!$Label.Obligation})</b><!-- Net Foreign Currency Cash Position (obligation) -->
                         </td>
-                        <apex:repeat value="{!netFXPositionObligation}" var="t">
+                        <apex:variable value="{!0}" var="v"/>
+                        <apex:repeat value="{!ztnetFXPositionObligation}" var="ztt">
                             <td>
                             <b>
-                                <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(t<0,'red','black')}">
+                                <apex:outputText value="{!ztt}" style="color:{!IF(netFXPositionObligation[v]<0,'red','black')}"></apex:outputText>
+                                <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(t<0,'red','black')}">
                                     <apex:param value="{!t}"/>
-                                </apex:outputText>
+                                </apex:outputText>-->
                             </b>
                             </td>
+                            <apex:variable value="{!v+1}" var="v"/>
                         </apex:repeat>
                     </tr>
                 </apex:outputPanel>
@@ -431,18 +508,22 @@
                     <tr>
                         <td class="leftTd">
                             {!UserCurrency} {!$Label.Equivalent_Todays_Rate} - <!-- was {!cur} {!currentRate}-->
-                            <apex:outputText value="{0, number, ###,###,##0.0000}" style="color:{!IF(currentRate<0,'red','black')}">
-                                <apex:param value="{!conversionRate}"/> <!-- {!currentRate} -->
-                            </apex:outputText>
+                            <apex:outputText value="{!ztconversionRate}" style="color:{!IF(currentRate<0,'red','black')}"></apex:outputText>
+                            <!--<apex:outputText value="{0, number, ###,###,##0.0000}" style="color:{!IF(currentRate<0,'red','black')}">
+                                <apex:param value="{!conversionRate}"/> <!-- {!currentRate} 
+                            </apex:outputText>-->
                         </td>
-                        <apex:repeat value="{!convertedRate}" var="conRate">
+                        <apex:variable value="{!0}" var="v"/>
+                        <apex:repeat value="{!ztconvertedRate}" var="ztconRate">
                         <td>
                             <b>
-                                <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(conRate<0,'red','black')}">
+                                <apex:outputText value="{!ztconRate}" style="color:{!IF(convertedRate[v]<0,'red','black')}"></apex:outputText>
+                                <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(conRate<0,'red','black')}">
                                     <apex:param value="{!conRate}"/>
-                                </apex:outputText>
+                                </apex:outputText>-->
                             </b>
                         </td>
+                        <apex:variable value="{!0}" var="v"/>
                         </apex:repeat>
                     </tr>
                 </apex:outputPanel>
@@ -451,36 +532,44 @@
                     <tr>
                         <td class="leftTd">
                             {!UserCurrency} {!$Label.Equivalent_Todays_Rate} {!$Label.Protection}<!-- was {!cur} --> <!-- conversionRate -->
-                            <apex:outputText value="{0, number, ###,###,##0.0000}" style="color:{!IF(conversionRate<0,'red','black')}">
-                                <apex:param value="{!conversionRate}"/> <!-- was {!currentRate} -->
-                            </apex:outputText>
+                            <apex:outputText value="{!ztconversionRate}" style="color:{!IF(conversionRate<0,'red','black')}"></apex:outputText>
+                            <!--<apex:outputText value="{0, number, ###,###,##0.0000}" style="color:{!IF(conversionRate<0,'red','black')}">
+                                <apex:param value="{!conversionRate}"/> <!-- was {!currentRate} 
+                            </apex:outputText>-->
                         </td>
-                        <apex:repeat value="{!convertedProtectionRate}" var="convProtRate">
+                        <apex:variable value="{!0}" var="v"/>
+                        <apex:repeat value="{!ztconvertedProtectionRate}" var="ztconvProtRate">
                         <td>
                             <b>
-                                <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(convProtRate<0,'red','black')}">
+                                <apex:outputText value="{!ztconvProtRate}" style="color:{!IF(convertedProtectionRate[v]<0,'red','black')}"></apex:outputText>
+                                <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(convProtRate<0,'red','black')}">
                                     <apex:param value="{!convProtRate}"/>
-                                </apex:outputText>
+                                </apex:outputText>-->
                             </b>
                         </td>
+                        <apex:variable value="{!v+1}" var="v"/>
                         </apex:repeat>
                     </tr>
                     <tr>
                         <td class="leftTd">
                             {!UserCurrency} {!$Label.Equivalent_Todays_Rate} {!$Label.Obligation} <!-- was {!cur} -->
-                            <apex:outputText value="{0, number, ###,###,##0.0000}" style="color:{!IF(conversionRate<0,'red','black')}">
+                            <apex:outputText value="{!ztconversionRate}" style="color:{!IF(conversionRate<0,'red','black')}"></apex:outputText>
+                            <!--<apex:outputText value="{0, number, ###,###,##0.0000}" style="color:{!IF(conversionRate<0,'red','black')}">
                                 <apex:param value="{!conversionRate}"/>
-                            </apex:outputText>
+                            </apex:outputText>-->
                             
                         </td>
-                        <apex:repeat value="{!convertedObligationRate}" var="convObliRate">
+                        <apex:variable value="{!0}" var="v"/>
+                        <apex:repeat value="{!ztconvertedObligationRate}" var="ztconvObliRate">
                         <td>
                             <b>
-                                <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(convObliRate<0,'red','black')}">
+                                <apex:outputText value="{!ztconvObliRate}" style="color:{!IF(convertedObligationRate[v]<0,'red','black')}"></apex:outputText>
+                                <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(convObliRate<0,'red','black')}">
                                     <apex:param value="{!convObliRate}"/>
-                                </apex:outputText>
+                                </apex:outputText>-->
                             </b>
                         </td>
+                        <apex:variable value="{!v+1}" var="v"/>
                         </apex:repeat>
                     </tr>
                 </apex:outputPanel>
@@ -501,9 +590,10 @@
 	                </td>
 	                <td>
 	                    <b>
-	                        <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(currentBalance<0,'red','black')}">
+                            <apex:outputText value="{!ztcurrentBalance}" style="color:{!IF(currentBalance<0,'red','black')}"></apex:outputText>
+                            <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(currentBalance<0,'red','black')}">
 	                            <apex:param value="{!currentBalance}"/>
-	                        </apex:outputText>
+                            </apex:outputText>--->
 	                    </b>
 	                </td>
 	                <apex:repeat value="{!spacer}" var="s">
@@ -530,24 +620,28 @@
                     <td style="background: #6B747B;">
                         &nbsp;
                     </td>
-                     <td colspan="{!months.size}" style="background: #6B747B;text-align: center;color: white;"><b>Amounts Converted in {!defaultCode}</b></td>
+                     <td colspan="{!months.size}" style="background: #6B747B;text-align: center;color: white;"><b>{!$Label.CM_SectionHeading_NetExposure_AmountsConvertedIn} {!defaultCode}</b></td>
                 </tr>                
             
                 <tr>
                     <td class="leftTd">
                         {!UserCurrency} {!$Label.Equivalent_Todays_Rate}
-                        <apex:outputText value="{0, number, ###,###,##0.0000}" style="color:{!IF(currentRate<0,'red','black')}">
-                            <apex:param value="{!conversionRate}"/> <!-- {!currentRate} -->
-                        </apex:outputText>
+                        <apex:outputText value="{!ztconversionRate}" style="color:{!IF(currentRate<0,'red','black')}"></apex:outputText>
+                        <!--<apex:outputText value="{0, number, ###,###,##0.0000}" style="color:{!IF(currentRate<0,'red','black')}">
+                            <apex:param value="{!conversionRate}"/> <!-- {!currentRate}
+                        </apex:outputText>-->
                     </td>
-                    <apex:repeat value="{!convertedRate}" var="conRate">
+                    <apex:variable value="{!0}" var="v"/>
+                    <apex:repeat value="{!ztconvertedRate}" var="ztconRate">
                     <td>
                         <b>
-                            <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(conRate<0,'red','black')}">
+                            <apex:outputText value="{!ztconRate}" style="color:{!IF(convertedRate[v]<0,'red','black')}"></apex:outputText>
+                            <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(conRate<0,'red','black')}">
                                 <apex:param value="{!conRate}"/>
-                            </apex:outputText>
+                            </apex:outputText>-->
                         </b>
                     </td>
+                    <apex:variable value="{!v+1}" var="v"/>
                     </apex:repeat>
                 </tr>
             </apex:outputPanel>
@@ -555,7 +649,7 @@
 			<apex:outputPanel layout="none" id="VolatilityImpact1" rendered="{!NOT(isTotal)}">
                 <tr id="VolatilityImpactRow1">
                     <td class="leftTd">
-                        <b><nobr>Volatility Impact in Home Currency</nobr></b> <div style="margin-top:10px;">&nbsp;</div>
+                        <b><nobr>{!$Label.CM_SectionHeading_NetExposure_VolatilityImpactInHomeCurrency}</nobr></b> <div style="margin-top:10px;">&nbsp;</div>
                         
                         <div id="slider-range-min1"></div> 
                         <div style="margin-top:-6px;">&nbsp;</div>
@@ -563,16 +657,19 @@
                             <input type="text" id="sliderAmount1" readonly="readonly" style="border: 0; color: #f6931f; font-weight: bold;text-align: center;" />
                         </div> <div style="margin-top:-5px;">&nbsp;</div>
                         <span style="float: left;">
-                        Depreciates
+                        {!$Label.CM_SectionText_InvoiceManagement_Insights_Depreciates}
                         &nbsp;&nbsp;&nbsp; <b>{!cur} </b> &nbsp;&nbsp;&nbsp; 
-                        Appreciates
+                        {!$Label.CM_SectionText_InvoiceManagement_Insights_Appreciates}
                         </span>                        
                     </td>
                     <apex:repeat value="{!convertedRate}" var="conRate">
                     <td>
                         <b>
                             <input type="hidden" value="{!conRate}"/>
-                            <span>0</span> 
+                            
+                            <apex:outputText value="0" style="color:{!IF(conRate<0,'red','black')}">
+                                
+                            </apex:outputText>
                         </b>
                     </td>
                     </apex:repeat>
@@ -604,41 +701,47 @@
             <apex:outputPanel layout="none" id="simpleTradingReceipts" rendered="{!NOT(noTradingReceipts)}">
                 <tr>
                     <td class="leftTd">
-                        {!$Label.Forecast_Inflow}
+                        {!$Label.CM_Community_Text_FieldFilter_TransactionTypeFilter_Item_ForecastInflow}
                     </td>
-                    <apex:repeat value="{!TradingReceipts}" var="tr">
+                    <apex:variable value="{!0}" var="v1"/>
+                    <apex:repeat value="{!ztTradingReceipts}" var="zttr" >
                         <td>
-                            <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(tr<0,'red','black')}">
+                            <apex:outputText value="{!zttr}" style="color:{!IF(TradingReceipts[v1]<0,'red','black')}"/>
+                            <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(tr<0,'red','black')}">
                                 <apex:param value="{!tr}"/>
-                            </apex:outputText>
+                            </apex:outputText>-->
                         </td>
+                        <apex:variable value="{!v1+1}" var="v1"/>
                     </apex:repeat>
                 </tr>
             </apex:outputPanel>
-            <apex:outputPanel layout="none" id="simpleInflowOther"> <!-- rendered="{!NOT(noInflowOther)}"  -->
-                <tr>
-                    <td class="leftTd">
-                        {!$Label.Inflow_Other}
-                    </td>
-                    <apex:repeat value="{!InflowOther}" var="io">
-                        <td>
-                            <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(io<0,'red','black')}">
-                                <apex:param value="{!io}"/>
-                            </apex:outputText>
-                        </td>
-                    </apex:repeat>
-                </tr>
-            </apex:outputPanel>
+<!--             <apex:outputPanel layout="none" id="simpleInflowOther">  -->
+<!--                 <tr> -->
+<!--                     <td class="leftTd"> -->
+<!--                         {!$Label.Inflow_Other} -->
+<!--                     </td> -->
+<!--                     <apex:repeat value="{!InflowOther}" var="io"> -->
+<!--                         <td> -->
+<!--                             <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(io<0,'red','black')}"> -->
+<!--                                 <apex:param value="{!io}"/> -->
+<!--                             </apex:outputText> -->
+<!--                         </td> -->
+<!--                     </apex:repeat> -->
+<!--                 </tr> -->
+<!--             </apex:outputPanel> -->
             <tr>
                 <td class="leftTd">
                     {!$Label.Total_Cash_Inflows}
                 </td>
-                <apex:repeat value="{!inflowTotal}" var="t">
+                <apex:variable value="{!0}" var="v2"/>
+                <apex:repeat value="{!ztinflowTotal}" var="ztt">
                     <td>
-                        <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(t<0,'red','black')}">
+                        <apex:outputText value="{!ztt}" style="color:{!IF(inflowTotal[v2]<0,'red','black')}"/>                        
+                        <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(t<0,'red','black')}">
                             <apex:param value="{!t}"/>
-                        </apex:outputText>
+                        </apex:outputText>  -->                      
                     </td>
+                    <apex:variable value="{!v2+1}" var="v2"/>
                 </apex:repeat>
             </tr>
             <tr>
@@ -660,12 +763,15 @@
                     <td class="leftTd">
                         {!$Label.Invoices}
                     </td>
-                    <apex:repeat value="{!Invoices}" var="inv">
+                    <apex:variable value="{!0}" var="v3"/>
+                    <apex:repeat value="{!ztInvoices}" var="ztinv">
                         <td>
-                            <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(inv<0,'red','black')}">
+                            <apex:outputText value="{!ztinv}" style="color:{!IF(Invoices[v3]<0,'red','black')}"/>
+                            <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(inv<0,'red','black')}">
                                 <apex:param value="{!inv}"/>
-                            </apex:outputText>
+                            </apex:outputText>-->
                         </td>
+                        <apex:variable value="{!v3+1}" var="v3"/>
                     </apex:repeat>
                 </tr>
             </apex:outputPanel>
@@ -675,12 +781,15 @@
                     <td class="leftTd">
                         {!$Label.Purchase_Orders}
                     </td>
-                    <apex:repeat value="{!purchaseOrders}" var="po">
+                    <apex:variable value="{!0}" var="v4"/>
+                    <apex:repeat value="{!ztpurchaseOrders}" var="ztpo">
                         <td>
-                            <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(po<0,'red','black')}">
+                            <apex:outputText value="{!ztpo}" style="color:{!IF(purchaseOrders[v4]<0,'red','black')}"/>
+                            <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(po<0,'red','black')}">
                                 <apex:param value="{!po}"/>
-                            </apex:outputText>
+                            </apex:outputText>-->
                         </td>
+                        <apex:variable value="{!v4+1}" var="v4"/>
                     </apex:repeat>
                 </tr>
             </apex:outputPanel>
@@ -690,41 +799,47 @@
                     <td class="leftTd">
                         {!$Label.Forecast_Outflow}
                     </td>
-                    <apex:repeat value="{!forecastOrders}" var="fo">
+                    <apex:variable value="{!0}" var="v5"/>
+                    <apex:repeat value="{!ztforecastOrders}" var="ztfo">
                         <td>
-                            <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(fo<0,'red','black')}">
+                            <apex:outputText value="{!ztfo}" style="color:{!IF(forecastOrders[v5]<0,'red','black')}"/>
+                            <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(fo<0,'red','black')}">
                                 <apex:param value="{!fo}"/>
-                            </apex:outputText>
+                            </apex:outputText>-->
                         </td>
+                        <apex:variable value="{!v5+1}" var="v5"/>
                     </apex:repeat>
                 </tr>
             </apex:outputPanel>
             
-            <apex:outputPanel layout="none" id="simpleOutflowOther" > <!-- rendered="{!NOT(noOutflowOther)}"  -->
-                <tr>
-                    <td class="leftTd">
-                        {!$Label.Outflow_Other}
-                    </td>
-                    <apex:repeat value="{!OutflowOther}" var="oo">
-                        <td>
-                            <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(oo<0,'red','black')}">
-                                <apex:param value="{!oo}"/>
-                            </apex:outputText>
-                        </td>
-                    </apex:repeat>
-                </tr>
-            </apex:outputPanel>
+<!--             <apex:outputPanel layout="none" id="simpleOutflowOther" >  -->
+<!--                 <tr> -->
+<!--                     <td class="leftTd"> -->
+<!--                         {!$Label.Outflow_Other} -->
+<!--                     </td> -->
+<!--                     <apex:repeat value="{!OutflowOther}" var="oo"> -->
+<!--                         <td> -->
+<!--                             <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(oo<0,'red','black')}"> -->
+<!--                                 <apex:param value="{!oo}"/> -->
+<!--                             </apex:outputText> -->
+<!--                         </td> -->
+<!--                     </apex:repeat> -->
+<!--                 </tr> -->
+<!--             </apex:outputPanel> -->
             
             <tr>
                 <td class="leftTd">
                     {!$Label.Total_Cash_Outflows}
                 </td>
-                <apex:repeat value="{!outflowTotal}" var="t">
+                <apex:variable value="{!0}" var="v6"/>
+                <apex:repeat value="{!ztoutflowTotal}" var="ztt">
                     <td>
-                        <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(t<0,'red','black')}">
+                    	<apex:outputText value="{!ztt}" style="color:{!IF(outflowTotal[v6]<0,'red','black')}"/>
+                        <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(t<0,'red','black')}">
                             <apex:param value="{!t}"/>
-                        </apex:outputText>
+                        </apex:outputText>-->
                     </td>
+                    <apex:variable value="{!v6+1}" var="v6"/>
                 </apex:repeat>
             </tr>
             <tr>
@@ -738,14 +853,17 @@
                 <td class="leftTd">
                     <b>{!$Label.Net_Cashflow}</b>
                 </td>
-                <apex:repeat value="{!netOperatingFXCashFlow}" var="t">
+                <apex:variable value="{!0}" var="v7"/>
+                <apex:repeat value="{!ztnetOperatingFXCashFlow}" var="ztt">
                     <td>
                     <b>
-                        <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(t<0,'red','black')}">
+                        <apex:outputText value="{!ztt}" style="color:{!IF(netOperatingFXCashFlow[v7]<0,'red','black')}"/>
+                        <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(t<0,'red','black')}">
                             <apex:param value="{!t}"/>
-                        </apex:outputText>
+                        </apex:outputText>-->
                     </b>
                     </td>
+                    <apex:variable value="{!v7+1}" var="v7"/>
                 </apex:repeat>
             </tr>
             <apex:outputpanel rendered="{!if(isNonCCTuser =true, false, true)}">
@@ -754,7 +872,7 @@
 	                    <b>{!$Label.Holding_Balance}</b>
 	                </td>
 	<!--                 <apex:repeat value="{!netOperatingFXCashFlow}" var="t"> -->
-	                    <td colspan="14">{!holdingBalance} 
+                        <td colspan="{!months.size}">{!ztHoldingBalance} 
 	<!--                     <b> -->
 	<!--                         <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(holdingBalance<0,'red','black')}"> -->
 	<!--                             <apex:param value="{!holdingBalance}"/> -->
@@ -787,12 +905,15 @@
                     <td class="leftTd">
                         &nbsp;-WUBS
                     </td>
-                    <apex:repeat value="{!ForwardContractsWUBS}" var="forwardContWUBS">
+                    <apex:variable value="{!0}" var="v8"/>
+                    <apex:repeat value="{!ztForwardContractsWUBS}" var="ztforwardContWUBS">
                         <td>
-                            <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(forwardContWUBS<0,'red','black')}">
+                            <apex:outputText value="{!ztforwardContWUBS}" style="color:{!IF(ForwardContractsWUBS[v8]<0,'red','black')}"/>
+                            <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(forwardContWUBS<0,'red','black')}">
                                 <apex:param value="{!forwardContWUBS}"/>
-                            </apex:outputText>
+                            </apex:outputText>-->
                         </td>
+                        <apex:variable value="{!v8+1}" var="v8"/>
                     </apex:repeat>
                 </tr>
             </apex:outputPanel>
@@ -802,12 +923,15 @@
                     <td class="leftTd">
                         &nbsp;-{!$Label.Others}
                     </td>
-                    <apex:repeat value="{!ForwardContractsOther}" var="forwardContOther">
+                    <apex:variable value="{!0}" var="v9"/>
+                    <apex:repeat value="{!ztForwardContractsOther}" var="ztforwardContOther">
                         <td>
-                            <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(forwardContOther<0,'red','black')}">
+                            <apex:outputText value="{!ztforwardContOther}" style="color:{!IF(ForwardContractsOther[v9]<0,'red','black')}"/>
+                             <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(forwardContOther<0,'red','black')}">
                                 <apex:param value="{!forwardContOther}"/>
-                            </apex:outputText>
+                            </apex:outputText>-->
                         </td>
+                        <apex:variable value="{!v9+1}" var="v9"/>
                     </apex:repeat>
                 </tr>
             </apex:outputPanel>
@@ -818,14 +942,17 @@
                     <b>{!$Label.Total_Hedging_Instruments}</b>
                 </td>
                 <!-- was {!netHedgeTotal} -->
-                <apex:repeat value="{!hedgeTotal}" var="hedgeTot">
+                <apex:variable value="{!0}" var="v14"/>
+                <apex:repeat value="{!zthedgeTotal}" var="zthedgeTot">
                     <td>
                     <b>
-                        <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(hedgeTot<0,'red','black')}">
+                        <apex:outputText value="{!zthedgeTot}" style="color:{!IF(hedgeTotal[v14]<0,'red','black')}"/>
+                        <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(hedgeTot<0,'red','black')}">
                             <apex:param value="{!hedgeTot}"/>
-                        </apex:outputText>
+                        </apex:outputText>-->
                     </b>
                     </td>
+                    <apex:variable value="{!v14+1}" var="v14"/>
                 </apex:repeat>
             </tr>
             <tr>
@@ -842,14 +969,17 @@
                     <b>{!$Label.Net_Cash_Position_After_Hedging_Instruments}</b>
                 </td>
                 <!-- was {!hedgeTotal} -->
-                <apex:repeat value="{!netHedgeTotal}" var="netHedgeTot">
+                <apex:variable value="{!0}" var="v17"/>
+                <apex:repeat value="{!ztnetHedgeTotal}" var="ztnetHedgeTot">
                     <td>
                     <b>
-                        <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(netHedgeTot<0,'red','black')}">
+                        <apex:outputText value="{!ztnetHedgeTot}" style="color:{!IF(netHedgeTotal[v17]<0,'red','black')}"/>
+                        <!--<apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(netHedgeTot<0,'red','black')}">
                             <apex:param value="{!netHedgeTot}"/>
-                        </apex:outputText>
+                        </apex:outputText>-->
                     </b>
                     </td>
+                    <apex:variable value="{!v17+1}" var="v17"/>
                 </apex:repeat>
             </tr>
             
@@ -868,7 +998,7 @@
                     <td style="background: #6B747B;">
                         &nbsp;
                     </td>
-                     <td colspan="{!months.size}" style="background: #6B747B;text-align: center;color: white;"><b>Amounts Converted in {!defaultCode}</b></td>
+                     <td colspan="{!months.size}" style="background: #6B747B;text-align: center;color: white;"><b>{!$Label.CM_SectionHeading_NetExposure_AmountsConvertedIn} {!defaultCode}</b></td>
                 </tr>                
             
                 <tr>
@@ -878,14 +1008,23 @@
                             <apex:param value="{!conversionRate}"/> <!-- {!currentRate} -->
                         </apex:outputText>
                     </td>
+                    <apex:variable var="countIndex" value="{!0}" />
                     <apex:repeat value="{!convertedRate}" var="conRate">
                     <td>
+                        <apex:variable var="tempVal" value="{!AND(netOperatingFXCashFlow[countIndex] == 0, conRate != 0)}" />
                         <b>
+                            <apex:outputPanel rendered="{!!tempVal}">
                             <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(conRate<0,'red','black')}">
                                 <apex:param value="{!conRate}"/>
                             </apex:outputText>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!tempVal}">
+                                <apex:outputText value="-" style="color : black;" />
+                                
+                            </apex:outputPanel>
                         </b>
                     </td>
+                    <apex:variable var="countIndex" value="{!countIndex+1}"/>
                     </apex:repeat>
                 </tr>
             </apex:outputPanel>
@@ -922,7 +1061,7 @@
             <apex:outputPanel layout="none" id="VolatilityImpact" rendered="{!NOT(isTotal)}">
                 <tr id="VolatilityImpactRow">
                     <td class="leftTd">
-                        <b><nobr>Volatility Impact in Home Currency</nobr></b> <div style="margin-top:10px;">&nbsp;</div>
+                        <b><nobr>{!$Label.CM_SectionHeading_NetExposure_VolatilityImpactInHomeCurrency}</nobr></b> <div style="margin-top:10px;">&nbsp;</div>
                         
                         <div id="slider-range-min"></div> 
                         <div style="margin-top:-6px;">&nbsp;</div>
@@ -930,21 +1069,28 @@
                             <input type="text" id="sliderAmount" readonly="readonly" style="border: 0; color: #f6931f; font-weight: bold;text-align: center;" />
                         </div> <div style="margin-top:-5px;">&nbsp;</div>
                         <span style="float: left;">
-                        Depreciates
+                        {!$Label.CM_SectionText_InvoiceManagement_Insights_Depreciates}
                         &nbsp;&nbsp;&nbsp; <b>{!cur} </b> &nbsp;&nbsp;&nbsp; 
-                        Appreciates
+                        {!$Label.CM_SectionText_InvoiceManagement_Insights_Appreciates}
                         </span>                        
                     </td>
+                    <apex:variable var="countIndex" value="{!0}" />
                     <apex:repeat value="{!convertedRate}" var="conRate">
+                    <apex:variable var="tempVal" value="{!(netOperatingFXCashFlow[countIndex] == 0.0 && conRate!=0.0)}" />
                     <td>
                         <b>
                             <input type="hidden" value="{!conRate}"/>
-                            <span>0</span> <!-- Slider default is 0% -->
+                            
+                            <apex:outputText value="{!if(tempVal, '-', '0')}" style="color:{!IF(conRate<0,'red','black')}">
+                                
+                            </apex:outputText>
+                            <!-- Slider default is 0% -->
 <!--                             <apex:outputText value="{0, number, ###,###,##0}" style="color:{!IF(conRate < 0,'red','black')}"> -->
 <!--                                 <apex:param value="{!conRate}"/> -->
 <!--                             </apex:outputText> -->
                         </b>
                     </td>
+                    <apex:variable var="countIndex" value="{!(countIndex+1)}" />
                     </apex:repeat>
                 </tr>
             </apex:outputPanel>            
@@ -972,15 +1118,17 @@
                     var volatilityImpact = parseFloat($(this).find("input").val());
                     volatilityImpact = (volatilityImpact * (ui.value / 100));
                     if(volatilityImpact % 1 === 0) {
-                        $(this).find("span").html(formatToCurrency(Math.round(Math.abs(volatilityImpact))));  
+                        $(this).find("span").html(Math.round(Math.abs(volatilityImpact)).toLocaleString('{!currentUserLocale}'));  
                     } else {
-                        $(this).find("span").html(formatToCurrency(Math.round(Math.abs(volatilityImpact.toFixed(2)))));
+                        $(this).find("span").html(Math.round(Math.abs(volatilityImpact.toFixed(2))).toLocaleString('{!currentUserLocale}'));
                     } 
+                    /*
                     if(ui.value > 0) {
-                        $(this).find("span").css('color','red');
-                    } else {
                         $(this).find("span").css('color','black');
+                    } else {
+                        $(this).find("span").css('color','red');
                     }                   
+                    */                  
                  } 
             });
         });       
@@ -990,6 +1138,7 @@
  });
  
  $(document).ready(function(){
+        
  	$( "#slider-range-min" ).slider({
      range: "min",
      value: 0,
@@ -1002,17 +1151,22 @@
             $(this).children('td').each(function(j){
                  if(j != 0) {
                     var volatilityImpact = parseFloat($(this).find("input").val());
+                    var tempStore = volatilityImpact;
                     volatilityImpact = (volatilityImpact * (ui.value / 100));
-                    if(volatilityImpact % 1 === 0) {
-                        $(this).find("span").html(formatToCurrency(Math.round(Math.abs(volatilityImpact))));  
+                    if($(this).find("span").text()!= '-'){
+                        if((volatilityImpact % 1) == 0) {
+                            $(this).find("span").html(Math.round(Math.abs(volatilityImpact)).toLocaleString('{!currentUserLocale}'));  
                     } else {
-                        $(this).find("span").html(formatToCurrency(Math.round(Math.abs(volatilityImpact.toFixed(2)))));
+                            $(this).find("span").html(Math.round(Math.abs(volatilityImpact.toFixed(2))).toLocaleString('{!currentUserLocale}'));
                     } 
-                    if(ui.value > 0) {
-                        $(this).find("span").css('color','red');
-                    } else {
+                    }
+                    /*
+                    if(tempStore >= 0) {
                         $(this).find("span").css('color','black');
+                    } else {
+                        $(this).find("span").css('color','red');
                     }                   
+                    */ 
                  } 
             });
         });       

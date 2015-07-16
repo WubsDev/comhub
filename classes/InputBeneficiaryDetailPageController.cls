@@ -34,7 +34,7 @@ public without sharing class InputBeneficiaryDetailPageController {
 	 			associationMsg = 'Invoices ( '+invoices.size()+')';
 	 			foundAssociation = true;
 	 		}
-	 		List<Input__c>inputs = [select id, Name from Input__c where Input_Beneficiary__c =:this.inputRecord.id];
+	 		List<Input__c>inputs = [select id, Name from Input__c where Input_Beneficiary__c =:this.inputRecord.id AND Input_Type__c != 'Invoice'];
 	 		if(inputs.size()>0){
 	 			if(!String.isEmpty(associationMsg)){
 	 				associationMsg = ' and ';

@@ -35,7 +35,7 @@
 
 				            
 		         function saveInputWithImage() {
-									progressbarBSMsg('Saving Input ...');
+                                    progressbarBSMsg('{!$Label.CM_Community_Text_Status_SavingInput}');
 								    showProgressbarBS(true);
 								   	var invImageFiles = document.getElementById('invoiceImage').files;
 								   
@@ -70,7 +70,7 @@
              
        </script>		
             <!-- rendered="{!if(selectedTranscation=='Invoice', true, false)}"  -->
-            <apex:actionstatus id="status1" onstart="progressbarBSMsg('{!$Label.Loading_Wait_Text}');showProgressbarBS(true);" onstop="showProgressbarBS(false);">
+            <apex:actionstatus id="status1" onstart="progressbarBSMsg('{!$Label.CM_Community_Text_PleaseWait}');showProgressbarBS(true);" onstop="showProgressbarBS(false);">
     		</apex:actionstatus>
             <apex:outputPanel id="mainPanel"> 
             <c:ManageCashInvoice sourcePage="{!sourcePage}" isInputTransaction="true" InsightsAndInputTabCtl="{!self}" rendered="{!selectedTranscation=='Invoice'}"/>
@@ -79,7 +79,7 @@
 				<apex:pageBlock id="pBlock1">
 					<apex:PageBlockSection columns="2" id="pbSec1">
 						<apex:facet name="header">
-                            <apex:outputtext value="{!if(sourcePage!='ManageCashInput', 'Input Wizard', 'Input Wizard')}" escape="false" />
+                            <apex:outputtext value="{!if(sourcePage!='ManageCashInput', $Label.CM_SectionHeading_Input_InputWizard, $Label.CM_SectionHeading_Input_InputWizard)}" escape="false" />
 						</apex:facet>				
 						<apex:pageBlock id="pBlock2">
 							<apex:outputpanel >
@@ -101,27 +101,35 @@
 									Added By : Ashish Goyal (Ref: T-377272)
 									Descriptio : added img tag to output text value for help test							 
 									-->
-									<center><h3>Data Input Option: Enter Data Manually</h3>
-		 									<img src='/s.gif' class='imgclass' data-toggle='tooltip' data-placement='bottom' title='{!$Label.Help_Text_Manual_Inputs}'  style='height: 21px; width: 18px;' />
+                                    <center><h3>{!$Label.CM_SectionHeading_Input_InputWizard_DataInputManual}</h3>
+                                            <img src='/s.gif' class='imgclass' data-toggle='tooltip' data-placement='bottom' title='{!$Label.CM_HelpText_Section_Input_InputWizard_DataInputManual}'  style='height: 42px; width: 18px;' />
 									</center>
 									</apex:facet>
 								</apex:PageBlockSection>
 								<apex:PageBlockSection columns="2"
 									 id="pbSec3">
 									<apex:PageBlockSectionItem >
-										<label><nobr> Transaction Type</nobr></label>
-										<apex:selectList value="{!selectedTranscation}"
+                                        <label><nobr>{!$Label.CM_FieldLabel_Input_TransactionType}</nobr></label>
+                                        <!-- Changed By: Megha Agarwal
+                                                T-415632
+                                                get picklist value directly from input object field
+                                            -->
+                                        <!--<apex:selectList value="{!selectedTranscation}"
 											multiselect="false" size="1">
 											<apex:selectOptions value="{!lstTransactionType}" />
 											<apex:actionSupport event="onchange" rerender="mainPanel" status="status1"
 												action="{!changeTransactionType}" />
-										</apex:selectList>
+                                        </apex:selectList>-->
+                                        <apex:inputField value="{!input.Input_Type__c}" >
+                                            <apex:actionSupport event="onchange" rerender="mainPanel" status="status1"
+                                                action="{!changeTransactionType}" />
+                                        </apex:inputField>
 									</apex:PageBlockSectionItem>
 									<apex:PageBlockSectionItem />
 									<apex:repeat value="{!if(fieldset != null, $ObjectType.Input__c.FieldSets[fieldset], null)}" var="f" rendered="{!fieldset != null}">
 										<apex:PageBlockSectionItem >
 											<span class="label" style="align: right"> {!if(f ==
-                                                'Custom_Currency__c', 'Currency',LabelMaps[f.fieldPath] )} </span>
+                                                'Custom_Currency__c', $Label.CM_FieldLabel_Invoice_Currency,LabelMaps[f.fieldPath] )} </span>
 											<apex:outputpanel >
 												<nobr>
 												
@@ -167,7 +175,7 @@
 			                                              				</script>
 																	</td>
 																	<td style="border-bottom:0px;padding: 0px 0px 0px 0px;">
-																			<apex:commandButton value="New" title="Add New Buyer/Supplier"
+                                                                            <apex:commandButton value="{!$Label.CM_Community_Button_New}" title="{!$Label.CM_Community_Button_AddNewBuyerSupplier}"
 																				rendered="{!if(f == 'Input_Beneficiary__c', true,false )}"
 																				styleClass="wuBtn"
 																				style="padding:5px 15px 5px!important"
@@ -184,7 +192,7 @@
 											</apex:outputpanel>
 										</apex:PageBlockSectionItem>
 										<apex:PageBlockSectionItem rendered="{!if(AND(fieldset='Option_Other', f='Amount__c'), true, false)}">
-											<span class="label" style="align: right"> Obligation Amount </span>
+                                            <span class="label" style="align: right">{!$Label.CM_FieldLabel_Input_ObligationAmount}</span>
 											<c:RequiredBlockComponent isRequired="{!(f.required || f.dbrequired)}">
 												<apex:inputField value="{!inputOther[f]}" />
 											</c:RequiredBlockComponent>
@@ -193,7 +201,7 @@
 									</apex:repeat>
 									
 									<apex:PageBlockSectionItem rendered="{!fieldset != null}">								
-										<apex:outputLabel value="Attach Reference Document" />
+                                        <apex:outputLabel value="{!$Label.CM_FieldLabel_Input_AttachReferenceDocument}" />
 										<apex:outputPanel >
 											<nobr>
 												
@@ -213,10 +221,10 @@
 									oncomplete="openPageInPopup({!hasError});" />
 								<center>
 									<div style="padding-top:{!if(fieldset != null, '10px;', '0px;')}">
-										<apex:commandButton value="Save"
+                                        <apex:commandButton value="{!$Label.CM_Community_Button_Save}"
 											onClick="saveInputWithImage(); return false;"
 											styleClass="btn wuBtn" rendered="{!fieldset != null}" />
-										<apex:commandButton value="Cancel" action="{!cancel}"
+                                        <apex:commandButton value="{!$Label.CM_Community_Button_Cancel}" action="{!cancel}"
 											rendered="{!fieldset != null}" />
 									</div>
 								</center>
@@ -232,8 +240,8 @@
 									Added By : Ashish Goyal (Ref: T-377272)
 									Descriptio : added img tag to output text value for help test							 
 									-->
-									<center><h3>Data Input Option: Upload CSV</h3>
-											<img src='/s.gif' class='imgclass' data-toggle='tooltip' data-placement='bottom' title='{!$Label.Help_Text_Csv_Upload}' style='height: 21px; width: 18px;' />
+                                    <center><h3>{!$Label.CM_SectionHeading_Input_InputWizard_DataInputUpload}</h3>
+                                            <img src='/s.gif' class='imgclass' data-toggle='tooltip' data-placement='bottom' title='{!$Label.CM_HelpText_Section_Input_InputWizard_DataInputUpload}' style='height: 21px; width: 18px;' />
 									</center>
 									<script>
 										$(function () {
@@ -243,12 +251,18 @@
 									</apex:facet>
 									<apex:outputpanel >
 										<nobr>
-										<apex:outputLabel value="Transaction Type" />
+                                        <apex:outputLabel value="{!$Label.CM_FieldLabel_Input_TransactionType}" />
 			                                          &nbsp;&nbsp;&nbsp;&nbsp;
-			                                          <apex:selectList id="transTypeId" multiselect="false" size="1"
+                                                      <!--
+                                                            Changed By: Megha Agarwal
+                                                            T-415632
+                                                            get picklist value directly from input object field
+                                                      -->
+                                                      <!--<apex:selectList id="transTypeId" multiselect="false" size="1"
 											styleClass="ctt" onchange="updateCSVSample(this.value)">
 											<apex:selectOptions value="{!lstTransactionType}" />
-										</apex:selectList>
+                                        </apex:selectList>-->
+                                           <apex:inputField value="{!inputUpload.Input_Type__c}"  id="transTypeId" onchange="updateCSVSample(this.value)"/>
 										</nobr>
 									</apex:outputpanel>
 			

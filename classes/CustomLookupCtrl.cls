@@ -14,7 +14,8 @@ public without sharing class CustomLookupCtrl {
     }
      
     public PageReference getSelectedRecord(){
-    	if(selectedId != null && selectedId != ''){                 
+    	if(!String.isEmpty(selectedId)){
+    		if(String.isEmpty(selectedRecordName)){                 
     		string currentRecordId = this.selectedId;  
     		String currentAccount =Utility.currentAccount;   	
     		if(currentRecordId <> null){
@@ -23,10 +24,16 @@ public without sharing class CustomLookupCtrl {
 		    	if(!sobjectList.isEmpty()){
 		    		this.currentRecord = sobjectList[0];
 		    		selectedRecordName = (String) this.currentRecord.get(this.fieldName);
-		    		system.debug('**********:selectedRecordName:'+selectedRecordName);
 		    	}
     		}
+    		}else{
+    			Schema.SObjectType targetType = Schema.getGlobalDescribe().get(this.objName);
+    			this.currentRecord = targetType.newSObject();
+				this.currentRecord.put('Id', selectedId);
+    			this.currentRecord.put(this.fieldName, selectedRecordName);
+    		}
     	}
+   		system.debug('**********:selectedRecordName:'+selectedRecordName);
     	return null;
     }   
 }

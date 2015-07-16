@@ -17,9 +17,10 @@
 	 transient public List<Attachment> listChildAttachments {get;set;}
 	 public String invoiceId {get;set;}
 	 public String invoiceName {get;set;}
+     public String attachmentIdToDelete {get;set;}
 	 public Decimal settlementCurrency {get;set;}
-	 public String attachmentIdToDelete {get;set;}
-     
+     public String userDefaultCurrency{get;set;}
+     public String settlementCurrencyDecimalVal{get;set;}
      //added line for test edit permissions
      public boolean canEdit{get;set;}
      public String returnURL{get; set;}
@@ -43,12 +44,24 @@
 	 		for(Invoice__c tmpInv : getInvoice(ApexPages.currentPage().getParameters().get('id')) ){
 	 		    this.invoiceRecord = tmpInv;
 	        }
-	     	invoiceRecord.Settlement_Amount__c = Utility.getSettlementCurrencyAmount(invoiceRecord.Amount__c, invoiceRecord.Currency_Code__c, Utility.userCurrency );//UserInfo.getDefaultCurrency()
+            //invoiceRecord.Settlement_Amount__c = Utility.getSettlementCurrencyAmount(invoiceRecord.Amount__c, invoiceRecord.Currency_Code__c, Utility.userCurrency );//UserInfo.getDefaultCurrency()
 	     	listChildAttachments = findAttachments();
 	     	invoiceid=invoiceRecord.id;
 	     	invoiceName = invoiceRecord.Name;
 	     	canEdit = false;
-        	canEdit = [SELECT RecordId, HasEditAccess FROM UserRecordAccess WHERE UserId = :userInfo.getuserId() AND RecordId = :invoiceRecord.id LIMIT 1].HasEditAccess ;	     	
+            // canEdit = [SELECT RecordId, HasEditAccess FROM UserRecordAccess WHERE UserId = :userInfo.getuserId() AND RecordId = :invoiceRecord.id LIMIT 1].HasEditAccess ;
+            
+            if(invoiceRecord.OwnerId == UserInfo.getUserId() || invoiceRecord.OwnerId == Utility.currentAccountOwner){
+                canEdit = true;
+            }
+            
+            userDefaultCurrency = UserInfo.getDefaultCurrency();
+            settlementCurrency = Utility.getSettlementCurrencyAmount(invoiceRecord.Amount__c, invoiceRecord.Custom_Currency__c, userDefaultCurrency);      
+            settlementCurrencyDecimalVal = settlementCurrency.format();
+			
+			if(!settlementCurrencyDecimalVal.contains(Utility.getDecimalChar)){
+				settlementCurrencyDecimalVal = settlementCurrency.format() + Utility.getDecimalChar+'00';
+			}
 	 	}
 	 	
 	 }
@@ -161,27 +174,27 @@
     	Boolean hasError = false;
     	try{
 	    	if(invoiceRecord.Name == null || invoiceRecord.Name == '') {
-	            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Invoice Number Should Not be Blank '));
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Validation_Input_InvoiceNumberShouldNotBeBlank));
 	            hasError = true;                
 	        }   
 	        if(invoiceRecord.Status__c == null || invoiceRecord.Status__c == ''){
-	            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Status Should Not be Blank '));
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Validation_Input_FieldStatusShouldNotBeBlank));
 	            hasError = true;                
 	        }       
 	        if(invoiceRecord.Due_Date__c == null) {
-	            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Payment Date Should Not be Blank '));
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Validation_Input_FieldPaymentDateShouldNotBeBlank));
 	            hasError = true;
 	        }
 	        if(invoiceRecord.Amount__c == null ) {
-	            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, 'Amount Should Not be Blank '));
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Validation_Input_FieldAmountShouldNotBeBlank));
 	            hasError = true;
 	        }   
 	        if(!Utility.isValidSfdcId(invoiceRecord.Input_Beneficiary__c)) {
-	            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, 'Supplier Should Not be Blank '));
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Validation_Input_FieldSupplierShouldNotBeBlank));
 	            hasError = true;
 	        }   
 	        if(invoiceRecord.Custom_Currency__c == '' || invoiceRecord.Custom_Currency__c == 'Select' || invoiceRecord.Custom_Currency__c == null) {
-	            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, 'Selected currency is not valid currency. Choose other than Select for Currency.'));
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Validation_Input_FieldSelectedCurrencyIsNotValid));
 	            hasError = true;
 	        }   
 	        if(!hasError) {

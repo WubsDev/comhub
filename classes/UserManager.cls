@@ -6,6 +6,8 @@
 //
 // 05 May, 2015    Ashish Goyal  Original (Ref. T-392409, T-392431)
 //
+// Updated By : 18 June 2015		Ashish Goyal	Ref: T-410586
+//
 public with sharing class UserManager {
 	public static final String EMAIL_TEMPLATE = 'ManageCashWelcomeEmail2';
 	public static Set<Id> commProfileIdSet = new Set<Id>();
@@ -16,44 +18,48 @@ public with sharing class UserManager {
 			if(commProfileIdSet.contains(tUser.ProfileId) && tUser.Username != null && tUser.FederationIdentifier == null){
 				tUser.FederationIdentifier = tUser.Username;
 			}
-			/*if(tUser.LocaleSidKey != null){
-				tUser.Region__c = tUser.LocaleSidKey;
+			/*if(tUser.CurrencyIsoCode != null){
+				UserCurrencyAndDisclaimer__c myCS1 = UserCurrencyAndDisclaimer__c.getValues(tUser.CurrencyIsoCode);
+				if(myCS1 != null){
+					tUser.Region__c = myCS1.Disclaimer__c;
+				}
 			}*/
 		}
 	}
 	
+	// @author : @Ashish Goyal (Ref : T-410586) 
+	// @desc : handle the before update event on User
+	// @param : List of User object record 
+	// @param : Map of Id and User object record 
+	// @return : void	
+	
 	public static void updateFederationIdBU(List<User> userList, Map<Id, User> userMap){
 		getProfileId();
+		Set<Id> updateSharingUserIdSet = new Set<Id>();
+		Set<Id> resetSharingUserIdSet = new Set<Id>();
+		
 		for(User tUser : userList){
 			if(commProfileIdSet.contains(tUser.ProfileId) && ((tUser.Username != null && tUser.FederationIdentifier == null)||
 					( tUser.Username != null && tUser.Username != userMap.get(tUser.Id).Username))){
 				tUser.FederationIdentifier = tUser.Username;
 			}			
+			
+			if(tUser.Share_Records__c && tUser.Share_Records__c != userMap.get(tUser.Id).Share_Records__c){
+				updateSharingUserIdSet.add(tUser.Id);
+			}
+			if(!tUser.Share_Records__c && tUser.Share_Records__c != userMap.get(tUser.Id).Share_Records__c){
+				resetSharingUserIdSet.add(tUser.Id);
 		}
 	}
 	
-	
-	public static void updateDisclaimer(List<User> userList){
-		system.debug('***updateDisclaimer 1:');
-		/*Map<String, Email_Disclaimer__c> emailDisclaimerMap = new Map<String, Email_Disclaimer__c>();
-		for(Email_Disclaimer__c emailDisc : [SELECT Name, Disclaimer__c FROM Email_Disclaimer__c LIMIT 999]){
-			emailDisclaimerMap.put(emailDisc.Name, emailDisc);
+		if(updateSharingUserIdSet.size() > 0){
+			InputInvoiceSharingManager.updateSharingPermission(updateSharingUserIdSet);
 		}
-		system.debug('***updateDisclaimer 2:'+emailDisclaimerMap);
-		
-		String disclaimer = 'USA';
-		for(User tUser : userList){
-			if(tUser.Country == null){
-				tUser.Disclaimer__c = emailDisclaimerMap.get(disclaimer).Disclaimer__c;
-				system.debug('***updateDisclaimer 3.1:'+userList);
+		if(resetSharingUserIdSet.size() > 0){
+			InputInvoiceSharingManager.resetSharingPermission(resetSharingUserIdSet);
 			}
-			else{
-				tUser.Disclaimer__c = emailDisclaimerMap.get(tUser.Country).Disclaimer__c;
-				system.debug('***updateDisclaimer 3.2:'+userList);
-			}
-		}*/
-		system.debug('***updateDisclaimer 3:'+userList);
 	}
+	
 	
 	
 	/*
@@ -117,4 +123,45 @@ public with sharing class UserManager {
 			commProfileIdSet.add(pf.Id);
 		}
 	}
+	
+	
+	public static void updateContactAI(List<User> userList){
+		Set<Id> contactIdSet = new Set<Id>();
+		List<Contact> contactToUpdate = new List<Contact>();
+		for(User tUser : userList){
+			if(tUser.ContactId != null){
+				contactIdSet.add(tUser.ContactId);
+			}
+		}
+		if(contactIdSet.size() > 0){
+			for(Contact con : [SELECT Id, hasCMPUser__c FROM Contact where Id IN:contactIdSet]){
+				con.hasCMPUser__c = true;
+				contactToUpdate.add(con);
+			}
+			if(contactToUpdate.size() > 0){
+				update contactToUpdate;
+			}
+		}
+	}
+	
+	
+	public static void updateContactAU(List<User> userList, Map<Id, User> userMap){
+		Set<Id> contactIdSet = new Set<Id>();
+		List<Contact> contactToUpdate = new List<Contact>();
+		for(User tUser : userList){
+			if(tUser.ContactId == null && tUser.ContactId != userMap.get(tUser.Id).ContactId){
+				contactIdSet.add(userMap.get(tUser.Id).ContactId);
+			}
+		}
+		if(contactIdSet.size() > 0){
+			for(Contact con : [SELECT Id, hasCMPUser__c FROM Contact where Id IN:contactIdSet]){
+				con.hasCMPUser__c = false;
+				contactToUpdate.add(con);
+			}
+			if(contactToUpdate.size() > 0){
+				update contactToUpdate;
+			}
+		}
+	}
+	
 }

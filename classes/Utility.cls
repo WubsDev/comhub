@@ -15,6 +15,7 @@ public without sharing class Utility {
 		// Get the Currency List From Current LoggedIn User Account    
         list<Selectoption> lstCurrency = new list<Selectoption>();
         Set<String> currencySet = new Set<String>();
+        
         for(AggregateResult invoiceRec: [SELECT count(Id), Custom_Currency__c 
                                          FROM Invoice__c 
                                          WHERE Account__c  =:currentAccount
@@ -28,8 +29,8 @@ public without sharing class Utility {
                                          FROM Input__c 
                                          WHERE Parent_account__c=:currentAccount
                                          and Custom_Currency__c not in :currencySet
-                                         and (Type__c in ('Forecast Inflow', 'Inflow - Other', 'Purchase Order','Forecast Order','Outflow - Other', 'Forecast Outflow') 
-                                         		or Input_Type__c in ('Forecast Inflow', 'Inflow - Other', 'Purchase Order','Forecast Order','Outflow - Other', 'Forecast Outflow')
+                                         and (Type__c in ('Forecast Inflow', 'Purchase Order','Forecast Order', 'Forecast Outflow') 
+                                            or Input_Type__c in ('Forecast Inflow', 'Purchase Order','Forecast Order', 'Forecast Outflow')
                                          	)
                                          group by  Custom_Currency__c]) {
             String currencyCode = (String) inputRec.get('Custom_Currency__c');
@@ -53,9 +54,11 @@ public without sharing class Utility {
 		// Get the Currency List From Current LoggedIn User Account    
         list<Selectoption> lstCurrency = new list<Selectoption>();
         Set<String> currencySet = new Set<String>();
+        Date startdt = Date.today(); //.toStartOfMonth();
         for(AggregateResult invoiceRec: [SELECT count(Id), Custom_Currency__c 
                                          FROM Invoice__c 
                                          WHERE Account__c  =:currentAccount
+                                         AND Due_Date__c >= :startdt
                                          group by  Custom_Currency__c]) {
             String currencyCode = (String) invoiceRec.get('Custom_Currency__c');
             if(!currencySet.contains(currencyCode)) {
@@ -67,6 +70,8 @@ public without sharing class Utility {
                                          WHERE Parent_account__c=:currentAccount
                                          and Custom_Currency__c not in :currencySet
                                          and Input_Type__c !='Fixed Forward Contract - WUBS'
+                                         AND Input_Type__c != 'Invoice'
+                                         AND Transaction_Date__c >= :startdt 
                                          group by  Custom_Currency__c]) {
             String currencyCode = (String) inputRec.get('Custom_Currency__c');
             if(!currencySet.contains(currencyCode)) {
@@ -149,14 +154,31 @@ public without sharing class Utility {
         Map<String, Schema.SObjectField> field_map = sobject_describe.fields.getMap(); 
         List<Schema.PicklistEntry> pick_list_values = field_map.get(fieldName).getDescribe().getPickListValues();
         if(addBlank){
-            lstPickvals.add(new SelectOption('','Select'));
+            lstPickvals.add(new SelectOption('', System.label.CM_Community_Text_FieldFilter_TransactionTypeFilter_Item_Select));
         } 
         for (Schema.PicklistEntry a : pick_list_values) {
-            lstPickvals.add(new SelectOption(a.getValue(),a.getValue()));
+            lstPickvals.add(new SelectOption(a.getLabel(),a.getLabel()));
         }
         lstPickvals.sort();
         return lstPickvals;
     }
+    
+    
+    public static Map<String, String> picklistLabelValueMap(String ObjectAPI , String fieldName){
+        Map<String, String> lstPickvals=new Map<String, String>();
+        Schema.SObjectType targetType = Schema.getGlobalDescribe().get(ObjectAPI);
+        Sobject Object_name = targetType.newSObject();
+        Schema.sObjectType sobject_type = Object_name.getSObjectType();
+        Schema.DescribeSObjectResult sobject_describe = sobject_type.getDescribe();
+        Map<String, Schema.SObjectField> field_map = sobject_describe.fields.getMap(); 
+        List<Schema.PicklistEntry> pick_list_values = field_map.get(fieldName).getDescribe().getPickListValues();
+        
+        for (Schema.PicklistEntry a : pick_list_values) {
+            lstPickvals.put(a.getLabel(),a.getValue());
+        }
+        return lstPickvals;
+    }
+    
     
     public static Set<String> picklistValueSet(String ObjectAPI , String fieldName){
         Set<String> lstPickvals=new Set<String>();
@@ -168,6 +190,7 @@ public without sharing class Utility {
         List<Schema.PicklistEntry> pick_list_values = field_map.get(fieldName).getDescribe().getPickListValues(); 
         for (Schema.PicklistEntry a : pick_list_values) {
             lstPickvals.add(a.getValue().toUpperCase());
+            lstPickvals.add('label-'+a.getLabel().toUpperCase());
         }
         return lstPickvals;
     }
@@ -243,13 +266,54 @@ public without sharing class Utility {
         return false;
     }
 
+    public static void getFormatDecimalString(){
+        Decimal d = 1234.45;
+        String s = d.format();
+        String separatorCharL = s.substring(s.length()-7, s.length()-6);
+        //system.debug('-----------'+s+'>>'+getDecimalSeparatorChar+'::'+getDecimalChar+'ooo');
+        if(separatorCharL == ' ' || separatorCharL == ' '){
+            separatorCharL = ' ';
+        }
+        getDecimalSeparatorChar = separatorCharL;
+        getDecimalChar = s.substring(s.length()-3, s.length()-2);       
+    }
+    public static string getDecimalChar{
+        get{
+            if(String.isEmpty(getDecimalChar) ){
+                getFormatDecimalString();
+            }
+            return getDecimalChar;
+        }
+        set;
+    }
+    public static string getDecimalSeparatorChar{
+        get{
+            if(String.isEmpty(getDecimalSeparatorChar)){
+                getFormatDecimalString();
+            }
+            system.debug('----------getDecimalSeparatorChar---------'+getDecimalSeparatorChar);
+            return getDecimalSeparatorChar;
+        }
+        set;
+    }
+    
     public static Decimal getDecimal(String srcText){
         if(Utility.isValidText(srcText)){
+        	system.debug('****Decimal SRC 0>>'+srcText);
             try{
-                system.debug('****Decimal Src>>'+Utility.getValidText(srcText));
-                return Decimal.valueOf(Utility.getValidText(srcText));
+                srcText = Utility.getValidText(srcText);
+                //system.debug('****Decimal Src>>'+Utility.getValidText(srcText));
+                //For some local "." is separator
+                srcText = srcText.replace(getDecimalChar, '@@');
+                system.debug('****Decimal SRC 2>>'+srcText);
+                srcText = srcText.replace(getDecimalSeparatorChar, '');
+                system.debug('****Decimal SRC 3>>'+srcText);
+                srcText = srcText.replace('@@', '.');  
+                system.debug('****Decimal SRC 4>>'+srcText);
+                system.debug('----------getDecimalSeparatorChar---------'+getDecimalSeparatorChar+' : '+getDecimalChar);         
+                return Decimal.valueOf(srcText);
             }catch(Exception Ex){
-                system.debug('****Decimal>>'+Ex);
+                system.debug('****Decimal>>'+Ex+': Converted:'+srcText);
             }
         }
         return null;
@@ -303,6 +367,15 @@ public without sharing class Utility {
         return !String.isEmpty( csvRow);
      }
      
+     
+     //Check if profile name ends with CCT, to find if profile is "CCT"  profile.
+     public static boolean isDealerUser{
+      get{
+        return (!(isCCTuser || isNonCCTuser));
+      }
+     }
+     
+     
      //Check if profile name ends with CCT, to find if profile is "CCT"  profile.
      public static boolean isCCTuser{
      	get{
@@ -319,23 +392,36 @@ public without sharing class Utility {
      public static String userCurrency{
      	get{
      		if(loggedInUser != null){
+            if(String.isEmpty(userCurrency)){
      			if(!String.isEmpty(loggedInUser.DefaultCurrencyIsoCode)){
-     				return loggedInUser.DefaultCurrencyIsoCode;
+                if(loggedInUser != null && loggedInUser.ContactId!=null){
+                    userCurrency= loggedInUser.DefaultCurrencyIsoCode;
+                    return userCurrency;
+                }
+                else{
+                    userCurrency= [SELECT CurrencyIsoCode from Account Where Id =:currentAccount].CurrencyIsoCode;
+                    return userCurrency;
+                }
      			}else{
      				if(loggedInUser != null && loggedInUser.ContactId!=null && Contact.AccountId!=null){
-     					return loggedInUser.CurrencyIsoCode;
+                  userCurrency= loggedInUser.CurrencyIsoCode;
+                  return userCurrency;
      				}
      			}
+            }else{
+            	return userCurrency;
+            }
      		}
      		return '';
      	}
+      set;
      }
      
      public static User loggedInUser{
         get{
             if(loggedInUser == null){
-                loggedInUser = [Select   Id, Profile.Name, ContactId, DefaultCurrencyIsoCode, Name, IsPrmSuperUser,
-                	CurrencyIsoCode, Contact.AccountId, Contact.Account.CurrencyIsoCode, LanguageLocaleKey FROM  User
+                loggedInUser = [Select   Id, Profile.Name, ContactId, DefaultCurrencyIsoCode, Name, IsPrmSuperUser,LocaleSidKey,
+                  CurrencyIsoCode, Contact.AccountId, Contact.Account.CurrencyIsoCode, LanguageLocaleKey, Contact.Account.OwnerId FROM  User
                   	WHERE  Id = :UserInfo.getUserId() LIMIT 1];//'005n0000000iicr']; 
             }
             return loggedInUser;
@@ -379,6 +465,23 @@ public without sharing class Utility {
         }
         set;
      }
+     
+     
+     public static Id currentAccountOwner{
+        get{
+            if(loggedInUser != null){
+                if(loggedInUser.Contact.AccountId != null){
+                    currentAccountOwner = loggedInUser.Contact.Account.OwnerId;
+                }else{
+                    currentAccountOwner = null;
+                }
+            }
+            return currentAccountOwner;
+        }
+        set;
+     }
+     
+     
      public static Datetime lastUpdateMarketDatetime{
         get{
             if(loggedInMarketRate!=null){
@@ -424,13 +527,13 @@ public without sharing class Utility {
         }
         set;
      }  
-     public static String inputNOT_Outgoing{
+     public static String input_Outgoing{
         get{            
-            if(String.isEmpty(inputNOT_Outgoing)){
+            if(String.isEmpty(input_Outgoing)){
                 //Outgoing is left from all below types
-                inputNOT_Outgoing = inputHedging+','+inputTypeFfcWubs+','+inputIncoming;
+                input_Outgoing = System.Label.CM_Type_Outgoing;
             }
-            return inputNOT_Outgoing;
+            return input_Outgoing;
         }
         set;
      }
@@ -454,7 +557,7 @@ public without sharing class Utility {
           system.debug('--------ashish---------'+f.getFieldPath()+'-----------------'+oBjsObject.get(f.getFieldPath()));
      			if(oBjsObject.get(f.getFieldPath())==null){
 		     		if(isRenderErrorMessage){
-		     			ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, mapLabelNames.get(f.FieldPath)+' Should Not be Blank '));
+              ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, mapLabelNames.get(f.FieldPath) + ' ' + System.Label.CM_Validation_Input_ShouldNotBeBlank));
 		     		}  
 		     		hasError = true;
      			}
@@ -463,7 +566,7 @@ public without sharing class Utility {
         }
         if(oBjsAnotherObject!=null && fieldSetName=='Option_Other' && oBjsAnotherObject.get('amount__c')==null){
         	if(isRenderErrorMessage){
-        		ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Obligation Amount Should Not be Blank '));
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Validation_Input_FieldObligationAmountShouldNotBeBlank));
         	}
         	hasError = true;
         }
@@ -473,7 +576,7 @@ public without sharing class Utility {
         	Datetime Window_End_Date = (Datetime)oBjsObject.get('Window_End_Date__c');
         	system.debug('*****::'+Window_Start_Date+' : '+Window_End_Date);
         	if(Window_End_Date<Window_Start_Date){
-        		ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'"Window End Date" should be equal or greater than "Window Start Date"'));
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Validation_Input_DateShouldBeGreaterOrEqual));
         	}
         }
         return hasError;
@@ -486,11 +589,11 @@ public without sharing class Utility {
     	String beneName = '';
     	if(!String.isEmpty(TransactionType)){
     		if(TransactionType.equalsIgnoreCase('Outgoing')){
-    			beneName = 'Supplier';
+          beneName = Label.CM_SectionText_InvoiceManagement_MyInvoices_BuyerSupplier;
     		}else if(TransactionType.equalsIgnoreCase('Hedging')){
     			beneName = 'Counter Party';
     		}else if(TransactionType.equalsIgnoreCase('Incoming')){
-    			beneName = 'Buyer';
+          beneName = Label.CM_SectionText_InvoiceManagement_MyInvoices_BuyerSupplier;
     		}
     	}
     	return beneName;
@@ -517,37 +620,37 @@ public without sharing class Utility {
      		if(f.getFieldPath().equalsIgnoreCase('Transaction_Date__c')){
      			if(tranApiName.equalsIgnoreCase('Fixed_Forward_Contract_Other') || tranApiName.equalsIgnoreCase('Option_Other')){
      				isSet = true;
-     				labelName.put(f.getFieldPath(), 'Settlement Date');
+            labelName.put(f.getFieldPath(), Label.Settlement_Date);
      			}
      		}
      		
         if(f.getFieldPath().equalsIgnoreCase('Custom_Currency__c')){
      				isSet = true;
-     				labelName.put(f.getFieldPath(), 'Currency Code');
+            labelName.put(f.getFieldPath(), Label.CM_Label_Currency_Code);
      		}
      		
      		if(f.getFieldPath().equalsIgnoreCase('Counter_Party__c')){
      				isSet = true;
-     				labelName.put(f.getFieldPath(), 'Counter Party');
+            labelName.put(f.getFieldPath(), Label.Counter_Party);
      		}
      		
      		if(f.getFieldPath().equalsIgnoreCase('Amount__c') && tranApiName.equalsIgnoreCase('Option_Other')){
-     			labelName.put(f.getFieldPath(), 'Protection Amount');
-     			labelName.put(f.getFieldPath()+'_other', 'Obligation Amount');
+          labelName.put(f.getFieldPath(), Label.Protection_Amount);
+          labelName.put(f.getFieldPath()+'_other', Label.Obligation_Amount);
      			isSet = true;
      		}
      		if(f.getFieldPath().equalsIgnoreCase('Paid__c')){
      			if(tranApiName.equalsIgnoreCase('Fixed_Forward_Contract_Other')||tranApiName.equalsIgnoreCase('Window_Forward_Contract_Other')||
      				tranApiName.equalsIgnoreCase('Option_Other')){
      				isSet = true;
-     				labelName.put(f.getFieldPath(), 'Settled');
+            labelName.put(f.getFieldPath(), System.Label.CM_FieldInput_Input_Settled);
      			}else
      				if(tranApiName.equalsIgnoreCase('Outgoing_Transaction')){
-     					labelName.put(f.getFieldPath(), 'Paid');
+              labelName.put(f.getFieldPath(), System.Label.CM_Community_Text_FieldFilter_InvoiceStatus_Item_Paid);
      					isSet = true;
      			}else 
      				if(tranApiName.equalsIgnoreCase('incoming_Transaction')){
-     					labelName.put(f.getFieldPath(), 'Received');
+              labelName.put(f.getFieldPath(), System.Label.CM_FieldInput_Input_Received);
      					isSet = true;
      			}
      		}
@@ -562,12 +665,11 @@ public without sharing class Utility {
 
 	public static string getTransactionType(String selectedTranscation) {
 		String trnType = '';
-    	if (selectedTranscation == 'Purchase Order' || selectedTranscation == 'Forecast Outflow' ||
-            selectedTranscation == 'Outflow - Other' ) {
+      if (selectedTranscation == 'Purchase Order' || selectedTranscation == 'Forecast Outflow') {
             trnType = 'Outgoing';
        	}else if(selectedTranscation == 'Option - Other' || selectedTranscation == 'Option - WUBS'){
        		trnType = 'Hedging';
-         }else if (selectedTranscation == 'Forecast Inflow' || selectedTranscation == 'Inflow - Other') {
+         }else if (selectedTranscation == 'Forecast Inflow') {
         	trnType = 'Incoming';
        	}else if(selectedTranscation == 'Fixed Forward Contract - Other') {
             trnType = 'Hedging';
@@ -583,12 +685,11 @@ public without sharing class Utility {
 
 	public static string changeTransactionType(String selectedTranscation) {
     	String fieldset = '';
-    	if (selectedTranscation == 'Purchase Order' || selectedTranscation == 'Forecast Outflow' ||
-            selectedTranscation == 'Outflow - Other' ) {
+      if (selectedTranscation == 'Purchase Order' || selectedTranscation == 'Forecast Outflow' ) {
             fieldset = 'Outgoing_Transaction';
        	}else if(selectedTranscation == 'Option - Other' || selectedTranscation == 'Option - WUBS'){
        		fieldset = 'Option_Other';
-         }else if (selectedTranscation == 'Forecast Inflow' || selectedTranscation == 'Inflow - Other') {
+         }else if (selectedTranscation == 'Forecast Inflow') {
         	fieldset = 'incoming_Transaction';
        	}else if(selectedTranscation == 'Fixed Forward Contract - Other') {
             fieldset = 'Fixed_Forward_Contract_Other';
@@ -622,7 +723,7 @@ public without sharing class Utility {
 	}
     public static String inputLink{
     	get{
-    		return '<a href=\'apex/ManageCashInput\'><h3 style=\'color:#222222;text-decoration:none!important;\'>Click here to manage all your inputs.</h3></a>';
+        return '<a href=\'apex/ManageCashInput\'><h3 style=\'color:#222222;text-decoration:none!important;\'>'+Label.CM_Community_Link_ManageAllInputs+'</h3></a>';
     	}
     }    
     
@@ -636,6 +737,35 @@ public without sharing class Utility {
     		}    		
     	}
     	return false;
+    }
+    
+    public static String CSVRowDeliminator{
+    	public get{
+    			if(String.isEmpty(CSVRowDeliminator)){
+	    			CMPUserBasedCSVPareser__c cmpCSVParser = CMPUserBasedCSVPareser__c.getValues(Utility.loggedInUser.LocaleSidKey);
+	    			if(cmpCSVParser != null){
+	                	CSVRowDeliminator = cmpCSVParser.CSVRowDeliminator__c;
+	            	}else{
+	            		//Check if default local-set
+	            		if(Utility.loggedInUser.LocaleSidKey.length()>2){
+	            			String findSid = Utility.loggedInUser.LocaleSidKey.substring(0,2);
+	            			
+	            			for(CMPUserBasedCSVPareser__c cmpCSVParserItr : CMPUserBasedCSVPareser__c.getAll().values()){
+	            				if(!String.isEmpty(cmpCSVParserItr.Name)&& cmpCSVParserItr.Name.length()==2){
+	            					if(findSid.equalsIgnoreCase(cmpCSVParserItr.Name)){
+	            						CSVRowDeliminator = cmpCSVParserItr.CSVRowDeliminator__c;
+	            					}
+	            				}
+	            			}
+	            		}
+	    			}
+    			}
+	    		if(String.isEmpty(CSVRowDeliminator)){	
+	            	CSVRowDeliminator= ',';
+	    		}
+    			return CSVRowDeliminator;
+    	}
+    	private set;
     }
     
     public static void updateOptionInput(sObject input, sObject optionInput, String selectedTranscation, String fieldSet){
@@ -675,18 +805,21 @@ public without sharing class Utility {
  		return true;
  	}
     
+    
+    
+    
     public static String getValidationTextByFieldType(Schema.FieldSetMember f ){
 		//if(f.getType()==Schema.DisplayType.String){
 		if(f.getType()==Schema.DisplayType.DATE){
-    		return ' should be a valid date';
+        return ': ' + System.Label.CM_Validation_Input_FieldShouldBeAValidDate;
 		}
 		if(f.getType()==Schema.DisplayType.PICKLIST){
-    		return ' should be a valid selected value';
+        return ': ' + System.Label.CM_Validation_Input_FieldShouldBeAValidValue;
 		}
 		if(f.getType()==Schema.DisplayType.DOUBLE){
-    		return ' should be a valid number';
+        return ': ' + System.Label.CM_Validation_Input_FieldShouldBeAValidNumber;
 		}
-		return ' should not be Blank';
+    return ': ' + System.Label.CM_Validation_Input_FieldShouldNotBeBlank;
 /*DATE
 PICKLIST
 DOUBLE
@@ -694,6 +827,12 @@ REFERENCE
 */
     }
     public static boolean getBoolean(String srcText){
+        if(srcText.equalsIgnoreCase(Label.CM_Field_Value_Yes)){
+            srcText = 'true';
+        }
+        if(srcText.equalsIgnoreCase(Label.CM_Field_Value_No)){
+            srcText = 'false';
+        }
         if(Utility.isValidText(srcText)){
             try{
                 system.debug('****Decimal Src>>'+Utility.getValidText(srcText));

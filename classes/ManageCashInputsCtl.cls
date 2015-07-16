@@ -169,7 +169,7 @@ public without sharing class ManageCashInputsCtl {
         checkWUBSRecord();
         
         ShowInput = true;
-        if(Record.Input_Type__c == 'Forecast Inflow' || Record.Type__c == 'Inflow - Other')
+        if(Record.Input_Type__c == 'Forecast Inflow')
             Mode='Incoming';
         else if(Record.Input_Type__c == 'Option - Other'||Record.Input_Type__c == 'Option - WUBS')
         {
@@ -216,15 +216,9 @@ public without sharing class ManageCashInputsCtl {
 	            }else if(Record.Input_Type__c == 'Forecast Order')
 	            {
 	                Record.Type__c='Forecast Order';
-	            }else if(Record.Input_Type__c == 'Outflow - Other')
-	            {
-	                Record.Type__c='Outflow - Other';
 	            }else if(Record.Input_Type__c == 'Forecast Inflow')
 	            {
 	                Record.Type__c='Forecast Inflow';
-	            }else if(Record.Input_Type__c == 'Inflow - Other')
-	            {
-	                Record.Type__c='Inflow- Other';
 	            }else if(Record.Input_Type__c == 'Fixed Forward Contract - WUBS')
 	            {
 	                Record.Type__c = 'Forward Contract - WUBS';
@@ -372,7 +366,7 @@ public without sharing class ManageCashInputsCtl {
         soql += ' FROM Input__c WHERE ';
         // WHERE
         //soql += ' Show_Input__c = true '; 
-        soql +=	 ' Parent_account__c=\''+Utility.currentAccount+'\'  AND Input_Type__c NOT IN (\'' + 'Fixed Forward Contract - WUBS' + '\') ';
+        soql +=  ' Input_Type__c != \'Invoice\' AND Parent_account__c=\''+Utility.currentAccount+'\'  AND Input_Type__c NOT IN (\'' + 'Fixed Forward Contract - WUBS' + '\') ';
         soql +=	 getCurrencyDatetimeFilter('input', selectedCurrency, input.Window_Start_Date__c, input.Window_End_Date__c);
         //ApexPages.addMessage(new ApexPages.message(ApexPages.severity.INFO, '********soql : '+soql));
         /*
@@ -395,7 +389,7 @@ public without sharing class ManageCashInputsCtl {
         //outgoingPgCtl.generateData(runQuery(soql + ' AND Type__c NOT IN '+Utility.getCriteriaFromValues(Utility.inputNOT_Outgoing)+'  AND Input_Type__c NOT IN '+Utility.getCriteriaFromValues(Utility.inputNOT_Outgoing)));
         
         List<inputWpr>outputs = getInputData(outgoingPgCtlCTM.sortField, outgoingPgCtlCTM.sortDir, 
-        	runQuery(outgoingPgCtlCTM.sortField, outgoingPgCtlCTM.sortDir, soql + ' AND Type__c NOT IN '+Utility.getCriteriaFromValues(Utility.inputNOT_Outgoing)+'  AND Input_Type__c NOT IN '+Utility.getCriteriaFromValues(Utility.inputNOT_Outgoing)));
+            runQuery(outgoingPgCtlCTM.sortField, outgoingPgCtlCTM.sortDir, soql + ' AND ( Type__c IN '+Utility.getCriteriaFromValues(Utility.input_Outgoing)+'  OR Input_Type__c IN '+Utility.getCriteriaFromValues(Utility.input_Outgoing)+' ) '));
         outputs.addAll(getInvoiceData(selectedCurrency, input.Window_Start_Date__c, input.Window_End_Date__c));
         outputs.sort();
         outgoingPgCtlCTM.loadData(outputs);
@@ -429,17 +423,34 @@ public without sharing class ManageCashInputsCtl {
     }
     private List<inputWpr> getInputData(String sortField, String sortDir, List<input__c>inputs){
     	List<inputWpr> wprs = new List<inputWpr>();
+        
     	for(input__c input: inputs){
-    		wprs.add(new inputWpr(sortField, sortDir,  input));
+            inputWpr inputWprL = new inputWpr(sortField, sortDir,  input); 
+            wprs.add(inputWprL);
     	}
     	return wprs;
     }
     private List<inputWpr> getInvoiceData(List<Invoice__c>invoices){
     	List<inputWpr> wprs = new List<inputWpr>();
+            
     	for(invoice__c invoice: invoices){
-    		wprs.add(new inputWpr(outgoingPgCtlCTM.sortField, outgoingPgCtlCTM.sortDir, invoice));
+            inputWpr inputWprL = new inputWpr(outgoingPgCtlCTM.sortField, outgoingPgCtlCTM.sortDir, invoice);
+            wprs.add(inputWprL);
+            //For dealar profile, don't show view detail link
+           // system.debug('****!permissionSet.contains(invoice.id):'+permissionSet+' >> '+' :: '+invoice.id+'!!'+permissionSet.contains(invoice.id));
     	}
     	return wprs;
+    }
+    boolean isCCTuser{
+        get{
+            if(isCCTuser==null){
+                Id profileId=userinfo.getProfileId();
+                String profileName = [Select Id,Name from Profile where Id=:profileId].Name;
+                isCCTuser = profileName.containsIgnoreCase('CCT');
+            }
+            return isCCTuser;
+        }
+        set;
     }
 	/*
     private void processInput(LIST<Input__c> inputs) {
@@ -500,7 +511,7 @@ public without sharing class ManageCashInputsCtl {
             checkWUBSRecord();
             ShowInput = true;
             
-            if(Record.Input_Type__c == 'Forecast Inflow' || Record.Type__c == 'Inflow - Other')
+            if(Record.Input_Type__c == 'Forecast Inflow')
                 Mode='Incoming';
             else if(Record.Input_Type__c == 'Option - Other'||Record.Input_Type__c == 'Option - WUBS') {
                 //ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'IN THE CORRECT AREA : ' + record2));
@@ -529,7 +540,7 @@ public without sharing class ManageCashInputsCtl {
                 Mode='Outgoing';                            
         }
     	}catch(Exception Ex){
-    		 //ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, 'Error occured while editing the '+Record.Input_Type__c+'. Error Detail :'+Ex));
+             //ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.ERROR, System.Label.CM_Alert_ErrorOccurredWhileEditingRecord + ' ' + Record.Input_Type__ c + ' ' + System.Label.CM_Alert_UnableToSaveErrorDetail + Ex));
     		 message = 'Error occured while editing the '+Record.Input_Type__c+'. Error Detail :'+Ex.getMessage();
     	}
     }
@@ -635,7 +646,7 @@ public without sharing class ManageCashInputsCtl {
      //Getting data from exising record I-149395
     public List<SelectOption> getaccountTradedCurrency(){
     	list<Selectoption> lstCurrency = new list<Selectoption>();
-        lstCurrency.add(new Selectoption('','- Show All -' ));
+        lstCurrency.add(new Selectoption('', Label.CM_Community_Text_FieldFilter_Currency_Item_ShowAll));
         lstCurrency.addAll(Utility.getaccountTradedCurrency());
 		return lstCurrency;
     }

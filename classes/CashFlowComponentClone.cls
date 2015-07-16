@@ -45,6 +45,35 @@ public without sharing class CashFlowComponentClone {
     transient   public  LIST<Double>   convertedProtectionRate{get;private set;}
     transient   public  LIST<Double>   convertedObligationRate{get;private set;}
     
+    transient   public  String         ztHoldingBalance{get;private set;}
+    transient   public  LIST<String>   ztTradingReceipts{get;private set;}
+    transient   public  LIST<String>   ztInflowTotal{get;private set;}
+    transient   public  LIST<String>   ztInvoices{get;private set;}
+    transient   public  LIST<String>   ztpurchaseOrders{get;private set;}
+    transient   public  LIST<String>   ztforecastOrders{get;private set;}
+    transient   public  LIST<String>   ztoutflowTotal{get;private set;}
+    transient   public  LIST<String>   ztnetOperatingFXCashFlow{get;private set;}
+    transient   public  LIST<String>   ztForwardContractsWUBS{get;private set;}
+    transient   public  LIST<String>   ztForwardContractsOther{get;private set;}
+    transient   public  LIST<String>   ztOptionsWUBSProtection{get;private set;}
+    transient   public  LIST<String>   ztOptionsWUBSObligation{get;private set;}
+    transient   public  LIST<String>   ztOptionsOtherProtection{get;private set;}
+    transient   public  LIST<String>   ztOptionsOtherObligation{get;private set;}
+    transient   public  LIST<String>   zthedgeTotal{get;private set;}
+    transient   public  LIST<String>   zthedgeTotalProtection{get;private set;}
+    transient   public  LIST<String>   zthedgeTotalObligation{get;private set;}
+    transient   public  LIST<String>   ztnetHedgeTotal{get;private set;}
+    transient   public  LIST<String>   ztnetFXPositionProtection{get;private set;}
+    transient   public  LIST<String>   ztnetFXPositionObligation {get;private set;}
+    transient   public  LIST<String>   ztconvertedRate{get;private set;}
+    transient   public  LIST<String>   ztconvertedProtectionRate{get;private set;}
+    transient   public  LIST<String>   ztconvertedObligationRate{get;private set;}
+    
+    
+    public String ztconversionRate {get;private set;}   
+    public String ztcurrentBalance {get;private set;} 
+    
+    
     //Booleans for empty lists
     public Boolean noInvoices                   {get;private set;}
     public Boolean noPurchaseOrders             {get;private set;}
@@ -68,6 +97,7 @@ public without sharing class CashFlowComponentClone {
     
     public Boolean isTotal                      {get;private set;}
     public Decimal holdingBalance {get; set;}
+    public String currentUserLocale {get; set;}
     
     //public set<Id> owners {get; set;}
 
@@ -79,6 +109,10 @@ public without sharing class CashFlowComponentClone {
         classUser = Utility.loggedInUser;//findUser(currentContact);
         System.debug('THE current CONTACT IS THIS: ' + currentContact);
         System.debug('THE RETURNED USER IS THIS: ' + classUser);
+        currentUserLocale = UserInfo.getLocale();
+        if(currentUserLocale.contains('_')){
+            currentUserLocale = currentUserLocale.substring(0, currentUserLocale.indexOf('_'));
+        }
         defaultCode = classUser.DefaultCurrencyIsoCode; // was DefaultCurrencyIsoCode
         
         
@@ -160,6 +194,32 @@ public without sharing class CashFlowComponentClone {
         convertedObligationRate = new LIST<Double>();
         convertedProtectionRate = new LIST<Double>();
         //owners = new set<Id>();
+        
+        ztTradingReceipts = new LIST<String>();
+        ztInflowTotal = new LIST<String>();
+        ztInvoices = new LIST<String>();
+        ztPurchaseOrders = new LIST<String>();
+        ztforecastOrders = new LIST<String>();
+        ztoutflowTotal = new LIST<String>();
+        ztnetOperatingFXCashFlow = new LIST<String>();
+        ztForwardContractsWUBS = new LIST<String>();
+        ztForwardContractsOther = new LIST<String>();
+        ztOptionsWUBSProtection = new LIST<String>();
+        ztOptionsWUBSObligation = new LIST<String>();
+        ztOptionsOtherProtection = new LIST<String>();
+        ztOptionsOtherObligation = new LIST<String>();
+        zthedgeTotal = new LIST<String>();
+        zthedgeTotalProtection = new LIST<String>();
+        zthedgeTotalObligation = new LIST<String>();
+        ztnetHedgeTotal = new LIST<String>();
+        ztnetFXPositionProtection = new LIST<String>();
+        ztnetFXPositionObligation = new LIST<String>();
+        ztconvertedRate = new LIST<String>();
+        ztconvertedProtectionRate = new LIST<String>();
+        ztconvertedObligationRate = new LIST<String>();
+        ztconversionRate = '0'; 
+        ztcurrentBalance = '0';       
+        ztHoldingBalance = '0';
     }
 
     //return the list of months. PSEUDO-CONSTRUCTOR
@@ -170,7 +230,9 @@ public without sharing class CashFlowComponentClone {
         if(currentAccount == null) {
             currentAccount = Utility.currentAccount;
         }
-        if(currentAccount != null || currentAccount != '')
+        //Fix - System.LimitException: Too many SOQL queries
+        //If "classAccount" already set, don't make again query
+        if((currentAccount != null || currentAccount != '') && classAccount==null)
             classAccount = findAccount(currentAccount);
         /*if(classAccount == null)
             classUser = findUser(currentContact);
@@ -200,12 +262,84 @@ public without sharing class CashFlowComponentClone {
         System.debug('For populateValues <Currency>: ' + cur);
         populateInvoiceValues(currentContact, startdt, lastdt, cur, currentAccount);
         populateFWContractValues(currentContact, startdt,lastdt, cur, currentAccount);
+        populateHoldingBalance(cur, currentAccount);
         populateValues(currentContact, startdt, lastdt, cur, currentAccount);
         
         //populateInvoiceValues(currentContact, startdt, lastdt, cur, currentAccount);
-        
-        populateHoldingBalance(cur, currentAccount);
+        popoulateFormatedValues();
         return(months);
+    }
+        
+    private void popoulateFormatedValues(){
+        for(Decimal val : TradingReceipts){
+            ztTradingReceipts.add(val.Format());
+        }
+        for(Decimal val : inflowTotal){
+            ztInflowTotal.add(val.Format());
+        }
+        for(Decimal val : Invoices){
+            ztInvoices.add(val.Format());
+        }
+        for(Decimal val : purchaseOrders){
+            ztpurchaseOrders.add(val.Format());
+        }
+        for(Decimal val : forecastOrders){
+            ztforecastOrders.add(val.Format());
+        }
+        for(Decimal val : outflowTotal){
+            ztoutflowTotal.add(val.Format());
+        }
+        for(Decimal val : netOperatingFXCashFlow){
+            ztnetOperatingFXCashFlow.add(val.Format());
+        }
+        for(Decimal val : ForwardContractsWUBS){
+            ztForwardContractsWUBS.add(val.Format());
+        }
+        for(Decimal val : ForwardContractsOther){
+            ztForwardContractsOther.add(val.Format());
+        }
+        for(Decimal val : OptionsWUBSProtection){
+            ztOptionsWUBSProtection.add(val.Format());
+        }
+        for(Decimal val : OptionsWUBSObligation){
+            ztOptionsWUBSObligation.add(val.Format());
+        }
+        for(Decimal val : OptionsOtherProtection){
+            ztOptionsOtherProtection.add(val.Format());
+        }
+        for(Decimal val : OptionsOtherObligation){
+            ztOptionsOtherObligation.add(val.Format());
+        }
+        for(Decimal val : hedgeTotal){
+            zthedgeTotal.add(val.Format());
+        }
+        for(Decimal val : hedgeTotalProtection){
+            zthedgeTotalProtection.add(val.Format());
+        }
+        for(Decimal val : hedgeTotalObligation){
+            zthedgeTotalObligation.add(val.Format());
+        }
+        for(Decimal val : netHedgeTotal){
+            ztnetHedgeTotal.add(val.Format());
+        }
+        for(Decimal val : netFXPositionProtection){
+            ztnetFXPositionProtection.add(val.Format());
+        }
+        for(Decimal val : netFXPositionObligation){
+            ztnetFXPositionObligation.add(val.Format());
+        }
+        for(Decimal val : convertedRate){
+            ztconvertedRate.add(val.Format());
+        }
+        for(Decimal val : convertedProtectionRate){
+            ztconvertedProtectionRate.add(val.Format());
+        }
+        for(Decimal val : convertedObligationRate){
+            ztconvertedObligationRate.add(val.Format());
+        }
+        
+        ztconversionRate = conversionRate.Format();
+        ztcurrentBalance = currentBalance.Format();
     }
     
     public LIST<String> getSpacer()
@@ -232,7 +366,8 @@ public without sharing class CashFlowComponentClone {
                                 WHERE   Paid__c = false 
                                 AND Parent_account__c=:Utility.currentAccount
                                 AND Transaction_Date__c <: td.addYears(1)
-                                AND Transaction_Date__c >= :td])
+                                AND Transaction_Date__c >= :td
+                                AND Input_Type__c != 'Invoice'])
             {
                 if(td > inp.Transaction_Date__c)
                 {
@@ -247,7 +382,8 @@ public without sharing class CashFlowComponentClone {
                             FROM    Input__c
                             WHERE   Paid__c = false AND ContactId__c =: con
                             AND Transaction_Date__c <: td.addYears(1)
-                            AND Transaction_Date__c >= :td])
+                            AND Transaction_Date__c >= :td
+                            AND Input_Type__c != 'Invoice'])
             {
                 if(td > inp.Transaction_Date__c)
                 {
@@ -271,7 +407,10 @@ public without sharing class CashFlowComponentClone {
             lmonth = m.month()+i;
             if(lmonth >12)
             {
-                lmonth = lmonth-12;
+                lmonth = Math.mod(lmonth,12);
+                if(lmonth == 0){
+                    lmonth = 12;
+                }
             }
             months.add(String.valueOf(Utility.getMonthName(lmonth)+' '+(String.valueOf(lYear).right(2))));
             outflowTotal.add(0);
@@ -427,9 +566,15 @@ public without sharing class CashFlowComponentClone {
                               FROM Holding_Balance__c
                               WHERE Account__c =: acc];
          }
-         system.debug('holdBalList >>> '+ holdBalList);
+         system.debug('holdBalList >>> acc:'+acc+' >theCurrency: '+theCurrency+' > holdBalList:'+ holdBalList);
          for(Holding_Balance__c h:holdBalList) {
             holdingBalance = holdingBalance + h.Amount__c;
+            ztHoldingBalance = holdingBalance.format(); 
+         }
+         //Add holding to Total 
+         if(hedgeTotal.size()>0){           
+            hedgeTotal[hedgeTotal.size()-1]= hedgeTotal[hedgeTotal.size()-1]+(Double)holdingBalance;
+            netHedgeTotal[netHedgeTotal.size()-1]= netHedgeTotal[netHedgeTotal.size()-1]+(Double)holdingBalance;
          }
     }
     // Method created to display the data from Invoice__c
@@ -536,10 +681,11 @@ public without sharing class CashFlowComponentClone {
                                 WHERE   Transaction_Date__c != null 
                                         AND Transaction_Date__c >= : startDate 
                                         //AND Parent_Account__c =: acc
-                                        //AND Paid__c = false
+                                        AND Paid__c = false
                                         AND Parent_account__c=:Utility.currentAccount
                                         AND (Custom_Currency__c =: theCurrency )  //CurrencyIsoCode =: theCurrency
                                         AND Transaction_Date__c <=: endDate
+                                        AND Input_Type__c != 'Invoice'
                                         ORDER BY Sort_Order__c ASC];
             }else
             {
@@ -550,9 +696,10 @@ public without sharing class CashFlowComponentClone {
                                 WHERE   Transaction_Date__c != null 
                                         AND Transaction_Date__c >= : startDate 
                                         //AND Parent_Account__c =: acc
-                                        //AND Paid__c = false
+                                        AND Paid__c = false
                                         AND Parent_account__c=:Utility.currentAccount
                                         AND Transaction_Date__c <=: endDate
+                                        AND Input_Type__c != 'Invoice'
                                         ORDER BY Sort_Order__c ASC];
             }
         }
@@ -567,9 +714,10 @@ public without sharing class CashFlowComponentClone {
                                         AND Transaction_Date__c >= : startDate 
                                         //AND Parent_Account__c =: u2.contact.AccountId
                                         AND Parent_account__c=:Utility.currentAccount
-                                        //AND Paid__c = false
+                                        AND Paid__c = false
                                         AND (Custom_Currency__c =: theCurrency ) //CurrencyIsoCode =: theCurrency
                                         AND Transaction_Date__c <=: endDate
+                                        AND Input_Type__c != 'Invoice'
                                         ORDER BY Sort_Order__c ASC];
             }else
             {
@@ -580,9 +728,10 @@ public without sharing class CashFlowComponentClone {
                                 WHERE   Transaction_Date__c != null 
                                         AND Transaction_Date__c >= : startDate 
                                         //AND Parent_Account__c =: u2.contact.AccountId
-                                        //AND Paid__c = false
+                                        AND Paid__c = false
                                         AND Parent_account__c=:Utility.currentAccount
                                         AND Transaction_Date__c <=: endDate
+                                        AND Input_Type__c != 'Invoice'
                                         ORDER BY Sort_Order__c ASC];
             }
         }
@@ -593,51 +742,43 @@ public without sharing class CashFlowComponentClone {
             /*if(i.Type__c == 'Invoice')
             {
                 addToInvoice(i, oldest);
-            }else*/ if(i.Type__c == 'Purchase Order' || i.Input_Type__c == 'Purchase Order')
+            }else*/ if('Purchase Order'.equalsIgnoreCase(i.Type__c) || 'Purchase Order'.equalsIgnoreCase(i.Input_Type__c))
             {
                 addToPurchaseOrder(i, startDate);
             }
-            else if(i.Type__c == 'Forecast Outflow' || i.Input_Type__c == 'Forecast Outflow')
+            else if('Forecast Outflow'.equalsIgnoreCase(i.Type__c) || 'Forecast Outflow'.equalsIgnoreCase(i.Input_Type__c))
             {
                 addToForecastOrder(i, startDate);
             }
-            else if(i.Type__c == 'Outflow - Other' || i.Input_Type__c == 'Outflow - Other')
-            {
-                addToOutflowOther(i, startDate);
-            }
             else if(//(i.Type__c == 'Option - Other' || i.Input_Type__c == 'Option - Other') || 
-                (i.Type__c == 'Fixed Forward Contract - Other' || i.Input_Type__c == 'Fixed Forward Contract - Other') ||
-                ( i.Type__c == 'Window Forward Contract - Other' || i.Input_Type__c == 'Window Forward Contract - Other')
+                ('Fixed Forward Contract - Other'.equalsIgnoreCase(i.Type__c) || 'Fixed Forward Contract - Other'.equalsIgnoreCase(i.Input_Type__c)) ||
+                ( 'Window Forward Contract - Other'.equalsIgnoreCase(i.Type__c) || 'Window Forward Contract - Other'.equalsIgnoreCase(i.Input_Type__c))
              ) {
                 addToForwardOther(i, startDate);
             }/*else if(i.Type__c == 'Forward Contract - WUBS')
             {
                 system.debug('type ::: Forward Contract - WUBS' + i);
                 addToForwardWUBS(i, startDate);
-            }*/else if(i.Type__c == 'Option Protection - WUBS')
+            }*/else if('Option Protection - WUBS'.equalsIgnoreCase(i.Type__c))
             {
                 addToOptionsWUBSProtection(i, startDate);
                 showAdvanced = true;
             }
-            else if(i.Type__c == 'Option Obligation - WUBS')
+            else if('Option Obligation - WUBS'.equalsIgnoreCase(i.Type__c))
             {
                 addToOptionsWUBSObligation(i, startDate);
                 showAdvanced = true;
             }
-            else if(i.Type__c == 'Option Protection - Other')
+            else if('Option Protection - Other'.equalsIgnoreCase(i.Type__c))
             {
                 addToOptionsOtherProtection(i, startDate);
                 showAdvanced = true;
-            }else if(i.Type__c == 'Option Obligation - Other')
+            }else if('Option Obligation - Other'.equalsIgnoreCase(i.Type__c))
             {
                 addToOptionsOtherObligation(i, startDate);
                 showAdvanced = true;
             }
-            else if(i.Type__c == 'Inflow - Other' || i.Input_Type__c == 'Inflow - Other')
-            {
-                addToInflowOther(i, startDate);
-            }
-            else if(i.Type__c == 'Forecast Inflow' || i.Input_Type__c == 'Forecast Inflow')
+            else if('Forecast Inflow'.equalsIgnoreCase(i.Type__c) || 'Forecast Inflow'.equalsIgnoreCase(i.Input_Type__c))
             {
                 addToTradingReceipts(i, startDate);
             }

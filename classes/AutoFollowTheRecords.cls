@@ -15,7 +15,7 @@ public class AutoFollowTheRecords{
         try{
             // creating set of already follow up records
             for(EntitySubscription objEntitySubscription:[Select id,parentId from EntitySubscription 
-            where parentId in:followIds]){
+            where parentId in:followIds LIMIT 1000]){
                 followupdoneIds.add(objEntitySubscription.parentId);
             }
             // looping thru all followIds to create follow up records
@@ -28,7 +28,7 @@ public class AutoFollowTheRecords{
                     System.debug('=======> subscriberId '+subscriberId); 
                    // if((recid == null) || (recid == ''))
                     //	continue;
-                    listEntitySubscription.add(new EntitySubscription (ParentId = recid, SubscriberId =  subscriberId, NetworkId = Network.getNetworkId()));   
+                    //listEntitySubscription.add(new EntitySubscription (ParentId = recid, SubscriberId =  subscriberId, NetworkId = Network.getNetworkId()));   
                     listEntitySubscription.add(new EntitySubscription (ParentId = recid, SubscriberId =  subscriberId));                
                 }    
             }

@@ -31,13 +31,12 @@ public without sharing class InputDetailController {
 		inputOptionRecord = new Input__c();
 		returnURL = ApexPages.currentPage().getParameters().get('retURL');
 		if(ApexPages.currentPage().getParameters().get('id') != null && ApexPages.currentPage().getParameters().get('id') != ''){
-		 	for(Input__C tempInput : [SELECT id, Input_Type__c, Type__c, Option_Protection_Obligation__c from Input__c WHERE Id =: ApexPages.currentPage().getParameters().get('id')]){
+		 	for(Input__c tempInput : [SELECT id, Input_Type__c, Type__c, Option_Protection_Obligation__c from Input__c WHERE Id =: ApexPages.currentPage().getParameters().get('id')]){
 		 		inputRecord = tempInput;
 		 		selectedTranscation = tempInput.Input_Type__c;
 		 	}
-		 	if(inputRecord.Input_Type__c == 'Forecast Outflow' || inputRecord.Input_Type__c == 'Purchase Order' ||
-		    	inputRecord.Input_Type__c == 'Outflow - Other' || inputRecord.Input_Type__c == 'Forecast Inflow' ||
-		    	inputRecord.Input_Type__c == 'Inflow - Other'){
+		 	if(inputRecord.Input_Type__c == 'Forecast Outflow' || inputRecord.Input_Type__c == 'Purchase Order' 
+		 			|| inputRecord.Input_Type__c == 'Forecast Inflow'){
 	    		isForcast = true;
 	    		fieldset = 'InputDetailFS3';
 	    	}
@@ -69,8 +68,13 @@ public without sharing class InputDetailController {
 	    		inputOptionRecord = getInput(inputOptionRecord.id);
 	    	}
 	    	canEdit = false;
-         	canEdit = [SELECT RecordId, HasEditAccess FROM UserRecordAccess 
+         	/*canEdit = [SELECT RecordId, HasEditAccess FROM UserRecordAccess 
                             WHERE UserId = :userInfo.getuserId() AND RecordId = :inputRecord.id LIMIT 1].HasEditAccess ;
+            if(!canEdit){*/
+        	if(inputRecord.OwnerId == UserInfo.getUserId() || inputRecord.OwnerId == Utility.currentAccountOwner){
+        		canEdit = true;
+        	}
+            //}
             listChildAttachments = findAttachments();
 
 		 }

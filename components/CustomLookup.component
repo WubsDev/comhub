@@ -73,11 +73,12 @@
     
     <apex:attribute name="objectName" type="String" required="true" assignTo="{!objName}" description="API Name of the Object for which Lookup has to be created"/> 
     <apex:attribute name="fieldAPI" type="String" required="true" assignTo="{!fieldName}" description="API Name of the field on the basis of which you want to search"/> 
-    <apex:attribute name="fieldToPopulateId" type="String" required="true" assignTo="{!fieldPopulatingId}" description="Id of the Field whose value needs to be populated"/> 
+    <apex:attribute name="fieldToPopulateId" type="String" required="true" assignTo="{!fieldPopulatingId}" description="Id of the record whose value needs to be populated"/> 
     <apex:attribute name="fieldSetName" type="String" required="true" assignTo="{!fieldSetNameAPI}" description="Name of the field Set whose fields need to be displayed"/>
     <apex:attribute name="selectedRefId" type="String" required="true" assignTo="{!selectedId}" description="Id for the record already selected"/>
     <apex:attribute name="isLookupLabel" type="boolean" required="false" description="Flag if text box or lookup" default="false"/>
     <apex:attribute name="isOnlyRead" type="boolean" required="false" description="Flag if allowed to update/remove selection" default="false"/>
+    <apex:attribute name="selectedRefName" type="String" required="false" assignTo="{!selectedRecordName}" description="Name value of the record" default=""/>
     
     <apex:outputPanel id="lookupPanel">
 		<table border="0" style="border-bottom:0px;padding: 0px 0px 0px 0px;width:100%;" width="100%">
@@ -102,13 +103,13 @@
 		</td><td style="border-bottom:0px;padding: 0px 0px 0px 0px;display:{!if(isOnlyRead, 'none;', 'block;')}">
         <a id="acc3_lkwgt" onclick="openLookupPopup('{!$Component.targetTxtName}', '{!fieldToPopulateId}');" tabindex="2" 
             title="Parent Lookup (New Window)" style="text-decoration: none;" >
-                <img src="/s.gif" alt="Search Buyer/Supplier" 
+                <img src="/s.gif" alt="{!$Label.CM_Community_Button_SearchBuyerSupplier}" 
                 class="lookupIcon" 
                 onblur="this.className = 'lookupIcon';" 
                 onfocus="this.className = 'lookupIconOn';" 
                 onmouseout="this.className = 'lookupIcon';this.className = 'lookupIcon';" 
                 onmouseover="this.className = 'lookupIconOn';this.className = 'lookupIconOn';" 
-                title="Search Buyer/Supplier" />
+                title="{!$Label.CM_Community_Button_SearchBuyerSupplier}" />
         </a>
         
 		<script type="text/javascript">
@@ -124,7 +125,7 @@
 			} 			
 		</script>        
 		</td><td>
-			<a style="display:{!if(isOnlyRead, 'none;', 'block;')}" href="javascript:resetLookup('{!fieldToPopulateId}', '{!$Component.targetTxtName}');" ><img alt="Delete Buyer/Supplier" src="/img/func_icons/remove12_on.gif" title="Delete Buyer/Supplier"/></a>
+            <a style="display:{!if(isOnlyRead, 'none;', 'block;')}" href="javascript:resetLookup('{!fieldToPopulateId}', '{!$Component.targetTxtName}');" ><img alt="{!$Label.CM_Community_Button_DeleteBuyerSupplier}" src="/img/func_icons/remove12_on.gif" title="{!$Label.CM_Community_Button_DeleteBuyerSupplier}"/></a>
 		</td></tr></table>
     </apex:outputPanel>
 <!-- 

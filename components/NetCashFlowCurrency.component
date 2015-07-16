@@ -98,7 +98,7 @@
                              }
                            }
                           }catch(e){
-                            alert('Chart Error '+e);
+                            alert('{!$Label.CM_Alert_ChartError}' + ' ' + e);
                           }
         
                           view = new google.visualization.DataView(data);
@@ -110,7 +110,7 @@
                                            3]);
                     
                          var options = {
-                                             title: "Amount Shown in 1000s ",
+                                             title: "{!$Label.CM_ReportText_AmountShownin1000s}",                                             
                                              width: "100%",
                                              height: 274,
                                              bar: {groupWidth: "45%"},
@@ -173,7 +173,7 @@
         </script>
         
         <apex:form style="margin-top:15px;min-width:350px;">
-                     <div style="padding: 3px 2px;background-color:#222;color:white;font-weight:bold;text-align:center;">Total Net Cash Flow by Currency</div>
+                     <div style="padding: 3px 2px;background-color:#222;color:white;font-weight:bold;text-align:center;">{!$Label.CM_SectionHeading_SummaryDashboard_NetExposureTop5CurrenciesByAmount}</div>
                 <apex:outputPanel layout="block" id="pieDiv" style="height:235px;">
                      <center>
                         <div id="chartBlockByCurrency" style="height: 230px;width:100%;cursor: pointer;" >
@@ -195,8 +195,7 @@
                    <center><a>
                     <div>
                         <p id="addNewInputLink2" onclick="window.open('{!$Site.Prefix}/apex/ManageCashInput','_top',false);" style="position: absolute;top: 130px;right: 162px;  text-decoration: underline;color: blue;cursor: pointer; display:none; backgroundColor:#eee;font-size: 18px;" >
-                        
-                            Start Adding Inputs
+                            {!$Label.CM_Community_Link_StartAddingInputs}
                         </p>
                     </div></a></center>
          </apex:form> 

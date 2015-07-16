@@ -8,6 +8,7 @@
  
  =====================================================================*/ 
  public class inputWpr implements Comparable {
+ 	public boolean isDealerAccess{get;set;}
 	public boolean isSelected {get;set;}
 	public boolean isOwner {get;set;}
 	public Input__c input{get;set;}
@@ -27,27 +28,50 @@
 		set;
 	}	
 	
+	public String settlementCurrencyFormatted{
+		get{
+			String settlementCurrencyDecimalVal = settlementCurrency.format();
+			
+			if(!settlementCurrencyDecimalVal.contains(Utility.getDecimalChar)){
+				settlementCurrencyDecimalVal = settlementCurrency.format() + Utility.getDecimalChar+'00';
+			}
+			return settlementCurrencyDecimalVal;
+		}
+	}
+	
 	public inputWpr(String sortField, String dir, input__c input){
 		this.input = input;
+		this.isDealerAccess= true;
 		this.sortField = sortField;
 		this.dir = dir;
-		if(this.input.OwnerId == UserInfo.getUserId()){
+		system.debug('------------------------Ashish------------'+Utility.currentAccountOwner);
+		if(this.input.OwnerId == UserInfo.getUserId() || 
+					(Utility.currentAccountOwner != null && this.input.OwnerId == Utility.currentAccountOwner)){
 			isOwner = true;
 		}
 		else{
 			isOwner = false;
 		}
+		if(Utility.isDealerUser && this.input.OwnerId!= UserInfo.getUserId()){
+			this.isDealerAccess= false;
+		}
+		//isDealerAccess
 
 	}
 	public inputWpr(String sortField, String dir, Invoice__c invoice){
 		this.invoice = invoice;
+		this.isDealerAccess= true;
 		this.sortField = sortField;
 		this.dir = dir;
-		if(this.invoice.OwnerId == UserInfo.getUserId()){
+		if(this.invoice.OwnerId == UserInfo.getUserId() || 
+					(Utility.currentAccountOwner != null && this.invoice.OwnerId == Utility.currentAccountOwner)){
 			isOwner = true;
 		}
 		else{
 			isOwner = false;
+		}
+		if(Utility.isDealerUser && this.invoice.OwnerId!= UserInfo.getUserId()){
+			this.isDealerAccess= false;
 		}
 	}
 
@@ -59,6 +83,17 @@
             return invoice.Amount__c;
         }
     }
+
+    public String amountFormatted{
+		get{
+			String amountFormattedVal = amount.format();
+			
+			if(!amountFormattedVal.contains(Utility.getDecimalChar)){
+				amountFormattedVal = amount.format() + Utility.getDecimalChar+'00';
+			}
+			return amountFormattedVal;
+		}
+	}
 
 	//Methods for sorting
     static map<string, string> fieldMappingForInvoice = new map<string, string>{

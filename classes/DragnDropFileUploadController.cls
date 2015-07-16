@@ -43,7 +43,7 @@ global class DragnDropFileUploadController{
               exitsingAttachment = att;
           }
           if(exitsingAttachment != null){
-              ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Attachment already exists with '+attachment.Name+ ' name, please upload with different name.'));
+              ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'{!$Label.CM_Alert_AttachmentAlreadyExistsWithSameName1}' + ' ' + attachment.name + ' ' + '{!$Label.CM_Alert_AttachmentAlreadyExistsWithSameName2}'));
 	          return null;
           }
             Attachment att = new Attachment(
@@ -82,7 +82,7 @@ global class DragnDropFileUploadController{
               exitsingAttachment = att;
           }
           if(exitsingAttachment != null){
-              ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Attachment already exists with '+attachment.Name+ ' name, please upload with different name.'));
+              ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Alert_AttachmentAlreadyExistsWithSameName1 + ' ' + attachment.name + ' ' + System.Label.CM_Alert_AttachmentAlreadyExistsWithSameName2));
 	          return null;
           }
       	attachment.OwnerId = Utility.loggedInUser.id;
@@ -116,7 +116,7 @@ global class DragnDropFileUploadController{
 			exitsingAttachment = att;
 		}
 		if(exitsingAttachment != null){
-			ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Attachment already exists with '+attachment.Name+ ' name, please upload with different name.'));
+            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Alert_AttachmentAlreadyExistsWithSameName1 + ' ' + attachment.name + ' ' + System.Label.CM_Alert_AttachmentAlreadyExistsWithSameName2));
 		    return null;
 		}
 	  	attachment.OwnerId = UserInfo.getUserId();
@@ -153,13 +153,13 @@ global class DragnDropFileUploadController{
    			return pr;
 		}
 	    /*
-		if(typeInput == 'Purchase Order'  ||  typeInput == 'Forecast Outflow' || typeInput == 'Outflow - Other' ) {
+        if(typeInput == 'Purchase Order'  ||  typeInput == 'Forecast Outflow') {
 			ApexPages.addMessage(new ApexPages.message(ApexPages.severity.INFO,'Attachment uploaded successfully'));
 	    	PageReference pr =  new PageReference('/apex/ParseAndDisplayCSVInput?attid='+attachment.id + '&sourcePage='+getPageName()+'&type='+typeInput);
 	    	pr.setredirect(true);
 	    	return pr;
 		}else 
-			if (typeInput == 'Forecast Inflow' || typeInput == 'Inflow - Other') {
+            if (typeInput == 'Forecast Inflow') {
 				PageReference pr =  new PageReference('/apex/ParseAndDisplayCSVInputIncoming?attid='+attachment.id + '&sourcePage='+getPageName()+'&type='+typeInput);
 	    		pr.setredirect(true);
 	    		return pr;

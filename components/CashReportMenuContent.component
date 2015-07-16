@@ -1,42 +1,40 @@
 <apex:component controller="InsightsAndInputTabCtrl" layout="none">
 	<div class="tab-pane" id="holding-balance" style="">
 		<apex:form >
-			<h4>Holding Balance by Currency with WUBS</h4>
+            <h4>{!$Label.CM_SectionHeading_CashFlowManagement_HoldingBalancebyCurrencywithWUBS}</h4>
 			<apex:dataTable value="{!HoldingBalanceReportData}"
 				rendered="{!IF(HoldingBalanceReportData.size > 0, true, false)}"
 				var="c" styleClass="table">
-				<apex:column headerValue="Currency">
+                <apex:column headerValue="{!$Label.CM_FieldLabel_HoldingBalance_Currency}">
                     <apex:outputText value="{!c.HoldingWpr.Custom_Currency__c}" />
 				</apex:column>
-				<apex:column headerValue="Amount">
-					<apex:outputText value="{0, number, ###,##0.00}">
-						<apex:param value="{!c.HoldingWpr.Amount__c}" />
-					</apex:outputText>
+                <apex:column headerValue="{!$Label.CM_FieldLabel_HoldingBalance_Amount}">
+                    <apex:outputField value="{!c.HoldingWpr.Amount__c}" />
 					<!--                                    <apex:outputText value="{!c.HoldingWpr.Amount__c}"/>-->
 				</apex:column>
 			</apex:dataTable>
 			<!--  BELOW TABLE WILL BE DISPLAYED WHEN THERE WILL BE NO DATA -->
 			<apex:outputpanel rendered="{!IF(HoldingBalanceReportData.size = 0, true, false)}">
-                <apex:image id="theImage1" value="{!URLFOR($Resource.Dashboard_Chart_NoData_Images, '/Dashboard_Chart_NoData_Images/HBRSF.png')}" />
+                <apex:image id="theImage1" value="{!URLFOR($Resource.Dashboard_Chart_NoData_Images, '/Dashboard_Chart_NoData_Images/HBRSF'+userLanguage+'.png')}" />
 			</apex:outputpanel>
 		</apex:form>
         <c:DisclamerComp />
 	</div>
 
 	<div class="tab-pane" id="forward-contract">
-		<h4>WUBS Forward Contracts</h4>
+        <h4>{!$Label.CM_SectionHeading_ForwardCashRollupSummary_WUBSForwardContracts}</h4>
 		<apex:form >
 			<apex:pageMessages ></apex:pageMessages>
 			<apex:actionregion >
 				<apex:outputPanel id="fwd">
 					<div class="palette">
-                        <span><apex:outputLabel value="Currency Filter" />
+                        <span><apex:outputLabel value="{!$Label.CM_Community_Text_FieldFilter_Currency}"/>
 						</span> <span> <apex:SelectList size="1" multiselect="false"
 								value="{!selectedForwardCurrency}">
-								<apex:selectOption itemValue="" itemLabel="Select" />
+                                <apex:selectOption itemValue="" itemLabel="{!$Label.CM_Community_Text_FieldFilter_CurrencyFilter_Item_Select}" />
 								<apex:SelectOptions value="{!ForwardContractCurrency}" />
 							</apex:SelectList> </span> <span><apex:commandButton action="{!generateForwardContractReportData}"
-								value="Generate Report"
+                                value="{!$Label.CM_Community_Button_GenerateReport}"
 								rerender="contract_table, fwdContractTbl, no_data_table_fwdContract, pagination_fwdContractList" />
 						</span>
 					</div>
@@ -55,7 +53,7 @@
 							<apex:outputField value="{!c.Start_Date__c}" />
 						</apex:column>
 						 -->
-						<apex:column headerValue="Maturity Date"
+                        <apex:column headerValue="{!$Label.CM_FieldLabel_ForwardContracts_MaturityDate}"
 							headerClass="forwordContractTbl">
 							<apex:outputField value="{!c.Maturity_Date__c}" />
 						</apex:column>
@@ -87,7 +85,7 @@
 <!--                            <apex:outputText value="{!c.market_rate__r.Ratio_to_USD__c}" /> -->
 <!--                        </apex:column> -->
 
-                        <apex:column headerValue="Currency "
+                        <apex:column headerValue="{!$Label.CM_FieldLabel_ForwardContracts_Currency}"
 							headerClass="forwordContractTbl">
                             <apex:outputText value="{!c.Custom_Currency__c}" />
 						</apex:column>
@@ -98,11 +96,9 @@
 <!-- 							</apex:outputText> -->
 							<!--                                        <apex:outputText value="{!c.FX_Amount__c}" />-->
 <!-- 						</apex:column> -->
-                        <apex:column headerValue="Outstanding Amount"
+                        <apex:column headerValue="{!$Label.CM_FieldLabel_ForwardContracts_OutstandingAmount}"
 							headerClass="forwordContractTbl">
-							<apex:outputText value="{0, number, ###,##0.00}">
-								<apex:param value="{!c.FX_Balance__c}" />
-							</apex:outputText>
+                            <apex:outputField value="{!c.FX_Balance__c}" />
 							<!--                                        <apex:outputText value="{!c.FX_Balance__c}" />-->
 						</apex:column>
 					</apex:dataTable>
@@ -111,24 +107,24 @@
 				<!--  BELOW TABLE WILL BE DISPLAYED WHEN THERE WILL BE NO DATA -->
 				<apex:outputpanel id="no_data_table_fwdContract">
 					<apex:outputpanel rendered="{!IF(fwdContractList.size = 0, true, false)}">
-                        <apex:image id="theImage1" value="{!URLFOR($Resource.Dashboard_Chart_NoData_Images, '/Dashboard_Chart_NoData_Images/FFRSF.png')}" />
+                        <apex:image id="theImage1" value="{!URLFOR($Resource.Dashboard_Chart_NoData_Images, '/Dashboard_Chart_NoData_Images/FFRSF'+userLanguage+'.png')}" />
 					</apex:outputpanel>
 
 				</apex:outputpanel>
 
 				<div class="text-center">
 					<apex:outputpanel id="pagination_fwdContractList">
-						<apex:commandButton rendered="{!setCon.hasPrevious}" value="First"
+                        <apex:commandButton rendered="{!setCon.hasPrevious}" value="{!$Label.CM_Community_Button_First}"
 							styleClass="wuBtn" action="{!setCon.first}" />
-						<apex:commandButton rendered="{!setCon.hasPrevious}"
-							value="Previous" action="{!setCon.previous}" />
+                        <apex:commandButton rendered="{!setCon.hasPrevious}" value="{!$Label.CM_Community_Button_Previous}" 
+                            action="{!setCon.previous}" />
 						<apex:outputText rendered="{!(setCon.pageNumber * setCon.pageSize) < setCon.ResultSize}"
-							value="{!setCon.pageNumber * setCon.pageSize} Of {!setCon.ResultSize}"></apex:outputText>
+                            value="{!setCon.pageNumber * setCon.pageSize} {!$Label.CM_Community_Text_Of} {!setCon.ResultSize}"></apex:outputText>
 						<apex:outputText rendered="{!(setCon.pageNumber * setCon.pageSize) >= setCon.ResultSize}"
-							value="{!setCon.ResultSize} Of {!setCon.ResultSize}"></apex:outputText>
-						<apex:commandButton rendered="{!setCon.hasNext}" value="Next"
+                            value="{!setCon.ResultSize} {!$Label.CM_Community_Text_Of} {!setCon.ResultSize}"></apex:outputText>
+                        <apex:commandButton rendered="{!setCon.hasNext}" value="{!$Label.CM_Community_Button_Next}"
 							styleClass="wuBtn" action="{!setCon.next}" />
-						<apex:commandButton rendered="{!setCon.hasNext}" value="Last"
+                        <apex:commandButton rendered="{!setCon.hasNext}" value="{!$Label.CM_Community_Button_Last}"
 							styleClass="wuBtn" action="{!setCon.last}" />
 					</apex:outputpanel>
 				</div>

@@ -13,8 +13,16 @@ public without sharing class TopPendingInvoicesCtrl {
     public Invoice__c invoice{get;set;}
     public String selectedStatus{get;set;}
     public String userDefaultCurrency{get;set;}
+    public String userLanguage{get;set;}
      
     public TopPendingInvoicesCtrl() {
+        userLanguage = UserInfo.getLanguage();
+        if(userLanguage.trim() == 'fr'|| userLanguage.trim() == 'it'){
+            userLanguage = '_'+userLanguage;
+        }
+        else{
+            userLanguage = '';
+        }
         invoice = new Invoice__c();
         userDefaultCurrency = UserInfo.getDefaultCurrency();
         selectedStatus = 'Both'; 
@@ -59,10 +67,12 @@ public without sharing class TopPendingInvoicesCtrl {
     public class InvoiceWrapper{
         public Invoice__c invoice{get;set;}
         public Decimal settlementCurrency{get;set;}
+        public String settlementCurrencyFormat{get;set;}
         
         public InvoiceWrapper(Invoice__c invoice){
             this.invoice = invoice;
             settlementCurrency = Utility.getSettlementCurrencyAmount(invoice.Amount__c, invoice.Custom_Currency__c, UserInfo.getDefaultCurrency());
+            settlementCurrencyFormat = settlementCurrency.format();
         }
     }
     

@@ -5,6 +5,7 @@
  * Created By: Nishant Bansal (JDC)
  *
  * Date Modified                Modified By                  Description of the update
+ * Updated : 07/02/2015, Megha Agarwal, T-415632
  =====================================================================*/
 
 
@@ -15,6 +16,7 @@ global without sharing class InsightsAndInputTabCtrl {
   public String selectedTranscation{get;set;}
   public Input__c input{get;set;}
   public Input__c inputOther{get;set;}
+  public Input__c inputUpload{get;set;} // T-415632
   public String fieldset {get; set;}
   public Id accId {get;set;}
   public String selectedForwardCurrency{get;set;}
@@ -26,6 +28,9 @@ global without sharing class InsightsAndInputTabCtrl {
   public List<Holding_Balance__c> holdingBalancesList{get;set;}
   public NetCashFlowCtrl  NetCashFlow{get;set;}
   public String selectTab{get;set;}
+  public String userLanguage{get;set;}
+  public String chartLanguage{get;set;}
+
   public  DateTime lastupdate{
   	get{
   		return Utility.lastUpdateMarketDatetime;
@@ -40,11 +45,12 @@ global without sharing class InsightsAndInputTabCtrl {
   public String invoiceImageBody{get;set;}
   public String invoiceImageName{get;set;}
   
+  /* commented : 07/02/2015 , T-415632
   public list<SelectOption> lstTransactionType {
   	get{
   		return getTransactionTypes();
   	}
-  }
+  }*/
 
   public List<Forward_Contracts__c> getfwdContractList(){
     if(setCon != null && setCon.getResultSize() > 0){
@@ -62,12 +68,30 @@ global without sharing class InsightsAndInputTabCtrl {
   global InsightsAndInputTabCtrl() {
     invoiceImageBody = '';
     invoiceImageName = '';  
+    chartLanguage = UserInfo.getLanguage();
+    userLanguage = UserInfo.getLanguage();
+    if(userLanguage.contains('_')){
+        userLanguage = userLanguage.substring(0, userLanguage.indexOf('_'));
+    }
+    if(userLanguage == 'en'){
+        userLanguage = '';
+    }else{
+        userLanguage = '_'+ userLanguage;
+    }
+    /*if(userLanguage.trim() == 'fr'|| userLanguage.trim() == 'it'){
+      userLanguage = '_'+userLanguage;
+    }
+    else{
+      userLanguage = '';
+    }
+      */  
     NetCashFlow = new NetCashFlowCtrl();
     if(system.currentPageReference().getParameters().get('currency') != null) {
     	NetCashFlowCtrl.selectedCurrency = System.currentPageReference().getParameters().get('currency');
     }
     input = new Input__c();
     inputOther = new Input__c();
+    inputUpload = new Input__c();// T-415632
     fwdContract = new Forward_Contracts__c();
     hasError =false;
     selectedForwardCurrency = '';
@@ -117,6 +141,9 @@ global without sharing class InsightsAndInputTabCtrl {
   		}
   	}
 	public void changeTransactionType() {
+        // T-415632 - get trasaction type value from input type  
+        selectedTranscation = input.Input_Type__c;
+        System.debug('::Megha '+selectedTranscation);
     	fieldset = Utility.changeTransactionType(selectedTranscation);
   	}
     @RemoteAction
@@ -201,12 +228,12 @@ global without sharing class InsightsAndInputTabCtrl {
     }catch(Exception ex) {
         hasError = true;
         if(!ex.getMessage().contains('Duplicate Reference Number and Beneficiar')){
-            //ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Unable to save Input. Error Detail :'+ex.getMessage()));
+            //ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Alert_UnableToSaveInput + ex.getMessage()));
         }else{
                 if(ex.getMessage().contains('FIELD_CUSTOM_VALIDATION_EXCEPTION')){
                     //ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,ex.getMessage()));
                 }else{
-                    ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR,'Unable to save Input. Error Detail :'+ex.getMessage()));
+                    ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, System.Label.CM_Alert_UnableToSaveInput + ex.getMessage()));
                 }           
         }
         system.debug('exception message:::: '+ ex.getMessage());
@@ -406,6 +433,7 @@ global without sharing class InsightsAndInputTabCtrl {
     }
 
     // This method used for get Transaction Type picklist value from custom setting (I-148624)
+    /* commented : 07/02/2015 , T-415632
     public List<SelectOption> getTransactionTypes() {
         List<SelectOption> options = new List<SelectOption>();
         options.add(new SelectOption('Select','Select'));
@@ -413,7 +441,7 @@ global without sharing class InsightsAndInputTabCtrl {
             options.add(new SelectOption(tt.Name,tt.Name));
         }
         return options;
-    }
+    }*/
     public String inputLink{
     	get{
     		return Utility.inputLink;

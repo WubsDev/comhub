@@ -11,6 +11,7 @@ public class inputTriggerHandler{
 // Validation to find duplicate before update
     public void triggerHandler_BeforeUpdate(list<Input__c> listInvoice){
         system.debug('****:insert');
+        updateCurrencyAndSettlementDate(listInvoice);
         validateUniqueInvoiceAndBenificiary(listInvoice, false);
     }
     
@@ -78,7 +79,8 @@ public class inputTriggerHandler{
         }
         system.debug('****:'+invoiceBenificiary);
         for(Input__c invoice : [SELECT Reference_Number__c ,ownerId, Input_Beneficiary__c, Input_Type__c FROM Input__c
-                                                                     WHERE Reference_Number__c in:setAllReferences and id not in :invoiceIds]) {
+                                                                     WHERE Reference_Number__c in:setAllReferences and id not in :invoiceIds
+                                                                     AND Input_Type__c != 'Invoice']) {
             if(ownerAccountId.containsKey(invoice.ownerId)){
                 String key = invoice.Reference_Number__c+'-'+ownerAccountId.get(invoice.ownerId);
                 if(invoiceBenificiary.containsKey(key) && 
@@ -103,7 +105,9 @@ public class inputTriggerHandler{
 	                    lblBeneficiary = maplables.get('Input_Beneficiary__c');
 	                }
 	            }
+	            if(Label.IsDupsValidationBene!='false'){
 	            input.addError('Duplicate Reference Number and '+lblBeneficiary+' Found');
+        	}
         	}
             //mapInvoice.get(invoice.Name)
         }
@@ -121,12 +125,12 @@ public class inputTriggerHandler{
     	for(Input__c input : inputList){
     		if(input.Input_Type__c == 'Option - Other' || input.Input_Type__c == 'Option - WUBS'
     				|| input.Input_Type__c == 'Window Forward Contract - Other' || input.Input_Type__c == 'Fixed Forward Contract - Other'){
-    			if(input.Buy_Currency__c != null){
+    			if(input.Buy_Currency__c != null && input.Custom_Currency__c != input.Buy_Currency__c){
     				input.Custom_Currency__c = input.Buy_Currency__c;
     			}
     		}
     		if(input.Input_Type__c == 'Window Forward Contract - Other'){
-    			if(input.Window_End_Date__c != null){
+    			if(input.Window_End_Date__c != null && input.Transaction_Date__c != input.Window_End_Date__c){
     				input.Transaction_Date__c = input.Window_End_Date__c;
     			}    			
     		}

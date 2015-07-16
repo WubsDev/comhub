@@ -1,13 +1,155 @@
 <apex:component >
 	<apex:attribute name="menuName" type="String" description="" default="summaryDashboard" />
+    <style>
+        #header{
+            width:10%; 
+            background:#1d1f20; 
+            line-height:50px;
+        }
+        ul li, ol li{
+            margin-left: 0em !important;
+        }
+        .hamburger{
+          background:none;
+          position:absolute;
+          top:0;
+          float : left;
+          left : 160px;
+          line-height:68px;
+          padding:0px 15px 0px 15px;
+          color:#BBBDBF;
+          border:0;
+          font-size:2.2em;
+          font-weight:bold;
+          cursor:pointer;
+          outline:none;
+          z-index:1;
+        }
+        .cross{
+          background:none;
+          position:absolute;
+          top:0px;
+          float : left;
+          left : 160px;
+          padding:0px 17px 0px 15px;
+          color:#BBBDBF;
+          border:0;
+          font-size:4.5em;
+          line-height:97px;
+          font-weight:bold;
+          cursor:pointer;
+          outline:none;
+          z-index:1;
+        }
+        .menu1{
+            z-index: 1000000;
+            font-family: 'UniversLTW01-57Condense_723821', sans-serif;
+            font-size: 15px;
+            width: 241px;
+            left: 0%;
+            float: right;
+            background: #131313;
+            position: absolute;
+            padding-left: 30px;
+            display : none;
+        }
+        .menu1 :focus{
+            display : block;
+        }
+        .menu1 ul {margin: 0; padding: 0; list-style-type: none; list-style-image: none;}
+        .menu1 li {display: block;   padding:10px 0 10px 0; border-bottom:#1d1f20 1px solid;}
+        .menu1 li:hover{display: block;    background:#181818; padding:15px 0 15px 0; border-bottom:#1d1f20 1px solid;}
+        .menu1 ul li a { text-decoration:none;  margin: 0px; color:#fff;}
+        .menu1 ul li a:hover {  color: #fff; text-decoration:none;}
+        .menu1 a{text-decoration:none; color:white;}
+        .menu1 a:hover{text-decoration:none; color:white;}
+        
+        .glyphicon-home{
+          color:white; 
+          font-size:1.5em; 
+          margin-top:5px; 
+          margin:0 auto;
+        }
+        .brandPrimaryFgr {
+            float: right;
+            margin-top: 0px;
+            margin-bottom: 0px;
+            font-size: 15px !important;
+            font-family: 'UniversLTW01-57Condense_723821', sans-serif;
+            font-weight: bold;
+            padding-top: 28px;
+            color: #BBBDBF !important;
+            padding-right: 10px;
+        }
+        html .brandPrimaryFgr {
+            color: #BBBDBF !important;        
+        }
+    </style>
 	<div class="menu">
 	      	<div class="container-fluid">
-	      		  <apex:image value="{!URLFOR($Resource.CommunityLogo)}"/>	              
-	              <a href="{!$Site.Prefix}/apex/wuDashboard" class="menu--item {!if(menuName=='SummaryDashboard', 'menu--active', '')}">Summary Dashboard</a>
-	              <a href="{!$Site.Prefix}/apex/ManageCashInput" class="menu--item {!if(menuName=='Input', 'menu--active', '')}">Input</a>	              
-				  			<a href="{!$Site.Prefix}/apex/InsightsAndInputTab" class="menu--item {!if(menuName=='Reports', 'menu--active', '')}">Cash Flow Management</a>
-	              <a href="{!$Site.Prefix}/apex/Insights" class="menu--item {!if(menuName=='Insights', 'menu--active', '')}">Business Intelligence</a>
+                  <apex:image value="{!URLFOR($Resource.CommunityLogo)}"/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;               
+                  <a href="{!$Site.Prefix}/apex/wuDashboard" class="menu--item {!if(menuName=='SummaryDashboard', 'menu--active', '')}">{!$Label.CM_Community_Tab_SummaryDashboard}</a>
+                  <a href="{!$Site.Prefix}/apex/ManageCashInput" class="menu--item {!if(menuName=='Input', 'menu--active', '')}">{!$Label.CM_Community_Tab_Input}</a>                
+                            <a href="{!$Site.Prefix}/apex/InsightsAndInputTab" class="menu--item {!if(menuName=='Reports', 'menu--active', '')}">{!$Label.CM_Community_Tab_CashFlowManagement}</a>
+                  <a href="{!$Site.Prefix}/apex/Insights" class="menu--item {!if(menuName=='Insights', 'menu--active', '')}">{!$Label.CM_Community_Tab_BusinessIntelligence}</a>
+                  <!-- a href="{!$Site.Prefix}/apex/AccountDocumentComm" class="menu--item {!if(menuName=='document', 'menu--active', '')}">{!$Label.CM_Community_Tab_DocumentCollaboration}</a-->
 	              <!-- a href="{!$Site.Prefix}/apex/InvoicesAndPayments" class="menu--item {!if(menuName=='Report', 'menu--active', '')}">Invoices</a-->
+                 <h2 class="brandPrimaryFgr">{!$Label.CM_Community_Text_Welcome} {!$User.FirstName} {!$User.LastName}</h2>
+                  <div id="header">
+                      <button class="hamburger" id="buttonHamburger" title="{!$Label.CM_Community_Link_Menu}">&#9776;</button>
+                      <button class="cross" id="buttonCross" title="{!$Label.CM_Community_Button_Close}" style="display:none;">&#735;</button>
 	          </div>
+                  
 	      </div> 
+              
+          </div> 
+          <div class="menu1" style="display:none;" id="hamburgerMenu">
+              <ul class="navigation">  
+<!--                    <a href="{!$Site.Prefix}/_ui/core/portal/PortalUserMyProfilePage/d" class="sidebarModulePortalWelcome" target="_top"><li>{!$Label.CM_Community_Link_MyProfile}</li></a> -->
+                    <a href="javascript:void((function(){ window.open('{!URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))}/apex/CMPUserDetail?Id={!$User.Id}&sfdc.tabName=MyProfile','Ratting','width=950,height=620,left=150,top=100,toolbar=0,status=0,');})());" target="_top" class="menuButtonMenuLink" title="{!$Label.CM_Community_Link_MyProfile}"><li>{!$Label.CM_Community_Link_MyProfile}</li></a>
+                    
+                    <a href="javascript:void((function(){ window.open('{!URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))}/apex/portalUserCurrency?sfdc.tabName=User Currency','Ratting','width=900,height=400,left=150,top=200,toolbar=0,status=0,');})());" target="_top" class="menuButtonMenuLink" title="{!$Label.CM_Community_Link_MyCurrency}"><li>{!$Label.CM_Community_Link_MyCurrency}</li></a>
+                
+                    <a href="javascript:topPersonalSetup();" class="menuButtonMenuLink" title="{!$Label.CM_Community_Link_MySettings}"><li>{!$Label.CM_Community_Link_MySettings}</li></a>
+                
+                    <a href="javascript:void((function(){ window.open('{!URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))}/apex/SharingRecordPage?sfdc.tabName=My Sharing Rules','Ratting','width=950,height=400,left=150,top=200,toolbar=0,status=0,');})());" target="_top" class="menuButtonMenuLink" title="{!$Label.CM_Community_Link_SharingSettings}"><li>{!$Label.CM_Community_Link_SharingSettings}</li></a>
+                
+                    <li onclick="javascript:openIntroVideoModal();" style="cursor: pointer;"><a href="" class="menuButtonMenuLink" title="{!$Label.CM_Community_Link_Tutorials}">{!$Label.CM_Community_Link_Tutorials}</a></li>
+                    
+                    <a href="{!$Site.Prefix}/secur/logout.jsp" class="sidebarModulePortalWelcome" title="{!$Label.CM_Community_Link_Logout}" target="_top"><li>{!$Label.CM_Community_Link_Logout}</li></a>
+              </ul>
+            </div>
+            <c:FirstTimeLogin />   
+<!--           <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"> </script> -->
+          <script>         
+            function topPersonalSetup(){            
+                parent.sfdcPage.openPersonalSetup('{!URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))}/_ui/common/setup/PersonalSetup');
+                sfdcPage.openPersonalSetup('{!URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', ''))}/_ui/common/setup/PersonalSetup');
+            }
+            function UserPopup(){
+            }
+            $( ".hamburger" ).click(function() {
+            $( ".menu1" ).slideToggle( "fast", function() {
+            $( ".hamburger" ).hide();
+            $( ".cross" ).show();
+            });
+            });
+        
+            $( ".cross" ).click(function() {
+            $( ".menu1" ).slideToggle( "fast", function() {
+            $( ".cross" ).hide();
+            $( ".hamburger" ).show();
+            });
+            });
+            
+            $( ".navigation" ).click(function() {
+            $( ".menu1" ).slideToggle( "fast", function() {
+            $( ".cross" ).hide();
+            $( ".hamburger" ).show();
+            });
+            });
+            
+            
+            
+          </script>
 </apex:component>

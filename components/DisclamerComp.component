@@ -1,0 +1,8 @@
+<apex:component >
+<table border="0"><tr><td>
+<b><apex:outputLabel value="{!$Label.CM_Community_Text_FooterLiability}" style="font-weight: bold !important;font-size: 9pt !important;"/>
+    <a href="{!$Site.prefix}/apex/DisclaimerDetail" style="font-family: sans-serif;font-weight: bold !important;line-height: 1.2em;text-transform: uppercase;font-size: 9pt !important;">{!$Label.CM_Community_Link_Here}</a></b>
+</td></tr><tr><td>    
+<b><apex:outputLabel value="{!$Label.CM_Community_Text_FooterBestExperience}" style="font-weight: bold !important;"/></b>
+</td></tr></table>
+</apex:component>

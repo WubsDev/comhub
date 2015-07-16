@@ -1,0 +1,43 @@
+<apex:page controller="FeedBackTabComponentController" >
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" />
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+	<script src="//code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+	<script>
+		$('#myTab a[href="#profile"]').tab('show');
+		$('#myTab a:first').tab('show');
+		$('#myTab a:last').tab('show');
+		$('#myTab li:eq(2) a').tab('show') ;
+		$('#myTab a').click(function (e) {
+		  e.preventDefault()
+		  $(this).tab('show')
+		});
+	</script>
+	<style>
+		body{
+			  width: 100%;
+			  height: 100%;
+		}
+		
+		.h2, h2 {
+		  font-size: 100%;
+		}
+	
+	</style>	
+	<div role="tabpanel">
+	  <!-- Nav tabs -->
+	  <ul class="nav nav-tabs" role="tablist">
+	    <li role="presentation" ><a href="/apex/CMPFeedbackCreationPage?tab=home" aria-controls="home" role="tab" style="cursor: pointer;">IDEAS</a></li>
+	    <li role="presentation"><a href="/apex/CMPFeedbackCreationPage?tab=profile" aria-controls="profile" role="tab" style="cursor: pointer;">Success Story</a></li>
+	    <li role="presentation" class="active"><a href="#qa" aria-controls="qa" role="tab" style="cursor: pointer;">Q&amp;A</a></li>
+	    <li role="presentation"><a href="/apex/CMPFeedbackCreationPage?tab=cmp" aria-controls="cmp" role="tab" style="cursor: pointer;">CMP Global Dashboard</a></li>
+	  </ul>
+	  </div>
+	  
+	<br />
+	<chatter:feed entityId="{!quesAndAnsGroupId}"/>	
+</apex:page>

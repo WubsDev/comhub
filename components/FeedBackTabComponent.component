@@ -1,0 +1,110 @@
+<apex:component allowDML="true" controller="FeedBackTabComponentController">
+	<script>
+		// $('#myTab a[href="#profile"]').tab('show');
+		$('#myTab a:first').tab('show');
+		$('#myTab a:last').tab('show');
+		$('#myTab li:eq(2) a').tab('show') ;
+		$('#myTab a').click(function (e) {
+		  e.preventDefault()
+		  $(this).tab('show')
+		});
+		
+		function hideMultiMedia2(){		
+					
+           var f=$('#dashboardSection > span').find("iframe");
+
+              f.load(function(){
+              		
+                  f.contents().find('div .bPageHeader').hide();
+                  f.contents().find('#sidebarCell').hide();
+                  f.contents().find('.bodyDiv').css("border",0);
+                  f.contents().find('body.hasMotif').css("margin",0);
+                  f.contents().find('body.sfdcBody').css("background","white");
+                  f.contents().find('.title > a').text("Post Your User Story");
+                  f.contents().find('.title > a').removeAttr("href");
+                  f.contents().find('.title > a').css("text-decoration","none");
+                  f.contents().find('.title > a').css("cursor","default");	                   
+                  f.contents().find('.pbButton').hide();
+                  document.getElementById("ideaSection").style.display = "block";
+                  showProgressbar(false);
+              })
+       }
+		
+	</script>
+	<div role="tabpanel">
+	  <!-- Nav tabs -->
+	  <ul class="nav nav-tabs" role="tablist">
+	    <li role="presentation" class="{!if(tabAssign == 'home', 'active' ,'')}"><a href="/apex/CMPFeedbackCreationPage?tab=home" aria-controls="home" role="tab" style="cursor: pointer;">IDEAS</a></li>
+	    <li role="presentation" class="{!if(tabAssign == 'profile', 'active', '')}"><a href="/apex/CMPFeedbackCreationPage?tab=profile" aria-controls="profile" role="tab" style="cursor: pointer;">Success Stories</a></li>
+	    <li role="presentation"><a href="/apex/QAChatterGroup" aria-controls="qa" role="tab" style="cursor: pointer;">Q&amp;A</a></li>
+	    <li role="presentation" class="{!if(tabAssign == 'cmp', 'active', '')}"><a href="/apex/CMPFeedbackCreationPage?tab=cmp" aria-controls="cmp" role="tab" style="cursor: pointer;">CMP Dashboards</a></li>
+	  </ul>
+	
+	  <!-- Tab panes -->
+	  <div class="tab-content">
+	    <div role="tabpanel" class="tab-pane {!if(tabAssign == 'home', 'active' ,'')}" id="home">
+	    	<c:NewFeedback />
+	    </div>
+	    <div role="tabpanel" class="tab-pane {!if(tabAssign == 'profile', 'active', '')}" id="profile">
+	    	<br/>
+<!-- 	    	<center><h3 style="font-weight: 900;  font-size: 18px;">Leave your Success story!</h3></center> -->
+<!-- 			<img alt="image" src="{!$Resource.Capture}" style="padding-left: 20%;padding-bottom: 4%;padding-top: 8%;"></img> -->
+			<chatter:feed entityId="{!successStoryGroupId}"/>			
+		</div>
+		
+		<div role="tabpanel" class="tab-pane" id="qa">
+<!-- 			<c:QAChatterComp /> -->
+			<iframe src="/apex/QAChatterGroup" height="200px" 
+					 scrolling="no" id="QAChatterGroup" width="98%" 
+						frameborder="0" onload="debugger;ResizeIframeFromParent1('QAChatterGroup');"/>
+				<script type="text/javascript">
+					function ResizeIframeFromParent1(id) {
+						debugger;
+					    if (jQuery('#'+id).length > 0) {
+					        var window = document.getElementById(id).contentWindow;
+					        var prevheight = jQuery('#'+id).attr('height');
+					        var newheight = Math.max( window.document.body.scrollHeight, window.document.body.offsetHeight, window.document.documentElement.clientHeight, window.document.documentElement.scrollHeight, window.document.documentElement.offsetHeight );
+					        if (newheight != prevheight && newheight > 0) {
+					            jQuery('#'+id).attr('height', newheight/5);
+					            console.log("Adjusting iframe height for "+id+": " +prevheight+"px => "+newheight+"px");
+					        }
+					    }
+					}
+				</script>	
+		</div>
+		<div role="tabpanel" class="tab-pane {!if(tabAssign == 'cmp', 'active', '')}" id="cmp">
+			<br />
+			<apex:form id="dashboardForm">
+				<div>
+					<b>Select Dashboard : </b><apex:SelectList size="1" multiselect="false" value="{!dashboardOption}" onChange="loadDashboard(); return false;">
+						<apex:SelectOptions value="{!dashboardList}" />
+					</apex:SelectList>
+				</div>
+				<br/> <br />
+				<div id="dashboardSection">
+				<apex:outputpanel rendered="{!dashboardOption != ''}" >
+					<iframe src="/{!dashboardOption}" height="800px" 
+					 scrolling="no" id="theIframeDashboardOption" width="98%" 
+						frameborder="0" onload="ResizeIframeFromParent('theIframeDashboardOption');"/>
+				</apex:outputpanel>
+				<script type="text/javascript">
+					function ResizeIframeFromParent(id) {
+					    if (jQuery('#'+id).length > 0) {
+					        var window = document.getElementById(id).contentWindow;
+					        var prevheight = jQuery('#'+id).attr('height');
+					        var newheight = Math.max( window.document.body.scrollHeight, window.document.body.offsetHeight, window.document.documentElement.clientHeight, window.document.documentElement.scrollHeight, window.document.documentElement.offsetHeight );
+					        if (newheight != prevheight && newheight > 0) {
+					            jQuery('#'+id).attr('height', newheight);
+					            console.log("Adjusting iframe height for "+id+": " +prevheight+"px => "+newheight+"px");
+					        }
+					    }
+					}
+				</script>					
+				</div>
+				<apex:actionFunction name="loadDashboard" action="{!refreshDashboard}" rerender="dashboardForm" oncomplete="hideMultiMedia2();" />
+			</apex:form>
+		</div>
+	  </div>
+	
+	</div>
+</apex:component>

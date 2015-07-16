@@ -1,0 +1,104 @@
+<apex:page controller="CMPUserDetailController" showHeader="false">
+    <apex:composition template="ManageCashCommunityTemplate">
+        <apex:define name="headerHTML">
+            <c:ManageCashMenuPopUp />
+        </apex:define>
+
+        <!-- Start-->
+        <apex:define name="body">
+            <apex:form style="height:536px; overflow-y:auto;">
+                <apex:pageBlock >
+                    <apex:pageMessages />
+                    <apex:outputpanel >
+                        <center class="pbButton " style="width:100%">
+                            <div style="left:0px;width:100%">                                       
+                                <apex:commandButton action="{!custUpdate}" value="{!$Label.CM_Community_Button_Save}" />
+                                <apex:commandButton action="{!custCancel}" html-formnovalidate="formnovalidate" immediate="true" value="{!$Label.CM_Community_Button_Cancel}" />                                        
+                            </div>
+                        </center>
+                    </apex:outputpanel>
+                    <apex:pageBlockSection title="{!$Label.CM_SectionHeading_CMPUser_UserInformation}" columns="1" collapsible="false">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="{!$Label.CM_FieldLabel_CMPUser_UserName}" for="Username"/>   
+                            <apex:inputField value="{!commUser.Username}" Id="Username"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="{!$Label.CM_FieldLabel_CMPUser_Timezone}" for="TimeZoneSidKey"/>   
+                            <apex:inputField value="{!commUser.TimeZoneSidKey}" Id="TimeZoneSidKey"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="{!$Label.CM_FieldLabel_CMPUser_Locale}" for="LocaleSidKey"/>   
+                            <apex:inputField value="{!commUser.LocaleSidKey}" Id="LocaleSidKey"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="{!$Label.CM_FieldLabel_CMPUser_Language}" for="LanguageLocaleKey"/>   
+                            <apex:inputField value="{!commUser.LanguageLocaleKey}" Id="LanguageLocaleKey"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="{!$Label.CM_FieldLabel_CMPUser_Nickname}" for="Nickname"/>   
+                            <apex:inputField value="{!commUser.CommunityNickname}" Id="Nickname"/>
+                        </apex:pageBlockSectionItem>
+                    </apex:pageBlockSection>
+                    
+                    <apex:pageBlockSection title="{!$Label.CM_SectionHeading_CMPUser_ContactInformation}" columns="2" collapsible="false">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="{!$Label.CM_FieldLabel_CMPUser_FirstName}" for="FirstName"/>                   
+                            <apex:inputField value="{!commUser.FirstName}" Id="FirstName"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="{!$Label.CM_FieldLabel_CMPUser_LastName}" for="LastName"/>   
+                            <apex:inputField value="{!commUser.LastName}" Id="LastName"/>
+                        </apex:pageBlockSectionItem> 
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="{!$Label.CM_FieldLabel_CMPUser_Title}" for="Title"/>   
+                            <apex:inputField value="{!commUser.Title}" Id="Title"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="{!$Label.CM_FieldLabel_CMPUser_Email}" for="Email"/>   
+                            <apex:inputField value="{!commUser.Email}" Id="Email"/>
+                        </apex:pageBlockSectionItem> 
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="{!$Label.CM_FieldLabel_CMPUser_Phone}" for="Phone"/>   
+                            <apex:inputField value="{!commUser.Phone}" Id="Phone"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="{!$Label.CM_FieldLabel_CMPUser_Extension}" for="Extension"/>   
+                            <apex:inputField value="{!commUser.Extension}" Id="Extension"/>
+                        </apex:pageBlockSectionItem> 
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="{!$Label.CM_FieldLabel_CMPUser_Fax}" for="Fax"/>   
+                            <apex:inputField value="{!commUser.Fax}" Id="Fax"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="{!$Label.CM_FieldLabel_CMPUser_Mobile}" for="MobilePhone"/>   
+                            <apex:inputField value="{!commUser.MobilePhone}" Id="MobilePhone"/>
+                        </apex:pageBlockSectionItem> 
+                    </apex:pageBlockSection>
+                    
+                    <apex:pageBlockSection title="{!$Label.CM_SectionHeading_CMPUser_AddressInformation}" columns="1" collapsible="false">
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="{!$Label.CM_FieldLabel_CMPUser_Street}" for="Street"/>   
+                            <apex:inputField value="{!commUser.Street}" Id="Street"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="{!$Label.CM_FieldLabel_CMPUser_City}" for="City"/>   
+                            <apex:inputField value="{!commUser.City}" Id="City"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="{!$Label.CM_FieldLabel_CMPUser_StateProvince}" for="State"/>   
+                            <apex:inputField value="{!commUser.State}" Id="State"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="{!$Label.CM_FieldLabel_CMPUser_ZipPostalCode}" for="ZipCode"/>   
+                            <apex:inputField value="{!commUser.PostalCode}" Id="ZipCode"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockSectionItem >
+                            <apex:outputLabel value="{!$Label.CM_FieldLabel_CMPUser_Country}" for="Country"/>   
+                            <apex:inputField value="{!commUser.Country}" Id="Country"/>
+                        </apex:pageBlockSectionItem>
+                    </apex:pageBlockSection>
+                </apex:pageBlock>
+            </apex:form>
+        </apex:define>
+    </apex:composition>
+</apex:page>

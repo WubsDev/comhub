@@ -1,0 +1,42 @@
+<apex:page controller="PortalUserCurrency" showHeader="false">
+    <apex:composition template="ManageCashCommunityTemplate">
+        <apex:define name="headerHTML">
+           <c:ManageCashMenuPopUp />
+        </apex:define>
+        <apex:define name="sidebar">
+        </apex:define> 
+
+        <!-- Start-->
+        <apex:define name="body">
+            <apex:form >
+                <apex:pageblock title="{!$Label.CM_Community_Link_SharingSettings}" >
+                    <apex:pageMessages ></apex:pageMessages>
+                    <div align="center">
+                    
+                        <apex:outputpanel rendered="{!(closeUserPopup=='')}">    
+                            <apex:inputField value="{!locUser.Share_Records__c}" style="width: 14px;height: 14px;" />&nbsp;&nbsp;                   
+                            <apex:outputLabel value="{!$Label.CM_SectionText_SharingSettings_AllowOthersSharingAccess}" style="vertical-align: bottom;font-weight: bold !important;font-size: 12px!important;"/>                            
+                        </apex:outputpanel>
+                        <br /><br />
+                        <table>
+                            <tr>
+                                <apex:outputpanel rendered="{!(closeUserPopup=='')}">
+                                    <td style="width:100px"><apex:commandButton action="{!updateSharingPemissionOnRecord}" value="{!$Label.CM_Community_Button_Save}" rendered="{!(closeUserPopup=='')}"/></td>
+                                    <td><apex:commandButton value="{!if(closeUserPopup=='', $Label.CM_Community_Button_Cancel, $Label.CM_Community_Button_Close)}" onClick="self.close();"/>
+                                    </td>
+                                </apex:outputpanel>
+                            </tr>
+                            
+                            <tr>
+                                <apex:outputpanel rendered="{!(closeUserPopup!='')}">
+                                    <td colspan="2"><apex:commandButton value="{!if(closeUserPopup=='', $Label.CM_Community_Button_Cancel, $Label.CM_Community_Button_Close)}" onClick="self.close();"/>
+                                    </td>
+                                </apex:outputpanel>
+                            </tr>                   
+                        </table>
+                    </div>
+                </apex:pageblock>
+            </apex:form>
+        </apex:define>
+    </apex:composition>
+</apex:page>

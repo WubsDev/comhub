@@ -1,0 +1,187 @@
+<!--  
+// 
+// (c) 2014 Appirio, Inc.
+//
+// CMPFeedbackCreationPage
+// Used to create new record for CMP Feedback object record
+//
+// May 26, 2015    Ashish Goyal  			Original (Ref. T-398557)
+// Modified: May 27, 2015	Ashish Goyal		Ref.: T-399621
+-->
+<apex:page standardController="CMP_Feedback__c" showHeader="true" sidebar="true">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css" />
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+	<script src="//code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+		<!-- 
+		// Added Script (Ref: T-399621)
+		 -->
+		 
+			<script>
+				var $x = jQuery.noConflict();
+				
+				$x(function () {
+				    $x('[data-toggle="tooltip"]').tooltip();
+				});
+				
+				function expandRecordSection(){
+					document.getElementById("recordSection").style.display = "block";
+				}
+				
+				$x(document).ready(function(){
+					showProgressbar(true);
+					hideMultiMedia();
+					// showConfirmation();
+					
+				});
+				
+				function hideMultiMedia(){		
+					
+		           var f=$x('#ideaSection').find("iframe");
+		
+	               f.load(function(){
+	               		
+	                   f.contents().find('div .bPageHeader').hide();
+	                   f.contents().find('#sidebarCell').hide();
+	                   f.contents().find('.bodyDiv').css("border",0);
+	                   f.contents().find('body.sfdcBody').css("background","white");
+	                   f.contents().find('body.hasMotif').css("margin",0);                   
+	                   f.contents().find('.pbButton').hide();
+	                   f.contents().find('div .communityIntro').hide();
+	                   document.getElementById("ideaSection").style.display = "block";
+	                   showProgressbar(false);
+	               })
+		       }
+		       
+		       function  showProgressbar(check) {
+					if(check) {
+					    $('#progressbar').show();
+					} else {
+					    $('#progressbar').hide();
+					    $('#progressTextBS').html('');
+					}
+				}
+				
+				
+			</script>
+			<style>
+				body.ideaTab .banner table {
+				  width: 470px;
+				}
+				.postIcon .title a {
+				  color: #333;
+				  padding-top: 68px;
+				  text-align: left;
+				  padding-left: 20px;
+				}
+				.voteIcon .title a {
+				  color: #333;
+				  padding-top: 68px;
+				  text-align: left;
+				  padding-left: 20px;
+				}
+				.discussIcon .title a {
+				  color: #333;
+				  padding-top: 68px;
+				  text-align: left;
+				  padding-left: 20px;
+				}
+				body.ideaTab .bannerIcon .title {
+				  padding-top: 63px;
+				}
+				.banner table {
+				  padding: 0;
+				  margin: 0 auto;
+				}
+				.bannerIcon .title {
+				  padding: 50px 0 0 0;
+				  font-weight: bold;
+				  color: #333;
+				  text-align: center;
+				}
+				body.ideaTab .bannerIcon .title {
+				  padding-top: 63px;
+				}
+				.communityIntro1 {
+				  background: url(/img/ideas/ideas_gradient.png) repeat-x;
+				  border: 1px solid #eaeaea;
+				  padding: 15px 0;
+				  margin: 0 0 14px;
+				}
+				body.ideaTab .postIcon {
+				  background-image: url(/img/alohaSkin/ideas/banner_bulb72.png);
+				}
+				.postIcon {
+				  background: url(/img/ideas/icons/banner_bulb72.png) 60% 1px no-repeat;
+				}
+				body.ideaTab .voteIcon {
+				  background-image: url(/img/alohaSkin/ideas/banner_votebtn72.png);
+				}
+				.voteIcon {
+				  background: url(/img/ideas/icons/banner_votebtn72.png) center 1px no-repeat;
+				}
+				body.ideaTab .discussIcon {
+				  background-image: url(/img/alohaSkin/ideas/banner_bubbles72.png);
+				}
+				.discussIcon {
+				  background: url(/img/ideas/icons/banner_bubbles72.png) center 1px no-repeat;
+				}
+				body.ideaTab .arrow {
+				  background-position: center 20px;
+				}
+				.arrow {				  
+				  width: 10%;
+				  height: 10%;
+				}
+				body{
+					  width: 100%;
+					  height: 100%;
+				}
+				
+				.h2, h2 {
+				  font-size: 100%;
+				}
+				
+				.imgclass{  
+		            background-image: url(/img/help/helpOrbs.gif);  
+		            background-repeat: no-repeat;  
+		            width: 16px;  
+		            height: 15px; 
+		            background-position: right;
+		        }
+		        .tooltip-inner{
+		        	  max-width: 400px !important;
+		        }
+		        th.vfLabelColTextWrap{
+					white-space: nowrap!important;
+				}
+			
+				#drop-files {
+				    height: 150px !important;
+				}
+				
+				
+				#drop-files input[type=file] {
+				    margin: auto;
+				}
+				
+				div#wait { width: 100%; height: 100% }
+				div#loading { width: 100%; height: 100%; position: fixed; top: 0px;}
+				div#waitingHolder { width: 400px; }
+				img.sortIndicator { padding-left: 5px; }
+				span.modified { color: red; }
+				.waitingSearchDivOpacity {
+					background-color: #fff;
+					opacity: .5 !important;
+				}
+				.publishercontainer .bottomBar{
+					height : 45px !important;
+				}
+			</style>
+			
+			<c:FeedBackTabComponent />
+			
+</apex:page>

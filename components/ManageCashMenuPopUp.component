@@ -1,0 +1,28 @@
+<apex:component >
+    <style>
+		.glyphicon-home{
+		  color:white; 
+		  font-size:1.5em; 
+		  margin-top:5px; 
+		  margin:0 auto;
+		}
+		.brandPrimaryFgr {
+			float: right;
+            margin-top: 0px;
+            margin-bottom: 0px;
+            font-size: 15px !important;
+            font-family: 'UniversLTW01-57Condense_723821', sans-serif;
+            font-weight: bold;
+            padding-top: 13px;
+            color: #BBBDBF !important;
+            padding-right: 10px; 
+        }
+    </style>
+    <div class="menu">
+		<div class="container-fluid">
+			<apex:image value="{!URLFOR($Resource.CommunityLogo)}"/> 
+		    <h2 class="brandPrimaryFgr">{!$Label.CM_Community_Text_Welcome} {!$User.FirstName} {!$User.LastName}</h2>
+		</div>
+              
+	</div> 
+</apex:component>

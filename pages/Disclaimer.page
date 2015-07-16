@@ -1,0 +1,269 @@
+<apex:page sidebar="false" id="thePage">
+
+<i>
+<p>
+Access to and use of these web pages, and any content herein (the “System”) is subject to the following disclaimer and any other posted restrictions.  You agree that the System is provided on an ‘as is’ basis solely as a convenience to you. “WUBS” in this legal statement refers to the global organization of companies comprising the Western Union Business Solutions division of The Western Union Company, each of which is a separate legal entity described below.  WUBS takes reasonable efforts to ensure that the System and the content provided by WUBS is accurate and reliable; however, WUBS does not guarantee that the System is accurate, complete or up-to-date and the information provided herein remains subject to change without notice. The reports and information contained in this System are prepared as of a particular date and time and will not reflect subsequent changes in market values or rates.  WUBS is not under any obligation to update or keep current the information contained in the System.  
+</p>
+<p>
+Unless specifically stated otherwise, all market values and rates and portfolio valuations, including any mark to market valuations, are indicative only and are provided for general informational purposes. The reports and information provided herein should not be relied upon as being determinative of any financial information relevant to transactions you have entered into with WUBS, and in no event, shall information in this System be construed as superseding any other disclosures or valuations provided by WUBS to you, as may be required by applicable law.  To the extent applicable by law, the reports and information provided herein should not be taken as providing definitive information for the purposes of valuations and disclosures required under the European Market Infrastructure Regulation (Regulation (EU) No. 648/2012) (“EMIR”), in particular valuations required pursuant to the portfolio reconciliation obligation set out in Article 11 of EMIR and the reporting obligation set out in Article 9 of EMIR. 
+</p>
+<p>
+The information available herein does not constitute investment advice and is not intended to be used as the basis for making investment decisions.  The information contained herein does not constitute an invitation or inducement to engage in investment activity of any kind.  
+</p>
+<p>
+WUBS makes no representations or warranties, express or implied, as to the accuracy, reliability or completeness of the information and reports contained in the System. WUBS does not guarantee that the System will function uninterrupted or error-free. WUBS will not be responsible or liable, directly or indirectly, in any way for any loss or damage of any kind incurred as a result of, or in connection with, your use of, or reliance on, or arising from decisions based on, the System or any of its content.  By choosing to access the System, you agree to all of the foregoing.
+</p>
+</i>
+
+<p>
+
+<table border="1" cellspacing="0" cellpadding="0">
+    <tbody>
+        <tr>
+            <td width="308" valign="top">
+                <p align="center">
+                    <strong>Company </strong>
+                </p>
+            </td>
+            <td width="308" valign="top">
+                <p align="center">
+                    <strong>Country</strong>
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="308" valign="top">
+                <p>
+                    Custom House Currency Exchange (Australia) Pty Limited <strong></strong>
+                </p>
+                <p>
+                    <br/>
+                    Western Union Business Solutions (Australia) Pty Limited
+                </p>
+            </td>
+            <td width="308" valign="top">
+                <p>
+                    Australia
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="308" valign="top">
+                <p>
+                    Western Union International Bank GmbH
+                </p>
+                <p>
+                    Custom House Financial (UK) Limited<strong></strong>
+                </p>
+            </td>
+            <td width="308" valign="top">
+                <p>
+                    Austria
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="308" valign="top">
+                <p>
+                    Custom House ULC
+                </p>
+            </td>
+            <td width="308" valign="top">
+                <p>
+                    Canada
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="308" valign="top">
+                <p>
+                    Western Union International Bank GmbH, Czech Branch<strong></strong>
+                </p>
+            </td>
+            <td width="308" valign="top">
+                <p>
+                    Czech Republic
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="308" valign="top">
+                <p>
+                    Custom House Financial (UK) Limited
+                    <br/>
+                    <br/>
+                </p>
+                <p>
+                    Western Union International Bank GmbH, French Branch
+                </p>
+            </td>
+            <td width="308" valign="top">
+                <p>
+                    France
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="308" valign="top">
+                <p>
+                    Western Union International Bank GmbH, Germany branch
+                </p>
+                <p>
+                    Custom House Financial (UK) Limited<strong></strong>
+                </p>
+            </td>
+            <td width="308" valign="top">
+                <p>
+                    Germany
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="308" valign="top">
+                <p>
+                    Western Union Business Solutions (Hong Kong) Limited
+                </p>
+            </td>
+            <td width="308" valign="top">
+                <p>
+                    Hong Kong
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="308" valign="top">
+                <p>
+                    Custom House Financial (UK) Limited
+                </p>
+                <p>
+                    Western Union Business Solutions (UK) Limited
+                </p>
+            </td>
+            <td width="308" valign="top">
+                <p>
+                    Ireland
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="308" valign="top">
+                <p>
+                    Custom House Financial (UK) Limited
+                </p>
+            </td>
+            <td width="308" valign="top">
+                <p>
+                    Italy
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="308" valign="top">
+                <p>
+                    Western Union Business Solutions (Malta) Limited
+                </p>
+            </td>
+            <td width="308" valign="top">
+                <p>
+                    Malta
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="308" valign="top">
+                <p>
+                    <a name="_DV_C3">Western Union Business Solutions (New Zealand)</a>
+                    <br/>
+                    <br/>
+                </p>
+                <p>
+                    Western Union Business Solutions (Australia) Pty Limited
+                </p>
+            </td>
+            <td width="308" valign="top">
+                <p>
+                    New Zealand
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="308" valign="top">
+                <p>
+                    Western Union International Bank GmbH, Polish Branch
+                </p>
+            </td>
+            <td width="308" valign="top">
+                <p>
+                    Poland
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="308" valign="top">
+                <p>
+                    Custom House Currency Exchange (Singapore) Pte Ltd.
+                    <br/>
+                    <br/>
+                </p>
+                <p>
+                    Western Union Business Solutions (Singapore) Pte Ltd &amp; WUBS Financial Services (Singapore) Pte Ltd
+                </p>
+            </td>
+            <td width="308" valign="top">
+                <p>
+                    Singapore
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="308" valign="top">
+                <p>
+                    Ruesch International, LLC, Zurich branch
+                </p>
+            </td>
+            <td width="308" valign="top">
+                <p>
+                    Switzerland
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="308" valign="top">
+                <p>
+                    Custom House Financial (UK) Limited
+                    <br/>
+                    <br/>
+                </p>
+                <p>
+                    Western Union Business Solutions (UK) Limited
+                </p>
+            </td>
+            <td width="308" valign="top">
+                <p>
+                    United Kingdom
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="308" valign="top">
+                <p>
+                    Custom House (USA) Ltd.
+                    <br/>
+                    <br/>
+                </p>
+                <p>
+                    Western Union Business Solutions (USA), LLC
+                </p>
+            </td>
+            <td width="308" valign="top">
+                <p>
+                    United States of America
+                </p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+</p>
+
+</apex:page>

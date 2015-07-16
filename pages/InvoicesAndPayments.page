@@ -1,4 +1,4 @@
-<apex:page controller="InvoicesAndPayments" title="Invoices"
+<apex:page controller="InvoicesAndPayments" title="{!$Label.CM_SectionHeading_CashFlowManagement_Invoices}"
 	standardStylesheets="true" sidebar="false" showChat="false" id="pg">
 	<apex:composition template="ManageCashCommunityTemplate">
 		<apex:define name="headerHTML">
@@ -52,7 +52,6 @@
 			         
 			    }
 				/*
-				<!--
       		   function openLookupAlert(objectType, recId) {
 					
 		            var url = "{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/NewThresholdAlertPage?objectType="+objectType+"&recId="+recId;
@@ -61,9 +60,7 @@
 		                newWin.focus();
 		            }  
 		       }
-		       -->
 		       */
-			    
 			</script>
 			<apex:define name="headerHTMLReportMenuHeader">
 				<c:CashReportMenu menuName="InvoicesReport"/>
@@ -110,8 +107,14 @@
 				       var vImpact = $('span[id$="totalInHomeCurrency"]').html();
 				       vImpact = vImpact.replace(/,/g,"");        
 				       var vImpactDec = parseFloat(vImpact);
-				       var vImpactDis =  ((vImpactDec * parseFloat(ui.value))/100);
-				       $('span[id$="volatilityImpact"]').html(numberWithCommas(Math.abs(vImpactDis.toFixed(2))));
+                      // alert('--vImpactDec--'+vImpactDec);
+                       var vImpactDis =  (vImpactDec * (ui.value/100));
+                      // alert('--vImpactDis--'+vImpactDis);
+                       if(vImpactDis % 1 === 0) {
+                            $('span[id$="volatilityImpact"]').html(Math.abs(vImpactDis).toLocaleString('{!currentUserLocale}'));
+                       }else{
+                            $('span[id$="volatilityImpact"]').html(Math.abs(vImpactDis.toFixed(2)).toLocaleString('{!currentUserLocale}'));
+                       }
 	                   if(ui.value > 0) {
 	                       $('span[id$="volatilityImpact"]').css('color','red');
 	                   } else {
@@ -128,21 +131,22 @@
 
 	
 			</script>
-			<apex:actionstatus id="status" onstart="progressbarBSMsg('{!$Label.Loading_Wait_Text}');showProgressbarBS(true);" onstop="showProgressbarBS(false);"/>
+            <apex:actionstatus id="status" onstart="progressbarBSMsg('{!$Label.CM_Community_Text_PleaseWait}');showProgressbarBS(true);" onstop="showProgressbarBS(false);"/>
 
 				<apex:outputPanel id="Inovice">
 					<div class="palette">
-						<span><apex:outputLabel value="Filter By Status"
+                        <span><apex:outputLabel value="{!$Label.CM_Community_Text_FieldFilter_Status}"
 								id="relaod" /></span> <span> <apex:SelectList size="1"
 								multiselect="false" value="{!selectedStatus}">
 								<apex:SelectOptions value="{!statusForFilter}" />
 							</apex:SelectList>
-						</span> <span><apex:outputLabel value="Currency" /></span> <span>
+                            
+                        </span> <span><apex:outputLabel value="{!$Label.CM_Community_Text_FieldFilter_Currency}" /></span> <span>
 							<apex:SelectList size="1" multiselect="false"
 								value="{!selectedCurrency}">
 								<apex:SelectOptions value="{!CurrencyList}" />
 							</apex:SelectList>
-						</span> <span><apex:commandButton value="Refresh"
+                        </span> <span><apex:commandButton value="{!$Label.CM_Community_Button_Refresh}"
 								action="{!toggleSort}" styleClass="wuBtn" status="status" rerender="frm"/></span>
 					</div>
 
@@ -154,11 +158,11 @@
 						Added By : Ashish Goyal (Ref: T-377272)
 						Descriptio : Added img tag for help test							 
 					-->
-						<h4>Insights</h4><img src="/s.gif" class="imgclass" data-toggle='tooltip' data-placement='bottom' title="{!$Label.Help_Text_Insights_Volatility}" style="height: 21px; width: 18px;" />
+                        <h4>{!$Label.CM_SectionHeading_InvoiceManagement_Insights}</h4><img src="/s.gif" class="imgclass" data-toggle='tooltip' data-placement='bottom' title="{!$Label.CM_HelpText_Section_InvoiceManagement_Insights}" style="height: 21px; width: 18px;" />
 						<table style="width: 100%; text-align: center;" class="list table">
 							<tr class="headerRow">
-								<th class="headerRow" ><div style="text-align: center;">Aggregate Total</div></th>
-								<th class="headerRow"><div style="text-align: center;">Impact in Home Currency</div></th>
+                                <th class="headerRow" ><div style="text-align: center;">{!$Label.CM_SectionText_InvoiceManagement_Insights_AggregateTotal}</div></th>
+                                <th class="headerRow"><div style="text-align: center;">{!$Label.CM_SectionText_InvoiceManagement_Insights_ImpactInHomeCurrency}</div></th>
 								<th class="headerRow"><div style="text-align: center;">
 										<p>
 											<apex:outputText style="border:0; color:#f6931f; font-weight:bold;font-size: medium;	"
@@ -166,24 +170,21 @@
 												rendered="{!selectedCurrency != 'ShowAll'}" />
 										</p>
 									</div></th>
-								<th class="headerRow"><div style="text-align: center;">Hedged Total</div><div style="text-align: center;">(Holding Balance + FWD Contracts)</div></th>
-								<th class="headerRow"><div style="text-align: center;">Un-Hedged Total</div></th>
+                                <th class="headerRow"><div style="text-align: center;">{!$Label.CM_SectionText_InvoiceManagement_Insights_HedgedTotal}</div><div style="text-align: center;">{!$Label.CM_SectionText_InvoiceManagement_Insights_HoldingBalanceFwdContracts}</div></th>
+                                <th class="headerRow"><div style="text-align: center;">{!$Label.CM_SectionText_InvoiceManagement_Insights_UnhedgedTotal}</div></th>
 							</tr>
 
 							<tr>
-								<td><apex:outputText value="{0, number, ###,###,###,##0.00}">
-										<apex:param value="{!aggregateTotal}" />
-									</apex:outputText>&nbsp;&nbsp; <apex:outputText value="{!selectedCurrency}"
-										rendered="{!selectedCurrency != 'ShowAll'}" /> <br /> <apex:outputText value="{0, number, ###,###,###,##0.00}">
+                                <td><apex:outputText value="{!aggregateTotalFormat}" />&nbsp;&nbsp; <apex:outputText value="{!selectedCurrency}"
+                                        rendered="{!selectedCurrency != 'ShowAll'}" /> <br /> 
+                                    <apex:outputText value="{!aggregateTotalSettlementFormat}" />&nbsp;{!userCurrency}</td>
+                                <td>{!$Label.CM_SectionText_InvoiceManagement_Insights_VolatilityImpact}<apex:outputText style="display:none;" value="{0, number, ###,###,###,##0.00}"
+                                        id="totalInHomeCurrency">
 										<apex:param value="{!aggregateTotalSettlement}" />
-									</apex:outputText> {!userCurrency}</td>
-								<td>Volatility Impact : <apex:outputText style="display:none;" value="{0, number, ###,###,###,##0.00}"
-										id="totalInHomeCurrency">
-										<apex:param value="{!totalInHomeCurrency}" />
-									</apex:outputText> <apex:outputText value="{0, number, ###,###,###,##0.00}"
-										id="volatilityImpact">
-										<apex:param value="{!0.00}" />
-									</apex:outputText><br /> <apex:outputText value="Market Rate not available for this currency."
+                                    </apex:outputText> 
+                                    <apex:outputText value="{!0.00}" id="volatilityImpact"> </apex:outputText>
+                                    <br /> 
+                                    <apex:outputText value="{!$Label.CM_Community_Text_MarketRateNotAvailableForThisCurrency}"
 										style="color: red;"
 										rendered="{!conversionRate == 0 && selectedCurrency != null && selectedCurrency != 'ShowAll'}" />
 								</td>
@@ -195,22 +196,16 @@
 											style="border: 0; color: #f6931f; font-weight: bold; text-align: center;" />
 									</div>
 									
-									<span style="float: left;">Depreciates</span><span
-									style="float: right;">Appreciates</span>
+                                    <span style="float: left;">{!$Label.CM_SectionText_InvoiceManagement_Insights_Depreciates}</span><span
+                                    style="float: right;">{!$Label.CM_SectionText_InvoiceManagement_Insights_Appreciates}</span>
 								</td>
-								<td><apex:outputText value="{0, number, ###,###,###,##0.00}">
-										<apex:param value="{!hedgedTotal}" />
-									</apex:outputText> &nbsp;&nbsp; <apex:outputText value="{!selectedCurrency}"
-										rendered="{!selectedCurrency != 'ShowAll'}" /> <br /> <!--                     <apex:outputText value="{0, number, 0.00}">-->
-									<!--										       <apex:param value="{!hedgedTotalSettlement}" />-->
-									<!--										 </apex:outputText>--> <!--                      {!userCurrency}-->
+                                <td><apex:outputText value="{!hedgedTotalFormat}" />&nbsp;&nbsp; 
+                                	<apex:outputText value="{!selectedCurrency}" rendered="{!selectedCurrency != 'ShowAll'}" /> <br /> 
+                                </td>
+                                <td><apex:outputText value="{!unHedgedTotalFormat}" />&nbsp;&nbsp; 
+                                	<apex:outputText value="{!selectedCurrency}" rendered="{!selectedCurrency != 'ShowAll'}" /> <br /> 
+                                	<apex:outputText value="{!unHedgedTotalSettlementFormat}" />&nbsp;&nbsp;{!userCurrency}
 								</td>
-								<td><apex:outputText value="{0, number, ###,###,###,##0.00}">
-										<apex:param value="{!unHedgedTotal}" />
-									</apex:outputText> &nbsp;&nbsp; <apex:outputText value="{!selectedCurrency}"
-										rendered="{!selectedCurrency != 'ShowAll'}" /> <br /> <apex:outputText value="{0, number, ###,###,###,##0.00}">
-										<apex:param value="{!unHedgedTotalSettlement}" />
-									</apex:outputText> {!userCurrency}</td>
 							</tr>
 							<tr>
 								<td colspan="5">
@@ -224,7 +219,7 @@
 
 					<!--   MY INVOICES LIST AND SORTING     -->
 
-					<h4>My Invoices</h4>
+                    <h4>{!$Label.CM_SectionHeading_InvoiceManagement_MyInvoices}</h4>
 
 					<apex:outputPanel id="opPanel">
 						<apex:dataTable value="{!invoicePgCtl_genericList}" var="c" styleClass="table" rendered="{!invoicePgCtl_genericList.size > 0}">
@@ -235,7 +230,7 @@
 
 							<apex:column >
 								<apex:facet name="header">
-									<apex:commandLink value="Invoice Number {!IF(invoicePgCtl.sortField=='Name',IF(invoicePgCtl.sortDir='asc','▲','▼'),'')}"
+                                    <apex:commandLink value="{!$Label.CM_SectionText_InvoiceManagement_MyInvoices_InvoiceNumber} {!IF(invoicePgCtl.sortField=='Name',IF(invoicePgCtl.sortDir='asc','▲','▼'),'')}"
 										action="{!toggleSort}"  status="status" rerender="opPanel">
 										<apex:param name="compare" value="Name"
 											assignTo="{!invoicePgCtl.sortField}" />
@@ -248,7 +243,7 @@
 							</apex:column>
 							<apex:column >
 								<apex:facet name="header">
-									<apex:commandLink value="Invoice Due Date {!IF(invoicePgCtl.sortField=='Due_Date__c',IF(invoicePgCtl.sortDir='asc','▲','▼'),'')}"
+                                    <apex:commandLink value="{!$Label.CM_SectionText_InvoiceManagement_MyInvoices_InvoiceDueDate} {!IF(invoicePgCtl.sortField=='Due_Date__c',IF(invoicePgCtl.sortDir='asc','▲','▼'),'')}"
 										action="{!toggleSort}"  status="status" rerender="opPanel">
 										<apex:param name="compare" value="Due_Date__c"
 											assignTo="{!invoicePgCtl.sortField}" />
@@ -258,20 +253,17 @@
 							</apex:column>
 							<apex:column >
 								<apex:facet name="header">
-									<apex:commandLink value="Invoice Amount (Foreign Currency) {!IF(invoicePgCtl.sortField=='Amount__c',IF(invoicePgCtl.sortDir='asc','▲','▼'),'')}"
+                                    <apex:commandLink value="{!$Label.CM_SectionText_InvoiceManagement_MyInvoices_InvoiceAmountForeignCurrency} {!IF(invoicePgCtl.sortField=='Amount__c',IF(invoicePgCtl.sortDir='asc','▲','▼'),'')}"
 										action="{!toggleSort}"  status="status" rerender="opPanel">
 										<apex:param name="compare" value="Amount__c"
 											assignTo="{!invoicePgCtl.sortField}" />
 									</apex:commandLink>
 								</apex:facet>
-								<apex:outputText value="{!c.invoice.Custom_Currency__c}{0, number, ###,##0.00}">
-									<apex:param value="{!c.amount}" />
-								</apex:outputText>
-								<!--                 <apex:outputtext value="{!c.invoice.Custom_Currency__c} {!c.amount}"/>  -->
+                                <apex:outputText > {!c.invoice.Custom_Currency__c}&nbsp;{!c.amountFormatted} </apex:outputText>
 							</apex:column>
 							<apex:column >
 								<apex:facet name="header">
-									<apex:commandLink value="Invoice Amount (Home Currency) {!IF(invoicePgCtl.sortField=='settlementCurrency',IF(invoicePgCtl.sortDir='asc','▲','▼'),'')}"
+                                    <apex:commandLink value="{!$Label.CM_SectionText_InvoiceManagement_MyInvoices_InvoiceAmountHomeCurrency} {!IF(invoicePgCtl.sortField=='settlementCurrency',IF(invoicePgCtl.sortDir='asc','▲','▼'),'')}"
 										action="{!toggleSort}"  status="status" rerender="opPanel">
 										<apex:param name="compare" value="settlementCurrency"
 											assignTo="{!invoicePgCtl.sortField}" />
@@ -281,13 +273,11 @@
 									<table class="table" border="0" cellpadding="0" cellspacing="0" style="margin-top:0px!important;margin-bottom:0px!important;">
 										<tr style="border-top:0px;">
 											<td style="border-top:0px;">
-												<apex:outputText value="{!userCurrency}{0, number, ###,##0.00}">
-													<apex:param value="{!c.settlementCurrency}" />
-												</apex:outputText>
+                                                <apex:outputText >{!userCurrency}&nbsp;{!c.settlementCurrencyFormatted}</apex:outputText>
 											</td>
 											<td style="border-top:0px;text-align:right">
-												<!-- nobr><a title="Please select a Threshold for your Invoice" alt="Please select a Threshold for your Invoice" href="javascript:openLookupAlert('Invoice', '{!c.invoice.id}');" src="#', '{!c.invoice.id}');" type="button" class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">Rate Watch</a></nobr-->
-												<nobr><a src="javascript:void();" type="button" title="Coming Soon" alt="Coming Soon"  class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">Rate Watch - Coming Soon!</a></nobr>							
+<!--                                                 <nobr><a title="{!$Label.CM_Community_Text_PleaseSelectAThresholdForYourInvoice}" alt="{!$Label.CM_Community_Text_PleaseSelectAThresholdForYourInvoice}" href="javascript:openLookupAlert('Invoice', '{!c.invoice.id}');" src="#', '{!c.invoice.id}');" type="button" class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">{!$Label.CM_Community_Link_RateWatch}</a></nobr> -->
+                                               <nobr><a src="javascript:void();" type="button" title="{!$Label.CM_Community_Link_RateWatchComingSoon}" alt="{!$Label.CM_Community_Link_RateWatchComingSoon}"  class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">{!$Label.CM_Community_Link_RateWatchComingSoon}</a></nobr>                           
 											</td>
 										</tr>
 									</table>
@@ -298,7 +288,7 @@
 
 							<apex:column >
 								<apex:facet name="header">
-									<apex:commandLink value="Buyer/Supplier {!IF(invoicePgCtl.sortField=='Input_Beneficiary__r.name',IF(invoicePgCtl.sortDir='asc','▲','▼'),'')}"
+                                    <apex:commandLink value="{!$Label.CM_SectionText_InvoiceManagement_MyInvoices_BuyerSupplier} {!IF(invoicePgCtl.sortField=='Input_Beneficiary__r.name',IF(invoicePgCtl.sortDir='asc','▲','▼'),'')}"
 										action="{!toggleSort}"  status="status" rerender="opPanel">
 										<apex:param name="compare" value="Input_Beneficiary__r.name"
 											assignTo="{!invoicePgCtl.sortField}" />
@@ -310,7 +300,7 @@
 
 							<apex:column >
 								<apex:facet name="header">
-									<apex:commandLink value="Status {!IF(invoicePgCtl.sortField=='Status__c',IF(invoicePgCtl.sortDir='asc','▲','▼'),'')}"
+                                    <apex:commandLink value="{!$Label.CM_SectionText_InvoiceManagement_MyInvoices_Status} {!IF(invoicePgCtl.sortField=='Status__c',IF(invoicePgCtl.sortDir='asc','▲','▼'),'')}"
 										action="{!toggleSort}"  status="status" rerender="opPanel">
 										<apex:param name="compare" value="Status__c"
 											assignTo="{!invoicePgCtl.sortField}" />
@@ -324,24 +314,24 @@
 						<div class="text-center">
 							<apex:outputpanel rendered="{!invoicePgCtl_genericList.size > 0}">
 								<apex:commandButton rendered="{!invoicePgCtl.paginater.showPrevious}"
-									value="First" styleClass="wuBtn" action="{!invoicePgCtl.firstPage}" status="status" rerender="opPanel"/>
+                                    value="{!$Label.CM_Community_Button_First}" styleClass="wuBtn" action="{!invoicePgCtl.firstPage}" status="status" rerender="opPanel"/>
 								<apex:commandButton rendered="{!invoicePgCtl.paginater.showPrevious}"
-									value="Previous" action="{!invoicePgCtl.previousPage}" status="status" rerender="opPanel"/>
+                                    value="{!$Label.CM_Community_Button_Previous}" action="{!invoicePgCtl.previousPage}" status="status" rerender="opPanel"/>
 								<apex:outputText rendered="{!(invoicePgCtl.paginater.pageNum * invoicePgCtl.pageSize) < invoicePgCtl.paginater.totalResults}"
-									value="{!invoicePgCtl.paginater.pageNum * invoicePgCtl.pageSize} Of {!invoicePgCtl.paginater.totalResults}"></apex:outputText>
+                                    value="{!invoicePgCtl.paginater.pageNum * invoicePgCtl.pageSize} {!$Label.CM_Community_Text_Of} {!invoicePgCtl.paginater.totalResults}"></apex:outputText>
 								<apex:outputText rendered="{!(invoicePgCtl.paginater.pageNum * invoicePgCtl.pageSize) >= invoicePgCtl.paginater.totalResults}"
-									value="{!invoicePgCtl.paginater.totalResults} Of {!invoicePgCtl.paginater.totalResults}"></apex:outputText>
-								<apex:commandButton rendered="{!(invoicePgCtl.paginater.showNext)}" value="Next"
+                                    value="{!invoicePgCtl.paginater.totalResults} {!$Label.CM_Community_Text_Of} {!invoicePgCtl.paginater.totalResults}"></apex:outputText>
+                                <apex:commandButton rendered="{!(invoicePgCtl.paginater.showNext)}" value="{!$Label.CM_Community_Button_Next}"
 									styleClass="wuBtn" action="{!invoicePgCtl.nextPage}" status="status" rerender="opPanel"/>
-								<apex:commandButton rendered="{!invoicePgCtl.paginater.showNext}" value="Last"
+                                <apex:commandButton rendered="{!invoicePgCtl.paginater.showNext}" value="{!$Label.CM_Community_Button_Last}"
 									styleClass="wuBtn" action="{!invoicePgCtl.lastPage}" status="status" rerender="opPanel"/>
 							</apex:outputpanel>
 							
 							<apex:outputPanel rendered="{!invoicePgCtl_genericList.size = 0}">
-								<apex:image id="theImage1" value="{!URLFOR($Resource.Dashboard_Chart_NoData_Images, '/Dashboard_Chart_NoData_Images/NIF.png')}" />
+                                <apex:image id="theImage1" value="{!URLFOR($Resource.Dashboard_Chart_NoData_Images, '/Dashboard_Chart_NoData_Images/NIF'+userLanguage+'.png')}" />
 								<div style="background-color: transparent;width:100%;position: relative;top: -150px;  left: 10px;">
 					                <apex:outputLink value="{!$Site.Prefix}/apex/ManageCashInput?lid=01rS000000095lA&#38;ic=1" target="_top" style="text-decoration: underline;color: blue;background-color:white;text-decoration: underline;color: blue;font-size: 18px;">
-					                    Start Adding Invoices
+                                        {!$Label.CM_Community_Link_StartAddingInputs}
 					                </apex:outputLink>
 					            </div>
 					        </apex:outputPanel>

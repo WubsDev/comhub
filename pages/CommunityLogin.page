@@ -1,39 +1,81 @@
-<apex:page sidebar="false" controller="CommunityLoginController" showheader="false" standardStylesheets="false" action="{!init}">
+<apex:page id="thePage" sidebar="false" controller="CommunityLoginController" showheader="false" standardStylesheets="false" cache="false" action="{!Init}" language="{!selectedLanguage}">
 	<apex:form id="theFrom">
 		
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<title>Login Page</title>
+        <title>{!$Label.CM_SectionHeading_LoginPage_LoginPage}</title>
 <!-- 		<link href="styles.css" rel="stylesheet" type="text/css"></link> -->
 		<apex:stylesheet value="{!URLFOR($Resource.CommunityLogin, 'styles/styles.css')}"/>
 	</head>
 	<body>
+        <c:WebsiteTracking />
 		<div id="background">
 			<div id="Background"><img src="{!URLFOR($Resource.CommunityLogin,'images/Background.png')}" /></div>
-			<div id="GlassesCityFocus"><img src="{!URLFOR($Resource.CommunityLogin,'images/GlassesCityFocus.png')}" /></div>
+            <div id="GlassesCityFocus" style="top: 55px !important;"><img src="{!URLFOR($Resource.CommunityLogin,'images/GlassesCityFocus.png')}" /></div>
 			<div style="position: relative;top: 231px;right: -493px;z-index: 5;color: red;font-weight: bolder;" ><apex:pageMessages id="msj" />	</div>
-			<div id="WelcometotheCashMana"><img src="{!URLFOR($Resource.CommunityLogin,'images/WelcometotheCashMana.png')}" /></div>
-			<div id="InputfieldsBG"><img class="imgToError" src="{!URLFOR($Resource.CommunityLogin,'images/InputfieldsBG.png')}" /></div>
-			<div id="Button" style="top: 401px !important;">
-				<apex:commandButton image="{!URLFOR($Resource.CommunityLogin,'images/Button.png')}" action="{!doLogin}"/>
-			</div>
-			<div id="Login" style="top: 414px !important;"><img src="{!URLFOR($Resource.CommunityLogin,'images/Login.png')}" onclick="submitForm();"/></div>
-			<div id="ButtonArrow" style="top: 409px !important;"><img src="{!URLFOR($Resource.CommunityLogin,'images/ButtonArrow.png')}" onclick="submitForm();"/></div>
-			<div id="UsernamePassword" style="top: 317px !important;"><img src="{!URLFOR($Resource.CommunityLogin,'images/UsernamePassword.png')}" /></div>
-			<div id="Usernamefieldbox" style=" top: 313px !important;"><apex:inputtext value="{!username}" /></div>
-			<div id="Passwordfieldbox" style=" top: 365px !important;"><apex:inputsecret value="{!password}" /></div>
-			<div id="LogoBanner"><img src="{!URLFOR($Resource.CommunityLogin,'images/LogoBanner.png')}" /></div>
+            <div id="WelcometotheCashMana">
+                <apex:outputText style="color: white;font-family: arial;font-size: 22pt;" value="{!$Label.CM_WelcomText_1_Login_Page}"/><br/>
+                <apex:outputText style="color: white;font-family: arial;font-size: 28pt;" value="{!$Label.CM_WelcomText_2_Login_Page}"/>
+                <!--<img src="{!URLFOR($Resource.CommunityLogin,'images/WelcometotheCashMana.png')}" />-->
+            </div>
+            <div id="InputfieldsBG"><img class="imgToError" src="{!URLFOR($Resource.CommunityLogin,'images/InputfieldsBG.png')}" style="width: 565px;" /></div>
+            <div id="Button" style="top: 432px !important; left:664px !important;" onclick="submitForm();">
+                <apex:commandButton value="{!$Label.CM_Community_Button_Login}" style="background-color: #f3d843;border: medium none;color: #968c54;font-size: 14px;height: 30px;" action="{!doLogin}"/>             
+            </div>
+            <!--<div id="Login" style="top: 409px !important;font-family: arial !important;color: #968C54;font-size: 14px;cursor:pointer;" onclick="submitForm();">
+                {!$Label.CM_Community_Button_Login}
+                <img src="{!URLFOR($Resource.CommunityLogin,'images/Login.png')}" onclick="submitForm();">{!$Label.CM_Login_Button_Login_Page}</img>
+            </div>
+            <div id="ButtonArrow" style="top: 409px !important;cursor: pointer;"><img src="{!URLFOR($Resource.CommunityLogin,'images/ButtonArrow.png')}" onclick="submitForm();"/></div>-->
+            
+            <div id="UsernamePassword" style="top: 300px !important; width:500px;">
+                <table style="color: white;font-family: arial;"  cellspacing="15">
+                    <!--<tr>
+                        <td>{!$Label.CM_Community_Field_Label_Language}</td>
+                        <td>
+                            <apex:selectList value="{!selectedLanguage}" onchange="chngLang();" size="1" style="height:22px;">
+                                <apex:selectOptions value="{!languageOptions}"/>
+                            </apex:selectList> 
+                        </td>
+                    </tr>-->
+                    <tr>
+                        <td>{!$Label.CM_FieldLabel_Login_UserName}</td>
+                        <td><apex:inputtext value="{!username}" /></td>
+                    </tr>
+                    <tr>
+                        <td>{!$Label.CM_FieldLabel_Login_Password}</td>
+                        <td><apex:inputsecret value="{!password}" /></td>
+                    </tr>
+                </table>
+                
+                
+            <!--<img src="{!URLFOR($Resource.CommunityLogin,'images/UsernamePassword.png')}" />-->
+                
+            </div>
+            
+            <!--<div id="Usernamefieldbox" style=" top: 313px !important;"><apex:inputtext value="{!username}" /></div>
+            <div id="Passwordfieldbox" style=" top: 365px !important;"><apex:inputsecret value="{!password}" /></div>-->
+            <div id="LogoBanner">
+                <img src="{!URLFOR($Resource.CommunityLogin,'images/LogoBanner.png')}" />
+                <span style="color: white;float: right;margin-right: 25px;margin-top: -45px;font-family: arial;position: relative;">
+                    {!$Label.CM_Community_Field_Label_Language}&nbsp;
+                    <apex:selectList value="{!selectedLanguage}" onchange="chngLang();" size="1" style="height:22px;">
+                        <apex:selectOptions value="{!languageOptions}"/>
+                    </apex:selectList>
+                </span>
+            </div>
 			<div id="WUBusinessSolutionsS"><img src="{!URLFOR($Resource.CommunityLogin,'images/WUBusinessSolutionsS.png')}" /></div>
-			<div id="RememberUsername" style="top: 412px;width: 152px;">
-				<a style="color: white;text-decoration: none;" href="{!$Site.Prefix}/secur/forgotpassword.jsp?locale=us">Forgot your password?</a>
+            <div id="RememberUsername" style="top: 440px;width: 152px;left:830px !important;">
+                <a style="color: white;text-decoration: none;" href="{!$Site.Prefix}/secur/forgotpassword.jsp?locale={!selectedLanguage}">{!$Label.CM_Community_Link_Forgot_Your_Password}</a>
 			</div>
 			
 			
 		</div>
-		
+        <c:TemplateFooter />
 	</body>
 	
 	<apex:actionFunction name="submitForm" action="{!doLogin}" rerender="theFrom" />
+    <apex:actionFunction name="chngLang" action="{!changeLanguage}" reRender="theFrom"/>
 	<script>
 		function updateUI(){
 			$('.imgToError').style.width = "650px";			

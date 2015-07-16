@@ -161,7 +161,7 @@
                 			                     data.addRow([r.invoiceMonth, r.amount, barColor, r.toolTipAmount]);
                 			                   }
                 			                  }catch(e){
-                								alert('Chart Error '+e);
+                                                alert('{!$Label.CM_Alert_ChartError}' + ' ' + e);
                 			                  }
                 			                  view = new google.visualization.DataView(data);
                 			                  view.setColumns([0, 1, 2,

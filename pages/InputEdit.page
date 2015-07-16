@@ -1,4 +1,4 @@
-<apex:page showHeader="false" title="Input Edit" label="Input Edit"
+<apex:page showHeader="false" title="{!$Label.CM_SectionHeading_InputDetail_Input}" label="Input Edit"
     name="Input Detail" id="pg" controller="InputDetailController">
     <apex:composition template="ManageCashCommunityTemplate">
         <apex:define name="headerHTML">
@@ -9,22 +9,22 @@
         <apex:define name="body">
                 
             <div class="container-fluid">
-                <apex:sectionHeader title="Input" />
+                <apex:sectionHeader title="{!$Label.CM_SectionHeading_InputDetail_Input}" />
                 <!-- Standard chatter functionality -->    
                 <chatter:feedWithFollowers entityId="{!inputRecord.Id}" showHeader="true" id="chatter"/>
                 <apex:form id="frm">
-                    <apex:pageBlock title="Input Edit">                
+                    <apex:pageBlock title="{!$Label.CM_Community_Link_Edit}">                
                         <apex:pageMessages />
                         <apex:pageBlockButtons >
-                            <apex:commandButton value="Save" action="{!save}"/>
-                            <apex:commandButton value="Cancel" action="{!customCancel}"/>
+                            <apex:commandButton value="{!$Label.CM_Community_Button_Save}" action="{!save}"/>
+                            <apex:commandButton value="{!$Label.CM_Community_Button_Cancel}" action="{!customCancel}"/>
                         </apex:pageBlockButtons> 
                         
                         
                         <apex:pageBlockSection rendered="{!isFixed}">
                             <apex:repeat value="{!$ObjectType.Input__c.FieldSets.Fixed_Forward_Contract_Other}" var="f1">
 					        	<apex:PageBlockSectionItem >
-						        	<span class="label" style="align: right"> {!if(f1 =='Custom_Currency__c', 'Currency',LabelMaps[f1.fieldPath] )} </span>
+                                    <span class="label" style="align: right"> {!if(f1 =='Custom_Currency__c', $Label.CM_FieldLabel_Input_Currency,LabelMaps[f1.fieldPath] )} </span>
 						        	<apex:outputPanel >
 						        		<c:RequiredBlockComponent isRequired="{!(f1.required || f1.dbrequired)}">
 											<apex:SelectList size="1" multiselect="false" rendered="{!if(f1=='Custom_Currency__c', true, false)}" 
@@ -44,7 +44,7 @@
                             <apex:repeat value="{!$ObjectType.Input__c.FieldSets.InputDetailFS2}" var="f2" >
                             	<apex:PageBlockSectionItem >
 <!--                             	IF(AND(f2 == 'Amount__c', OR( Input__c.Input_Type__c == 'Option - Other', Input__c.Input_Type__c == 'Option - WUBS')),IF(OR(Input__c.Type__c == 'Option Obligation - Other',Input__c.Type__c == 'Option Obligation - WUBS'), 'Obligation Amount', 'Protection Amount'),LabelMaps[f2.fieldPath]) -->
-						        	<span class="label" style="align: right"> {!if(f2 =='Custom_Currency__c', 'Currency',LabelMaps[f2.fieldPath])} </span>
+                                    <span class="label" style="align: right"> {!if(f2 =='Custom_Currency__c', $Label.CM_FieldLabel_Input_Currency,LabelMaps[f2.fieldPath])} </span>
 						        	<apex:outputPanel >
 						        		<c:RequiredBlockComponent isRequired="{!(f2.required || f2.dbrequired)}">
 											<apex:SelectList size="1" multiselect="false" rendered="{!if(f2=='Custom_Currency__c', true, false)}" 
@@ -64,14 +64,14 @@
 	                                </apex:outputPanel>
                                 </apex:PageBlockSectionItem>
                             </apex:repeat>
-                            <apex:inputField value="{!inputOptionRecord.Amount__c}" label="Obligation Amount" styleclass="dataTable"/>
+                            <apex:inputField value="{!inputOptionRecord.Amount__c}" label="{!$Label.CM_FieldLabel_Input_ObligationAmount}" styleclass="dataTable"/>
                         </apex:pageBlockSection>
                         
                         
                         <apex:pageBlockSection rendered="{!isForcast}">
                             <apex:repeat value="{!$ObjectType.Input__c.FieldSets.InputDetailFS3}" var="f3" >
                                 <apex:PageBlockSectionItem >
-						        	<span class="label" style="align: right"> {!if(f3 =='Custom_Currency__c', 'Currency',LabelMaps[f3.fieldPath] )} </span>
+                                    <span class="label" style="align: right"> {!if(f3 =='Custom_Currency__c', $Label.CM_FieldLabel_Input_Currency,LabelMaps[f3.fieldPath] )} </span>
 						        	<apex:outputPanel >
 						        		<c:RequiredBlockComponent isRequired="{!(f3.required || f3.dbrequired)}">
 											<apex:SelectList size="1" multiselect="false" rendered="{!if(f3=='Custom_Currency__c', true, false)}" 
@@ -98,7 +98,7 @@
                         <apex:pageBlockSection rendered="{!isWindow}">
                             <apex:repeat value="{!$ObjectType.Input__c.FieldSets.Window_Forward_Contract_Other}" var="f4">
                                 <apex:PageBlockSectionItem >
-						        	<span class="label" style="align: right"> {!if(f4 =='Custom_Currency__c', 'Currency',LabelMaps[f4.fieldPath] )} </span>
+                                    <span class="label" style="align: right"> {!if(f4 =='Custom_Currency__c', $Label.CM_FieldLabel_Input_Currency,LabelMaps[f4.fieldPath] )} </span>
 						        	<apex:outputPanel >
 						        		<c:RequiredBlockComponent isRequired="{!(f4.required || f4.dbrequired)}">
 											<apex:SelectList size="1" multiselect="false" rendered="{!if(f4=='Custom_Currency__c', true, false)}" 

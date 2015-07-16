@@ -5,7 +5,7 @@ Task         :   T-375814
 Description  :   custom detail page for Input object
 -->
 <apex:page controller="InputDetailController" showHeader="false"
-	 title="Input Detail" label="Input Detail"
+     title="Input Detail" label="{!$Label.CM_SectionHeading_InputDetail_InputDetail}"
 	name="Input Detail" id="pg">
 	<apex:composition template="ManageCashCommunityTemplate">
 		<apex:define name="headerHTML">
@@ -17,7 +17,7 @@ Description  :   custom detail page for Input object
 			<!-- Start page content -->
 
 			<div class="container-fluid">
-				<apex:sectionHeader title="Input"/>
+                <apex:sectionHeader title="{!$Label.CM_SectionHeading_InputDetail_Input}"/>
 				<!-- Standard chatter functionality -->
 				<chatter:feedWithFollowers entityId="{!inputRecord.id}" showHeader="true"
 					id="chatter2" rendered="{!canEdit}"/>
@@ -35,16 +35,16 @@ Description  :   custom detail page for Input object
 						<apex:outputpanel >
 							<table width="100%" style="width:100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr>
 								<td class="pbTitle" style="position: relative;">									
-									<h2 class="mainTitle" style="float:left;">Input Detail</h2>
+                                    <h2 class="mainTitle" style="float:left;">{!$Label.CM_SectionHeading_InputDetail_InputDetail}</h2>
 									<div style="position: absolute;left:0px;width:100%">
 										<center class="pbButton " style="width:100%">
 											<apex:outputPanel rendered="{!canEdit}">
-											<input type="button" class="btn" value="Edit"
+                                            <input type="button" class="btn" value="{!$Label.CM_Community_Button_Edit}"
 												onClick="window.location.href = '{!$Site.Prefix}/apex/InputEdit?id={!inputRecord.id}&retURL={!$Site.Prefix}/apex/InputDetail?id={!inputRecord.id}'" />
 												
-											<apex:commandButton value="Delete" action="{!customDelete}" />
+                                            <apex:commandButton value="{!$Label.CM_Community_Button_Delete}" action="{!customDelete}" />
 											</apex:outputPanel>
-											<apex:commandButton value="Cancel" action="{!customCancel}" />
+                                            <apex:commandButton value="{!$Label.CM_Community_Button_Cancel}" action="{!customCancel}" />
 										</center>
 									</div>
 								</td>
@@ -62,20 +62,20 @@ Description  :   custom detail page for Input object
 				        <apex:pageBlockSection rendered="{!isOption}">
 					        <apex:repeat value="{!fields}" var="f2" >
 <!-- 					        IF(AND(f2 == 'Amount__c', OR( inputRecord.Input_Type__c == 'Option - Other', inputRecord.Input_Type__c == 'Option - WUBS')),IF(OR(inputRecord.Type__c == 'Option Obligation - Other',inputRecord.Type__c == 'Option Obligation - WUBS'), 'Obligation Amount', 'Protection Amount'),LabelMaps[f2.fieldPath]) -->
-					        	<apex:outputField value="{!inputRecord[f2]}" label="{!if(f2 =='Custom_Currency__c', 'Currency',LabelMaps[f2.fieldPath])}" styleclass="dataTable"/>
+                                <apex:outputField value="{!inputRecord[f2]}" label="{!if(f2 =='Custom_Currency__c', $Label.CM_FieldLabel_Invoice_Currency, LabelMaps[f2.fieldPath])}" styleclass="dataTable"/>
 					        </apex:repeat>
-					        <apex:outputField value="{!inputOptionRecord.Amount__c}" label="Obligation Amount" styleclass="dataTable"/>
+                            <apex:outputField value="{!inputOptionRecord.Amount__c}" label="{!$Label.CM_FieldLabel_Input_ObligationAmount}" styleclass="dataTable"/>
 				        </apex:pageBlockSection>
 				        
 				        <apex:pageBlockSection rendered="{!isForcast}">
 					        <apex:repeat value="{!fields}" var="f3" >
-					        	<apex:outputField value="{!inputRecord[f3]}" label="{!if(f3 =='Custom_Currency__c', 'Currency',LabelMaps[f3.fieldPath])}" styleclass="dataTable"/>
+                                <apex:outputField value="{!inputRecord[f3]}" label="{!if(f3 =='Custom_Currency__c', $Label.CM_FieldLabel_Invoice_Currency,LabelMaps[f3.fieldPath])}" styleclass="dataTable"/>
 					        	
 					        </apex:repeat>
 				        </apex:pageBlockSection>
 				        <apex:pageBlockSection rendered="{!isWindow}">
 					        <apex:repeat value="{!fields}" var="f4">
-					        	<apex:outputField value="{!inputRecord[f4]}" label="{!if(f4 =='Custom_Currency__c', 'Currency',LabelMaps[f4.fieldPath])}" styleclass="dataTable"/>
+                                <apex:outputField value="{!inputRecord[f4]}" label="{!if(f4 =='Custom_Currency__c', $Label.CM_FieldLabel_Invoice_Currency,LabelMaps[f4.fieldPath])}" styleclass="dataTable"/>
 					        </apex:repeat>
 				        </apex:pageBlockSection>
 				        <apex:pageBlockSection >
@@ -94,11 +94,11 @@ Description  :   custom detail page for Input object
 						<apex:outputpanel >
 							<table width="100%" style="width:100%" border="0" cellpadding="0" cellspacing="0"><tbody><tr>
 								<td class="pbTitle" style="position: relative;">									
-									<h2 class="mainTitle" style="float:left;">Attachments</h2>
+                                    <h2 class="mainTitle" style="float:left;">{!$Label.CM_SectionHeading_InvoiceDetail_Attachments}</h2>
 									<div style="position: absolute;left:0px;width:100%">
 										<center class="pbButton " style="width:100%">
 											<apex:commandButton action="{!createNewAttachment}"
-												value="Attach Reference Document" rendered="{!canEdit}"/>
+                                                value="{!$Label.CM_Community_Button_AttachReferenceDocument}" rendered="{!canEdit}"/>
 										</center>
 									</div>
 								</td>
@@ -114,31 +114,31 @@ Description  :   custom detail page for Input object
 						<apex:outputpanel id="att" rendered="{!canEdit}">
 							<apex:dataTable value="{!listChildAttachments}"
 								var="eachAttachment" styleClass="table">
-								<apex:column headerValue="Action">
-									<apex:outputLink value="/apex/AttachmentEdit?id={!eachAttachment.Id}&retURL=/apex/InputDetail?id={!inputRecord.id}">Edit</apex:outputLink>
+                                <apex:column headerValue="{!$Label.CM_FieldLabel_Attachments_Action}">
+                                    <apex:outputLink value="/apex/AttachmentEdit?id={!eachAttachment.Id}&retURL=/apex/InputDetail?id={!inputRecord.id}">{!$Label.CM_Community_Link_Edit}</apex:outputLink>
 					      &#160;|&#160;
-					      <apex:outputLink value="/servlet/servlet.FileDownload?file={!eachAttachment.Id}">View</apex:outputLink>
+                          <apex:outputLink value="/servlet/servlet.FileDownload?file={!eachAttachment.Id}">{!$Label.CM_Community_Link_View}</apex:outputLink>
 					      &#160;|&#160;
 					      <apex:outputLink onclick="if (confirm('Are you sure?')) {deleteAttachment('{!eachAttachment.Id}'); }else{return false;}"
-										value="javascript:void(0);">Del</apex:outputLink>
+                                        value="javascript:void(0);">{!$Label.CM_Community_Button_Delete}</apex:outputLink>
 
 
 								</apex:column>
-								<apex:column headerValue="Type">Attachment</apex:column>
-								<apex:column headerValue="Title">
+                                <apex:column headerValue="{!$Label.CM_FieldLabel_Attachments_Type}">{!$Label.CM_Community_Text_Attachment}</apex:column>
+                                <apex:column headerValue="{!$Label.CM_FieldLabel_Attachments_Title}">
 									<!--                   <apex:outputLink value="/{!eachAttachment.Id}?btdid={!invoiceId}">{!eachAttachment.name}</apex:outputLink> -->
 									<apex:outputLink value="/servlet/servlet.FileDownload?file={!eachAttachment.Id}">{!eachAttachment.name}</apex:outputLink>
 								</apex:column>
 								<apex:column value="{!eachAttachment.LastModifiedById}"
-									headerValue="Last Modified" />
+                                    headerValue="{!$Label.CM_FieldLabel_Attachments_LastModifiedBy}" />
 								<apex:column value="{!eachAttachment.CreatedById }"
-									headerValue="Created By" />
+                                    headerValue="{!$Label.CM_FieldLabel_Attachments_CreatedBy}" />
 							</apex:dataTable>
 						</apex:outputpanel>
 										
 					</apex:pageBlock>
 					<br /><br />
-					<!-- c:Related_List p_objectName="Alert_Threshold__c" rendered="{!canEdit}"
+                 <!--    <c:Related_List p_objectName="Alert_Threshold__c" rendered="{!canEdit}"
 						p_fieldsCSV="Threshold__c,Active__c,CreatedById,LastModifiedDate" 
 						p_pageSize="2" 
 						p_parentFieldId="{!inputRecord.Id}" 
@@ -146,9 +146,9 @@ Description  :   custom detail page for Input object
 						p_orderByFieldName="Name" 
 						p_sortDirection="asc"
 						p_actionToInvoke=""
-						p_title="Alert Threshold"
+                        p_title="{!$Label.CM_SectionHeading_InvoiceDetail_AlertThreshold}"
 						p_returnUrl="/{!inputRecord.Id}"
-						p_showAsStandardRelatedList="true"/--> 
+                        p_showAsStandardRelatedList="true"/> -->
 				</apex:form>
 			</div>
 			<c:DisclamerComp />

@@ -20,11 +20,11 @@
 			<!--   To Display that the invoice is created and to add another invoice option    -->
 			
 			<apex:outputLabel /><br/><br/>
-			<apex:outputLabel value="Input Saved" styleclass="center" style="padding-left:38%!important;color:#000000!important;"/><br></br><br></br><br></br>
+            <apex:outputLabel value="{!$Label.CM_Community_Text_Status_InputSaved}" styleclass="center" style="padding-left:38%!important;color:#000000!important;"/><br></br><br></br><br></br>
 			<apex:form >
 				<div style="text-align: center;">
-					<apex:commandButton value="Add Another Input" onclick="window.opener.parent.location.href='{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/{!sourcePage}';window.close();" styleclass="button"/><br></br><br></br><br></br><br></br>
-					<apex:commandButton value="Finished" onclick="window.opener.parent.location.href='{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/{!sourcePage}{!IF(contains(sourcePage, '?'), '&fin=true', '?fin=true')}';window.close();"  styleclass="button" />
+                    <apex:commandButton value="{!$Label.CM_Community_Button_AddAnotherInput}" onclick="window.opener.parent.location.href='{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/{!sourcePage}';window.close();" styleclass="button"/><br></br><br></br><br></br><br></br>
+                    <apex:commandButton value="{!$Label.CM_Community_Button_Finished}" onclick="window.opener.parent.location.href='{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/{!sourcePage}{!IF(contains(sourcePage, '?'), '&fin=true', '?fin=true')}';window.close();"  styleclass="button" />
 				</div>
 			</apex:form>
 		</apex:define>

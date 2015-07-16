@@ -11,7 +11,7 @@
 <!--Display the top 5 invoices   -->  
 
 		<apex:form >
-        	<!-- script type="text/javascript">
+            <script type="text/javascript">
       		   function openLookupAlert(objectType, recId) {
 					
 		            var url = "{!IF($Site.Prefix != null, URLFOR($Site.BaseCustomUrl+'/'+SUBSTITUTE($Site.Prefix, '/', '')), '')}/apex/NewThresholdAlertPage?objectType="+objectType+"&recId="+recId;
@@ -20,15 +20,15 @@
 		                newWin.focus();
 		            }  
 		       }
-			</script-->		
-		    <apex:pageBlock title="Top Pending Invoices  " >
-		        <apex:outputLabel value="Filter By Status" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </script>       
+            <apex:pageBlock title="{!$Label.CM_SectionHeading_SummaryDashboard_TopPendingInvoices}" >
+                <apex:outputLabel value="{!$Label.CM_Community_Text_FieldFilter_InvoiceStatus}" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		        <apex:selectList value="{!selectedStatus}" multiselect="false" size="1">
-		            <apex:selectOption itemValue="Both" itemLabel="Both"/>
-		            <apex:selectOption itemValue="Approved" itemLabel="Approved"/>
-		            <apex:selectOption itemValue="Pending Approval (Open)" itemLabel="Pending Approval"/>
+                    <apex:selectOption itemValue="Both" itemLabel="{!$Label.CM_Community_Text_FieldFilter_InvoiceStatus_Item_Both}"/>
+                    <apex:selectOption itemValue="Approved" itemLabel="{!$Label.CM_Community_Text_FieldFilter_InvoiceStatus_Item_Approved}"/>
+                    <apex:selectOption itemValue="Pending Approval (Open)" itemLabel="{!$Label.CM_Community_Text_FieldFilter_InvoiceStatus_Item_PendingApproval}"/>
 		        </apex:selectList>&nbsp;
-		        <apex:commandButton value="Refresh" action="{!search}"/>&nbsp;&nbsp;&nbsp;
+                <apex:commandButton value="{!$Label.CM_Community_Button_Refresh}" action="{!search}"/>&nbsp;&nbsp;&nbsp;
 		        <c:DateTimestampMessage />
 		        <br/>
 		        <apex:outputPanel rendered="{!dataAvailable}">
@@ -37,22 +37,22 @@
 						<thead class="">
 							<tr>
 								<th scope="col" colspan="1" >
-									<div >Invoice Number</div>
+                                    <div >{!$Label.CM_FieldLabel_Invoice_InvoiceNumber}</div>
 								</th>
 								<th scope="col" colspan="1" >
-									<div >Due Date</div>
+                                    <div >{!$Label.CM_FieldLabel_Invoice_DueDate}</div>
 								</th>
 								<th scope="col" colspan="2" width="10%" style="width:10%;">
-									<div >Amount in Settlement Currency*</div>
+                                    <div >{!$Label.CM_FieldLabel_Invoice_AmountinSettlementCurrency}</div>
 								</th>
 								<th scope="col" colspan="1" >
-									<div style="padding-left:30px;">Invoice Amount Due</div>
+                                    <div style="padding-left:30px;">{!$Label.CM_FieldLabel_Invoice_AmountinForeignCurrency}</div>
 								</th>
 								<th scope="col" colspan="1" >
-									<div >Buyer/Supplier</div>
+                                    <div >{!$Label.CM_FieldLabel_Invoice_BuyerSupplier}</div>
 								</th>
 								<th scope="col" colspan="1" >
-									<div >Status</div>
+                                    <div >{!$Label.CM_FieldLabel_Invoice_Status}</div>
 								</th>
 							</tr>
 						</thead>		        
@@ -69,19 +69,17 @@
 									</td>
 									<td>
 										<nobr>
-							                <apex:outputText value="{!userDefaultCurrency}{0, number, ###,##0.00} ">
-							                	<apex:param value="{!c.settlementCurrency}"/>
-							                </apex:outputText>
+                                            <apex:outputText >{!userDefaultCurrency}&nbsp;{!c.settlementCurrencyFormat}</apex:outputText>
 							            </nobr>							
 									</td>
 									<td>
-										<!-- nobr><a title="Please select a Threshold for your Invoice" alt="Please select a Threshold for your Invoice" href="javascript:openLookupAlert('Invoice', '{!c.invoice.id}');" src="#', '{!c.invoice.id}');" type="button" class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">Rate Watch</a></nobr-->
-										<nobr><a src="javascript:void();" type="button" title="Coming Soon" alt="Coming Soon"  class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">Rate Watch - Coming Soon!</a></nobr>							
+<!--                                         <nobr><a title="{!$Label.CM_Community_Text_PleaseSelectAThresholdForYourInvoice}" alt="{!$Label.CM_Community_Text_PleaseSelectAThresholdForYourInvoice}" href="javascript:openLookupAlert('Invoice', '{!c.invoice.id}');" src="#', '{!c.invoice.id}');" type="button" class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">{!$Label.CM_Community_Link_RateWatch}</a></nobr> -->
+                                       <nobr><a src="javascript:void();" type="button" title="{!$Label.CM_Community_Link_RateWatchComingSoon}" alt="{!$Label.CM_Community_Link_RateWatchComingSoon}"  class="btn1" style="padding:2px 5px!important;cursor:pointer!important;background: #ebeff1!important;font-size: 0.7em!important;">{!$Label.CM_Community_Link_RateWatchComingSoon}</a></nobr>                           
 									</td>
 									<td>
-				            			<nobr><apex:outputText value="{!c.invoice.Custom_Currency__c}{0, number, ###,##0.00}" style="padding-left:30px;">
-				                  			<apex:param value="{!c.invoice.Amount__c}"/>
-				                  			</apex:outputText>
+                                        <nobr>
+                                            <apex:outputText value="{!c.invoice.Custom_Currency__c}" style="padding-left:30px;" />&nbsp;
+                                            <apex:outputField value="{!c.invoice.Amount__c}"/>
 				                  		</nobr>
 				                  	</td>
 									<td>
@@ -98,12 +96,13 @@
 		        <apex:outputPanel rendered="{!NOT(dataAvailable)}">
 		            <div class="noDataPanel" style="background-color: transparent;height: 252px; float:left;width:100%;text-align:center; vertical-align: middle;">
 <!-- 		                <p style="color: #fcd40d; font-size: 28px; font-weight: bold; padding-bottom: 10px;">No Data To Display</p> -->
-						<apex:image id="theImage1" value="{!URLFOR($Resource.Dashboard_Chart_NoData_Images, '/Dashboard_Chart_NoData_Images/TPI.png')}" style="padding-top: 9px;  vertical-align: bottom !important;" />
+                        <!-- If French, the display Image "TPI_fr.png", else if Italian then "TPI_it.png", else use the standard TPI.png image -->
+                        <apex:image id="theImage1" value="{!URLFOR($Resource.Dashboard_Chart_NoData_Images, '/Dashboard_Chart_NoData_Images/TPI'+userLanguage+'.png')}" style="padding-top: 9px;  vertical-align: bottom !important;" />
 		                
 	            	</div>
 	            	<div style="background-color: transparent;float:left;width:100%;text-align:center;position:absolute;top:170px">
 		                <apex:outputLink value="{!$Site.Prefix}/apex/ManageCashInput?lid=01rS000000095lA&#38;ic=1" target="_top" style="text-decoration: underline;color: blue;font-size: 18px; ">
-		                    Start Adding Invoices
+                            {!$Label.CM_Community_Link_StartAddingInputs}
 		                </apex:outputLink>
 		            </div>
 		        </apex:outputPanel>

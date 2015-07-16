@@ -9,7 +9,7 @@
 -->
  <apex:page showHeader="false"
     controller="InputBeneficiaryDetailPageController" name="Input Buyer/Supplier Detail" id="pg"
-    title="Input Buyer/Supplier Detail" label="Input Buyer/Supplier Detail">
+    title="{!$Label.CM_SectionHeading_InputBuyerSupplier_InputBuyerSupplier}" label="Input Buyer/Supplier Detail">
     
     <apex:composition template="ManageCashCommunityTemplate">
         <apex:define name="headerHTML">
@@ -21,7 +21,7 @@
             <!-- Start page content -->
 
             <div class="container-fluid">
-                <apex:sectionHeader title="Input Buyer/Supplier" />
+                <apex:sectionHeader title="{!$Label.CM_SectionHeading_InputBuyerSupplier_InputBuyerSupplier}" />
                 <apex:form id="frm">
                     <apex:pageMessages />
 
@@ -31,15 +31,15 @@
                             <table width="100%" style="width:100%" border="0" cellpadding="0" cellspacing="0">
                                 <tbody><tr>
                                     <td class="pbTitle" style="position: relative;">                                    
-                                        <h2 class="mainTitle" style="float:left;">Input Buyer/Supplier Detail</h2>
+                                        <h2 class="mainTitle" style="float:left;">{!$Label.CM_SectionHeading_InputBuyerSupplier_InputBuyerSupplier}</h2>
                                         <div style="position: absolute;left:0px;width:100%">
                                             <center class="pbButton " style="width:100%">
     											<apex:outputPanel rendered="{!$User.Id == inputRecord.OwnerId}">
 	                                                <input type="button" class="btn" value="Edit"
 	                                                    onClick="window.location.href = '{!$Site.Prefix}/apex/InputBeneficiaryEdit?id={!inputRecord.id}&retURL={!$Site.Prefix}/apex/InputBeneficiaryDetailPage?id={!inputRecord.id}'" />
-	                                                <apex:commandButton value="Delete" action="{!customDelete}" />
+                                                    <apex:commandButton value="{!$Label.CM_Community_Button_Delete}" action="{!customDelete}" />
                                                 </apex:outputPanel>
-                                                <apex:commandButton value="Cancel" action="{!customCancel}" />
+                                                <apex:commandButton value="{!$Label.CM_Community_Button_Cancel}" action="{!customCancel}" />
                                             </center>
                                         </div>
                                     </td>
@@ -50,7 +50,7 @@
                         <apex:pageBlockSection >
                             <apex:repeat value="{!$ObjectType.Input_Beneficiary__c.FieldSets.Detail}" var="f1">
                             	<apex:PageBlockSectionItem >
-						        	<span class="label" style="align: right"> {!if(f1 =='Name', 'Buyer/Supplier Name',LabelDetailMaps[f1.fieldPath])} </span>
+                                    <span class="label" style="align: right"> {!if(f1 =='Name', $Label.CM_FieldLabel_AddInputBeneficiary_BuyerSupplierName,LabelDetailMaps[f1.fieldPath])} </span>
 						        	<apex:outputPanel >
                                 <apex:outputField value="{!inputRecord[f1.fieldPath]}" styleclass="dataTable"/>
                                 	</apex:outputPanel>

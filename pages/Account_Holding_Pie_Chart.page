@@ -35,8 +35,8 @@ data.push(product);
     <apex:pageblock >    
         <apex:pageblocksection columns="{!if(isNonCCTuser=true, '2', '3')}">
         <apex:outputPanel rendered="{!NOT(isNonCCTuser)}">
-           <apex:pageblocksection collapsible="false" title="Holding Balance by Currency" columns="1" >
-            <apex:facet name="header"><div style="width:100%;text-align:center;">Holding Balance by Currency with WUBS</div></apex:facet>
+           <apex:pageblocksection collapsible="false" title="Holding Balance by Currency with WUBS" columns="1">
+            <apex:facet name="header"><div style="width:100%;text-align:center;">{!$Label.CM_SectionHeading_SummaryDashboard_HoldingBalancebyCurrencywithWUBS}</div></apex:facet>
               <apex:outputPanel layout="block" id="pieDiv" style="height:250px;" rendered="{!IF(pieData.size > 0 , true, false)}">
               <center>
               <a href ='InsightsAndInputTab?sfdc.tabName=01rS000000095lP&dtab=tabAccount3&holding=1' target='_parent'>          
@@ -53,9 +53,8 @@ data.push(product);
             
             <apex:outputPanel rendered="{!IF(AND(pieData.size = 0, NOT(isNonCCTuser)) , true, false)}">
          	<center>
-<!--             <a href='InsightsAndInputTab?sfdc.tabName=01rS000000095lP&dtab=tabAccount3&holding=1' target='_parent'> -->
-              <apex:image id="theImage1" value="{!URLFOR($Resource.Dashboard_Chart_NoData_Images, '/Dashboard_Chart_NoData_Images/HBDB.png')}" style="padding-top: 0px;height:250px; width:330px;" />
-<!--             </a>   -->
+              <!-- If French, the display Image "HBDB_fr.png" at the end of it, else if Italian then "HBDB_it.png", else use the standard HBDB.png image -->
+              <apex:image id="theImage1" value="{!URLFOR($Resource.Dashboard_Chart_NoData_Images, '/Dashboard_Chart_NoData_Images/HBDB'+userLanguage+'.png')}" style="padding-top: 0px;height:250px; width:330px;" />
             </center>
          </apex:outputPanel>
             </apex:pageblocksection>
@@ -64,7 +63,7 @@ data.push(product);
          
 <!--           <apex:outputPanel rendered="{!IF(pieData1.size > 0, true, false)}"> -->
              <apex:pageblocksection collapsible="false" title="Outstanding Forwards with WUBS" columns="1">
-                <apex:facet name="header"><div style="width:100%;text-align:center;">Outstanding Forward Contracts by Currency with WUBS</div></apex:facet>
+                <apex:facet name="header"><div style="width:100%;text-align:center;">{!$Label.CM_SectionHeading_SummaryDashboard_OutstandingForwardContractsbyCurrencywithWUBS}</div></apex:facet>
                 <apex:outputPanel layout="block" id="pieInsightDiv" style="height:250px;" rendered="{!IF(pieData1.size > 0, true, false)}">
                   <center>
                   <a href ='InsightsAndInputTab?sfdc.tabName=01rS000000095lP&dtab=tabAccount3&forward=1' target='_parent'>
@@ -79,9 +78,8 @@ data.push(product);
             </apex:outputPanel>
             <apex:outputPanel rendered="{!IF(pieData1.size = 0, true, false)}">
             <center>
-<!--             <a href='InsightsAndInputTab?sfdc.tabName=01rS000000095lP&dtab=tabAccount3&forward=1' target='_parent'> -->
-              <apex:image id="theImage2" value="{!URLFOR($Resource.Dashboard_Chart_NoData_Images, '/Dashboard_Chart_NoData_Images/OFCDB.png')}" style="padding-top: 0px;height:250px; width:330px;"/>
-<!--             </a>   -->
+              <!-- If French, the display Image "OFCDB_fr.png", else if Italian then "OFCDB_it.png", else use the standard OFCDB.png image -->
+              <apex:image id="theImage2" value="{!URLFOR($Resource.Dashboard_Chart_NoData_Images, '/Dashboard_Chart_NoData_Images/OFCDB'+userLanguage+'.png')}" style="padding-top: 0px;height:250px; width:330px;"/>
             </center>
          </apex:outputPanel>
             </apex:pageblocksection>
@@ -152,15 +150,15 @@ data.push(product);
         function renderTooltip(data , item) {
             //var present = String(item.storeItem.data.data);
             var convertedCurrency = item.storeItem.data.Rate;
-            convertedCurrency = convertedCurrency.toFixed(2)
-            convertedCurrency = numberWithCommas(convertedCurrency);
-            this.setTitle(data.raw.name + ' ' + convertedCurrency);
+            //convertedCurrency = convertedCurrency.toFixed(2)
+            //convertedCurrency = numberWithCommas(convertedCurrency);
+            this.setTitle(data.raw.name + ' ' + convertedCurrency.toLocaleString('{!currentUserLocale}'));
         }
         function renderTooltipStacked(data , item) {
             //console.log(data);
             //console.log(item);
             //var present = String(item.storeItem.data.data);
-            this.setTitle(item.yField+ ' : ' + item.value[1]);
+            this.setTitle(item.yField+ ' : ' + item.value[1].toLocaleString('{!currentUserLocale}'));
         }
         
         Chart$(document).ready(function() {

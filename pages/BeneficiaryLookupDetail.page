@@ -5,15 +5,15 @@
 				<table border="0" cellpadding="0" cellspacing="0">
 					<tr>
 						<td class="pbTitle">
-							<h2 class="mainTitle">Buyer/Supplier</h2></td>
+                            <h2 class="mainTitle">{!$Label.CM_FieldLabel_Invoice_BuyerSupplier}</h2></td>
 						<td class="pbButton" colspan="2" style="padding: 0px !important;">
-							<input value=" View " class="btn" name="view"
+                            <input value="{!$Label.CM_Community_Link_View}" class="btn" name="view"
 								onclick="navigateToUrl('/{!$Site.Prefix}/apex/InputBeneficiaryDetailPage?Id={!inputRecord.Id}&retURL=/{!$Site.Prefix}/apex/ManageCashInput',null,'view');"
-								title="View" type="button" />
+                                title="{!$Label.CM_Community_Link_View}" type="button" />
 						</td><td style="padding: 0px !important;">
-							<input value=" Edit " class="btn" name="edit" style="display:{!IF(inputRecord.OwnerId == $User.Id, 'block', 'none')};"
+                            <input value="{!$Label.CM_Community_Link_Edit}" class="btn" name="edit" style="display:{!IF(inputRecord.OwnerId == $User.Id, 'block', 'none')};"
 								onclick="navigateToUrl('/{!$Site.Prefix}/InputBeneficiaryEdit?Id={!inputRecord.Id}&retURL=/{!$Site.Prefix}/apex/ManageCashInput',null,'edit');"
-								title="Edit" type="button" />
+                                title="{!$Label.CM_Community_Link_Edit}" type="button" />
 						</td>
 						<td width="100%" style="width:100%">
 						</td>
@@ -23,7 +23,7 @@
 			<div class="pbBody">
 				<table class="detailList" border="0" cellpadding="0" cellspacing="0">
 					<tr>
-						<td class="labelCol last">Buyer/Supplier Name</td>
+                        <td class="labelCol last">{!$Label.CM_FieldLabel_AddInputBeneficiary_BuyerSupplierName}</td>
 						<td class="dataCol last">{!inputRecord.Name}</td>
 					</tr>
 				</table>

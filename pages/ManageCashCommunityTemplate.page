@@ -144,7 +144,7 @@ controller="ManageCashCommunityTemplateCtl" action="{!init}">
 			    <!-- Start page content table -->
 				<tbody>
 			        <tr>
-						<apex:insert name="sidebar">
+						<apex:insert name="sidebar"><!--  
 							<td id="sidebarCell"
 							    class=" sidebarCell sidebarCollapsible {!if(isSidebarCollapsed==true, 'sidebarCollapsed', '') }"><a
 								    class="zen handlebarContainer" href="javascript:sidebarTogel();"
@@ -160,9 +160,9 @@ controller="ManageCashCommunityTemplateCtl" action="{!init}">
 							            marginheight="0" marginwidth="0" name="066S0000000DzOz"
 							            scrolling="no" src="{!$Site.Prefix}/apex/MysettingComponent"
 							            title="MysettingComponent" width="100%"> </iframe> -->
-							        <c:MySettingSideBarComponent />    
+							      <!--   <c:MySettingSideBarComponent />    
 							    </div>
-							</td>
+							</td> -->
 						</apex:insert>
 						<td class="oRight" id="bodyCell">
 					    	<apex:insert name="body"></apex:insert>

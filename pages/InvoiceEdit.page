@@ -1,4 +1,4 @@
-<apex:page showHeader="false" title="Invoice Edit" label="Invoice Edit"
+<apex:page showHeader="false" title="{!$Label.CM_SectionHeading_InvoiceEdit_InvoiceEdit}" label="Invoice Edit"
     name="Invoice Detail" id="pg" controller="InvoiceDetailController">
 	<apex:composition template="ManageCashCommunityTemplate">
 		<apex:define name="headerHTML">
@@ -9,16 +9,16 @@
 		<apex:define name="body">
                 
 			<div class="container-fluid">
-				<apex:sectionHeader title="Invoice" subtitle="{!invoiceName}" />
+                <apex:sectionHeader title="{!$Label.CM_SectionHeading_InvoiceDetail_Invoice}" subtitle="{!invoiceName}" />
 			    <!-- Standard chatter functionality -->    
 			    <chatter:feedWithFollowers entityId="{!invoiceId}" showHeader="true"
 					id="chatter" rendered="{!canEdit}"/>
 				<apex:form id="frm">
-				    <apex:pageBlock title="Invoice Edit">                
+                    <apex:pageBlock title="{!$Label.CM_SectionHeading_InvoiceEdit_InvoiceEdit}">                
 				        <apex:pageMessages />
 				        <apex:pageBlockButtons >
-				        	<apex:commandButton value="Save" action="{!save}"/> 
-				        	<apex:commandButton value="Cancel" action="{!customCancel}"/>
+                            <apex:commandButton value="{!$Label.CM_Community_Button_Save}" action="{!save}"/> 
+                            <apex:commandButton value="{!$Label.CM_Community_Button_Cancel}" action="{!customCancel}"/>
 				        </apex:pageBlockButtons>
 				        <apex:pageBlockSection columns="2" >
 <!-- 				        <apex:repeat value="{!$ObjectType.Invoice__c.FieldSets.Community_Invoice_Edit}" var="f"> -->
@@ -26,7 +26,7 @@
 <!-- 				        </apex:repeat> -->
 				        <apex:repeat value="{!$ObjectType.Invoice__c.FieldSets.Community_Invoice_Edit}" var="f">
 				        	<apex:PageBlockSectionItem >
-					        	<span class="label" style="align: right"> {!if(f =='Custom_Currency__c', 'Currency',LabelMaps[f.fieldPath] )} </span>
+                                <span class="label" style="align: right"> {!if(f =='Custom_Currency__c', $Label.CM_FieldLabel_Invoice_Currency,if(f =='Amount__c', $Label.CM_FieldLabel_Invoice_AmountinForeignCurrency,LabelMaps[f.fieldPath] ))} </span>
 					        	<apex:outputPanel >
 					        		<c:RequiredBlockComponent isRequired="{!(f.required || f.dbrequired)}">
 										<apex:SelectList size="1" multiselect="false" rendered="{!if(f=='Custom_Currency__c', true, false)}" 

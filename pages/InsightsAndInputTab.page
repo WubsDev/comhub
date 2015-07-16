@@ -1,4 +1,10 @@
 <apex:page id="pg" controller="InsightsAndInputTabCtrl" sidebar="false">
+    <style>
+        .tooltip-inner{
+             max-width: 400px !important;
+             width : 400px !important;
+        }
+    </style>
     <apex:composition template="ManageCashReportTemplate">
             <apex:define name="headerHTML">
                 <c:ManageCashMenu menuName="Reports" />
@@ -29,7 +35,7 @@
             <script>
                 
                 $( document ).ready(function(){
-                    $('.pbHeader .pbTitle .mainTitle').append("<img src='/s.gif' data-toggle='tooltip' data-placement='bottom' class='imgclass' title='{!$Label.Help_Text_Summary_Netcash}' style='height: 21px; width: 18px;' />");
+                    $('.pbHeader .pbTitle .mainTitle').append("<img src='/s.gif' data-toggle='tooltip' data-placement='bottom' class='imgclass' title='{!$Label.CM_HelpText_Section_NetExposure_NetExposureWithoutHedging}' style='height: 21px; width: 18px;' />");
                 });
                 
                 function openPageInPopup(hasErrorval){
@@ -52,7 +58,7 @@
                   $('#progressText').html(message);
                 }                
                 function saveInputWithImage(){
-                    progressbarBSMsg('Saving Input ...');
+                    progressbarBSMsg('{!$Label.CM_Community_Text_Status_SavingInput}');
                     showProgressbarBS(true);
                     var invImageFiles = document.getElementById('invoiceImage').files;
                    
@@ -102,22 +108,24 @@
                                 </apex:pageBlock>                               
                                 <!-- Net Flow Start -->
 
-                                <apex:pageBlock title="Net Cash Flow without Hedging">
+                                <apex:pageBlock title="{!$Label.CM_SectionHeading_NetExposure_NetExposureWithoutHedging}">
                                     <div class="palette">
-                                        <span><apex:outputLabel value="Currency" /></span> <span>
+                                        <span><apex:outputLabel value="{!$Label.CM_Community_Text_FieldFilter_Currency}" /></span> <span>
                                             <apex:selectList value="{!NetCashFlow.selectedCurrency}"
                                                 multiselect="false" size="1">
                                                 <apex:selectOptions value="{!NetCashFlow.accountTradedCurrency}" />
                                             </apex:selectList>
-                                        </span> <span><apex:outputLabel value="Months" /></span> <span>
+                                        </span> <span><apex:outputLabel value="{!$Label.CM_Community_Text_FieldFilter_DateRange}" /></span> <span>
                                             <apex:selectList value="{!NetCashFlow.selectedMonth}"
                                                 multiselect="false" size="1">
-                                                <apex:selectOption itemValue="3" itemLabel="3 Months" />
-                                                <apex:selectOption itemValue="6" itemLabel="6 Months" />
-                                                <apex:selectOption itemValue="9" itemLabel="9 Months" />
-                                                <apex:selectOption itemValue="12" itemLabel="12 Months" />
+                                                <apex:selectOption itemValue="3" itemLabel="{!$Label.CM_Community_Text_FieldFilter_DateRange_Item_03Months}"/>
+                                                <apex:selectOption itemValue="6" itemLabel="{!$Label.CM_Community_Text_FieldFilter_DateRange_Item_06Months}"/>
+                                                <apex:selectOption itemValue="9" itemLabel="{!$Label.CM_Community_Text_FieldFilter_DateRange_Item_09Months}"/>
+                                                <apex:selectOption itemValue="12" itemLabel="{!$Label.CM_Community_Text_FieldFilter_DateRange_Item_12Months}"/>                                              
+                                                <apex:selectOption itemValue="18" itemLabel="{!$Label.CM_Community_Text_FieldFilter_DateRange_Item_18Months}"/>
+                                                <apex:selectOption itemValue="24" itemLabel="{!$Label.CM_Community_Text_FieldFilter_DateRange_Item_24Months}"/>
                                             </apex:selectList>
-                                        </span> <span><apex:commandButton value="Refresh"
+                                        </span> <span><apex:commandButton value="{!$Label.CM_Community_Button_Refresh}"
                                                 action="{!NetCashFlow.search}" /></span>
                                     </div>
 
@@ -126,11 +134,12 @@
                                                 <div id="chartBlock1" style="width: 100%; height: 300px;" >
                                                     <center>
                                                         <a id="addNewInputLink" href="{!$Site.Prefix}/apex/ManageCashInput" style="display:none; padding-top:13%; font-size: 18px;" >
-                                                            Start Adding Inputs
+                                                            {!$Label.CM_Community_Link_StartAddingInputs}
                                                         </a>
                                                     </center>
                                                 </div>
                                             <script type="text/javascript">
+                                            
                                     var chart =null;
                                     var view = null;
                                     var chartData = null;
@@ -151,7 +160,13 @@
          
                                               // Prepare table model for chart with columns
                                               var data = new google.visualization.DataTable();
-                                              data.addColumn('string', 'invoiceMonth');
+                                              
+                                              
+                                              // Comment By Ashish Goyal
+                                              // ref : I-171376
+                                              //data.addColumn('string', 'invoiceMonth');
+                                              data.addColumn({type:'date', label:'Invoice Month'});
+                                             
                                               data.addColumn('number', 'Amount');
                                               data.addColumn({type:'string', role:'style'});
                                              data.addColumn({type :'string', role: 'tooltip'}); 
@@ -159,17 +174,18 @@
                                              try{
                                               for(var i =0; i<result.length;i++){
                                                  var r = result[i];
-                                                 var barColor = '#ffffff';
+                                                 var barColor = '#585858';
                                                  if(r.amount<0){
                                                      barColor = '#C9626E';
                                                  }
-                                                 if(r.amount>0){
-                                                     barColor = '#585858';
-                                                 }
-                                                 data.addRow([r.invoiceMonth, r.amount, barColor, r.toolTipAmount]);
+                                                 // Comment By Ashish Goyal
+                                                 // ref : I-171376
+                                                 //data.addRow([r.invoiceMonth, r.amount, barColor, r.toolTipAmount]);
+                                                 data.addRow([new Date(r.invYear, r.invMonth-1, 1), r.amount, barColor, r.toolTipAmount]);
+                                                                                                  
                                                }
                                               }catch(e){
-                                                alert('Chart Error '+e);
+                                                alert('{!$Label.CM_Alert_ChartError}' + ' ' + e);
                                               }
                                               view = new google.visualization.DataView(data);
                                               view.setColumns([0, 1, 2,
@@ -180,13 +196,14 @@
                                                                ,3]);
                                         
                                              var options = {
-                                                                 title: "Amount showed in 1000s",
+                                                                 title: "{!$Label.CM_ReportText_AmountShownin1000s}",
                                                                  width: "100%",
                                                                  height: 300,
                                                                  bar: {groupWidth: "65%"},
                                                                  vAxis: { textPosition: 'none',gridlineColor: '#fff', baseline: 3 },
                                                                  legend: { position: "none" },
                                                                  chartArea: {width: '96%', height: '55%'}
+                      
                                                  };        
                                              //vAxis to hide vAxis and caption
                                               var chart = new google.visualization.ColumnChart(document.getElementById("chartBlock1"));
@@ -222,7 +239,7 @@
                                          }
                                       }
                                    // Load the Visualization API and the piechart package.
-                                    google.load('visualization', '1.0', {'packages':['corechart']});
+                                    google.load('visualization', '1.0', {'packages':['corechart'], 'language':'{!chartLanguage}'});
             
                                     // Set a callback to run when the Google Visualization API is loaded.
                                     google.setOnLoadCallback(initCharts);

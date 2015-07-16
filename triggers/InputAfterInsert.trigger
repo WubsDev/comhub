@@ -8,6 +8,7 @@ trigger InputAfterInsert on Input__c (after insert ,before insert ,before update
     
     if(trigger.isBefore && trigger.isInsert) {
         objHandler.triggerHandler_BeforeInsert(trigger.new);
+        InputAutoFollowHandler.updateOwnerSharing(trigger.new);
     }   
 	//April-01 : Updated By Ranjeet(Appirio) : Moved existing code to isInsert and isAfter event block 
     if(Trigger.isInsert && trigger.isAfter){
@@ -75,7 +76,8 @@ trigger InputAfterInsert on Input__c (after insert ,before insert ,before update
 		for (User u : [Select Id, Name, ContactId, Contact.AccountId from User 
 			where	Contact.AccountId in: accountIdSet 
 					And Id !=: Userinfo.getUserId() 
-					and UserType <>'CspLitePortal']) {
+                    and UserType NOT IN ('CspLitePortal','PowerPartner')]) {
+                    	system.debug('------------u----------------'+u);
             if (!accountIdUsersMap.containsKey(u.Contact.AccountId))
                 accountIdUsersMap.put(u.Contact.AccountId, new List<User>{u});
             else 
@@ -87,12 +89,14 @@ trigger InputAfterInsert on Input__c (after insert ,before insert ,before update
         for (Input__c input : Trigger.new) {
             if (input.Parent_Account__c != null) {
                 if (accountIdUsersMap.containsKey(input.Parent_Account__c)) {
+                	system.debug('------------input----------------'+input);
                     for (User u : accountIdUsersMap.get(input.Parent_Account__c)) 
                     {
                         /* 
                          * Updated By: Bohao Chen on 19/Mar/2014
                          * Description: Because we cannot share the record with the user who is the owner of record
                          */
+                        system.debug('------------input----------------'+input+'------------u.id---'+u.Id);
                         if(u.Id != input.OwnerId)
                         {  
                             inputShareList.add(new Input__Share(ParentId = input.Id, UserOrGroupId = u.Id, AccessLevel = 'Edit'));
@@ -125,6 +129,9 @@ trigger InputAfterInsert on Input__c (after insert ,before insert ,before update
         system.debug('inputBeneShareList ids map values: ' + inputBeneShareList);
         system.debug('inputShareList ids map values: ' + inputShareList);
         insert inputBeneShareList;
+        if(inputShareList.size() > 0){
         insert inputShareList;
+    }
+        
     }
 }

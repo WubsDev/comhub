@@ -1,4 +1,9 @@
 <apex:page standardStylesheets="true" sidebar="false" showChat="false" id="pg">
+    <style>
+        .tooltip-inner{
+             max-width: 400px !important;
+        }
+    </style>
 	<apex:composition template="ManageCashCommunityTemplate">
 			<apex:define name="headerHTML">
 				<c:ManageCashMenu menuName="Input" />

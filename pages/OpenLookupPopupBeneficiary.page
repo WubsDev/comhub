@@ -37,15 +37,15 @@
       
         <apex:outputPanel styleClass="lookupHeader" layout="block">
 	        <apex:inputtext value="{!searchText}"/>
-	        <apex:commandButton value="Go!" action="{!runSearch}"/>
-	        <apex:commandButton value="Done"  onclick="window.close(); return false;"/>
+            <apex:commandButton value="{!$Label.CM_Community_Button_Go}" action="{!runSearch}"/>
+            <apex:commandButton value="{!$Label.CM_Community_Button_Done}"  onclick="window.close(); return false;"/>
         </apex:outputPanel>
         
-        <apex:outputLabel styleClass="searchResult">Search Results</apex:outputLabel>
+        <apex:outputLabel styleClass="searchResult">{!$Label.CM_SectionHeading_OpenLookupPopupBeneficiary_SearchResults }</apex:outputLabel>
         <apex:pageBlock id="result" >
             <apex:outputPanel rendered="{!(listRecords!=null && listRecords.size > 0)}" >
                 <apex:pageBlockTable value="{!listRecords}" var="res">
-                    <apex:column headervalue="Select Record">
+                    <apex:column headervalue="{!$Label.CM_FieldLabel_OpenLookupPopupBeneficiary_SelectRecord}">
                             <input type="radio" name="selectedRecord" value="{!res.Id}" onchange="reRenderParentPage('{!res.Id}', '{!res['Name']}');"/>  
                     </apex:column>
                     <apex:repeat value="{!listFieldNames}" var="field">
@@ -54,7 +54,7 @@
                 </apex:pageBlockTable>
             </apex:outputPanel>
             <apex:outputPanel rendered="{!(listRecords==null || listRecords.size == 0)}">
-                <apex:outputText value="No records to display" />
+                <apex:outputText value="{!$Label.CM_Community_Text_NoRecordsToDisplay}" />
             </apex:outputPanel>
 
         </apex:pageBlock>
